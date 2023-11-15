@@ -1,19 +1,18 @@
+Getting Started With Frame
+==========================
 
-Introduction
-============
+The Framepiler CLI Tool 
+-----------------------
 
-This series of articles will introduce you to the Frame language and give you an overview
-of its features using a simple model of a Lamp.
+Frame has an open source MIT licensed transpiler available at `GitHub <https://github.com/frame-lang/frame_transpiler>`_.
 
-.. toctree::
-    :maxdepth: 1
-    :name: toc-getting-started-introduction
 
-    basics
-    frame_events
-    system
-    domain_block
-    actions_block
-    machine_block
-    interface_block
-    controller
+The Online Framepiler
+---------------------
+
+You can experiment with Frame online `here <https://framepiler.frame-lang.org>`_.
+
+VSCode Extension
+--------------
+
+Get the VSCode extension here. 
