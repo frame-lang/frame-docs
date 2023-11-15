@@ -1,6 +1,6 @@
-Frame v0.11.0 Documentation 
-=======================================================
-Welcome! Here you will find the official v0.11.0 documentation for the **Frame Language**.
+Quick Introduction to Frame 
+===========================
+Welcome! Here you will find the official documentation for the **Frame Language**.
 
 What is Frame?
 --------------
@@ -39,10 +39,8 @@ A System in Frame is indicated by an identifier preceeded by the '#' token and t
     :caption: Empty System
 
     #Lamp
-        // Frame comment follows C style
-        // Empty system
+        // Frame comment follows C syntax
     ##
-
 
 Above we see a Frame *specification* for a lamp "system". Currently this system does absolutely nothing. 
 
