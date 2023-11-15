@@ -18,15 +18,15 @@ Welcome to Framelang.
     :caption: Getting Started
     :name: sec-getting-started
 
-    getting_started/introduction/index
-    getting_started/introduction/basics
-    getting_started/introduction/frame_events
-    getting_started/introduction/system
-    getting_started/introduction/domain_block
-    getting_started/introduction/actions_block
-    getting_started/introduction/machine_block
-    getting_started/introduction/interface_block
-    getting_started/introduction/controller
+    getting_started/index
+    getting_started/basics
+    getting_started/frame_events
+    getting_started/system
+    getting_started/domain_block
+    getting_started/actions_block
+    getting_started/machine_block
+    getting_started/interface_block
+    getting_started/controller
 
 .. toctree::
     :hidden:
