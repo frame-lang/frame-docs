@@ -1,24 +1,9 @@
 
-Quick Introduction to Frame 
+Quick Introduction to Frame Programming
 ===========================
-Welcome! Here you will find the official documentation for the **Frame Language**.
 
-What is Frame?
---------------
-Frame is a "metaprogramming" language for both designing and programming state machines (technically Turning Machines). 
-Frame is a "metaprogramming" language in the sense that Frame programs are intended to be transpiled to other languages
-as well as into documentation. Currently Frame supports Python as its only target language and Statechart visual notation 
-for documentation. 
-
-In the future Frame will expand its target language set beyond Python to include JavaScript, Java, C#, C++, Golang and Rust. Other languages 
-will follow as the project gains support and adoption. 
-
-The Framepiler
---------------
-
-The Frame transpiler (Framepiler) is an open source CLI tool that turns Frame "specs" into UML or code. 
-It is written in Rust and is straightforward to modify to add new target outputs for documentation and source code generation. You can experiment with Frame online `here <https://framepiler.frame-lang.org>`_.
-
+The Frame language is primarily a system design language. As such, it has very different syntax 
+than other languages. 
 
 System Design with Frame
 ------------------------
