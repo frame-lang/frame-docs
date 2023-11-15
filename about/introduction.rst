@@ -63,7 +63,7 @@ To improve our lamp, lets start by adding two states - **$Off** and **$On** - to
     ##
 
 As with "#" for systems, Frame uses a special token "$"  to indicate that an identifier is a state. Frame systems
-have optional "blocks" that provide the structure for a system spec. States must live inside the "-machine-" block. 
+have  "blocks" that provide the structure for a system spec. States must live inside the "-machine-" block. 
 
 However these states don't do anything. Let's fix that.
 

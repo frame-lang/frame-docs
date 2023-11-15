@@ -7,7 +7,7 @@ Welcome to Framelang.
 .. toctree::
     :hidden:
     :maxdepth: 1
-    :caption: General
+    :caption: About
     :name: sec-about
 
     about/introduction
@@ -19,6 +19,14 @@ Welcome to Framelang.
     :name: sec-getting-started
 
     getting_started/introduction/index
+    getting_started/introduction/basics
+    getting_started/introduction/frame_events
+    getting_started/introduction/system
+    getting_started/introduction/domain_block
+    getting_started/introduction/actions_block
+    getting_started/introduction/machine_block
+    getting_started/introduction/interface_block
+    getting_started/introduction/controller
 
 .. toctree::
     :hidden:
