@@ -2,18 +2,17 @@
 The Basics
 ==========
 
-This section will discuss aspects to the language that are common throughout
+This article will discuss aspects to the language that are common throughout
 a system specification.
 
 Comments
 --------
 
-Comments are single line and indicated by three (3) dashes:
+Frame supports single line C style comments:
 
 .. code-block::
 
-    --- this is a single line comment
-    --- so is this
+    // this is a single line comment
 
 
 Variable and Parameter Declarations
@@ -23,28 +22,22 @@ Variables and parameter declarations share a core common syntax.
 
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
-Parameters are declared as follows and separated by whitespace:
+Parameters are declared as follows:
 
 .. code-block::
 
-    param:type
+    identifier:type
 
-The name is required but the :type is optional. Parameter lists are one or
-more parameter declarations enclosed in brackets:
+The name is required but the :type is optional. 
 
-.. code-block::
-
-    [<param_list>]
-
-Therefore parameter lists can be declared either of these two ways:
+Parameter lists are one or
+more parameter declarations separated by commans and enclosed in square brackets:
 
 .. code-block::
 
-    [param1 param2]
+    [p1:int, p2, p3, p4:string]
 
-    --- or ---
-
-    [param1:type1 param2:type2]
+Frame's handling of types is covered in more detail next. 
 
 .. _variable_declarations:
 
@@ -55,24 +48,35 @@ Variable and constant declarations have the following format:
 
 .. code-block::
 
-    <var | const> <name> : <type_opt> = <intializer>
+    var <name> (:type) = <intializer>
 
     var x:int = 1
-    const name = "Steve"
+    var name = "Boris"
 
-Variables can be modified after initialization and constants can not. Frame will
- transpile into the closest semantic equivalents in the target language.
-
-The type is optional but the initializer is not.
-
-If you transpile into a language that requires a type and you don’t provide one,
-a token such as `<?>` is substituted. Conversely, if you add a type and transpile
-into a language that doesn’t require one, the Framepiler ignores it.
+Frame variables do not require a type but the target language may. If a type is declared and 
+is required or optional in the target language, Frame will generate it. 
+Conversely, if a variable declaration does not have a type but one is required in the target langauge,
+Frame will generate `:<?>`. This will generate an error when the target language program is compiled. 
 
 .. _methods:
 
-Methods
+Functions, Interface Methods and Actions
 -------
+
+Frame has three flavors of function types:
+
+#. Functions 
+#. System Interface Methods
+#. System Actions
+
+Frame functions are normal, globally scoped routines. 
+
+.. NOTE::
+    In v0.11 Frame only supports a single `main()` function. This will be expanded 
+    to support multiple functions in v0.12.
+
+Interface methods are publicaly accessible methods on systems. Frame itself does not currently 
+support general object oriented class-like types. However systems are implemented using object oriented classes.
 
 All methods (for all blocks) have a similar syntax:
 

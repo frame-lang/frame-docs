@@ -3,7 +3,9 @@ Quick Introduction to Frame Programming
 ===========================
 
 The Frame language is primarily a system design language. As such, it has very different syntax 
-than other languages. 
+than other languages. In this article we will explore a simple model of a Lamp to see how Frame 
+enables system designers to easily represent the logical problem they are trying to solve 
+and generate a working Python program to run the solution. 
 
 System Design with Frame
 ------------------------
@@ -18,7 +20,7 @@ Frame notation promotes three concepts as first class aspects of the language th
 Systems
 ^^^^^^^
 
-A System in Frame is indicated by an identifier preceeded by the '#' token and terminated by the '##' token:
+A system is indicated by an identifier preceeded by the '#' token and terminated by the '##' token:
 
 
 .. code-block::
@@ -84,7 +86,7 @@ Event Handlers
 ~~~~~~~~~~~~~~
 
 Event handlers always begin with an **event selector** for an event message **|msg|** and end with an event handler terminator 
-which, in this case, is a return token **^**. 
+which, in this case, is a return token **^** which terminates the event handler. 
 
 .. code-block::
     :caption: Event Selector
