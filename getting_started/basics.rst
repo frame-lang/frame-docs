@@ -18,7 +18,7 @@ Frame supports single line C style comments:
 Variable and Parameter Declarations
 -----------------------------------
 
-Variables and parameter declarations share a core common syntax.
+Variables and parameter declarations share a common core syntax.
 
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -35,7 +35,11 @@ more parameter declarations separated by commans and enclosed in square brackets
 
 .. code-block::
 
-    [p1:int, p2, p3, p4:string]
+    [p1:int, p2, p3:`[]`]
+
+Parameter `p1` shows the typed syntax for parameters while `p2` shows the untyped. p3 shows how to 
+use the `superstring` syntax to specify types whose syntax Frame doesn't support - in this case 
+Python lists. 
 
 Frame's handling of types is covered in more detail next. 
 
@@ -48,7 +52,7 @@ Variable and constant declarations have the following format:
 
 .. code-block::
 
-    var <name> (:type) = <intializer>
+    var <name>:<type_opt> = <intializer_expr>
 
     var x:int = 1
     var name = "Boris"
@@ -56,7 +60,7 @@ Variable and constant declarations have the following format:
 Frame variables do not require a type but the target language may. If a type is declared and 
 is required or optional in the target language, Frame will generate it. 
 Conversely, if a variable declaration does not have a type but one is required in the target langauge,
-Frame will generate `:<?>`. This will generate an error when the target language program is compiled. 
+Frame will generate `:<?>`. This type token is intended to generate an error when the target language program is compiled. 
 
 .. _methods:
 
