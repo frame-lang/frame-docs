@@ -18,7 +18,74 @@ Frame supports single line C style comments:
 Variable and Parameter Declarations
 -----------------------------------
 
-Variables and parameter declarations share a common core syntax.
+Variables and parameter declarations share a common core syntax for identifier typing. For both, there 
+are three type options:
+
+#. Untyped identifiers
+#. Typed identifiers
+#. Superstring typed identifiers
+
+We will explore these options for variable declarations first. 
+
+.. _variable_declarations:
+
+Variable Declarations
+---------------------
+
+Before examining each variable declaration variation, it is important to note that a common requirement 
+for all of them is that the variable must be initialized. As Frame is intended to transpile to multiple
+target languages it makes no assumptions about a default values.
+
+With regard to types, Frame has a very limited set of native types including systems, states and events. 
+Other than these, Frame does not "understand" types and does no checking or validation of them. Instead,
+for both flavors of types, Frame simply passes them through to the generated code as is.  
+
+Frame variables do not require a type but the target language may. If a type is declared and 
+is required or optional in the target language, Frame will generate it. 
+Conversely, if a variable declaration does not have a type but one is required in the target langauge,
+Frame will generate `:<?>`. This type token is intended to generate an error when the target language program is compiled. 
+
+
+Untyped Variables
+~~~~~~~~~~~~~~~~~
+
+Untyped variables are valid only for target languages that don't require types. 
+
+.. code-block::
+    :caption: Untyped Variable Declaration
+
+    // var <name> = <intializer_expr>
+    var x = 0  
+    var name = "Spock"
+    var value = nil
+
+Typed Variables
+~~~~~~~~~~~~~~~~~ 
+
+Typed variables are indicated by the use of ':' <type> syntax. 
+
+.. code-block::
+    :caption: Typed Variable Declaration
+
+    var <name>:<type> = <intializer_expr>
+    var x:int = 1  // p
+    var <name> = <intializer_expr>
+
+Superstring Typed Variables
+~~~~~~~~~~~~~~~~~ 
+
+The Framepiler makes relatively conservative assumptions about what syntax is permitted in a type 
+declaration. Do circumvent Frame errors for type syntax, simply enclose the type string in backticks to 
+make it a superstring and thus passed directly through to the code generators as-is.
+
+This frequently requires that the expression that is assigned is also a superstring: 
+
+``golang``
+
+.. code-block::
+    :caption: Superstring Typed Variable Declaration
+    var <name>:<`type`> = <intializer_expr>
+    var array:`[4][2]int` =  `[4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}`
 
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -31,36 +98,17 @@ Parameters are declared as follows:
 The name is required but the :type is optional. 
 
 Parameter lists are one or
-more parameter declarations separated by commans and enclosed in square brackets:
+more parameter declarations separated by commas and enclosed in square brackets:
 
 .. code-block::
 
     [p1:int, p2, p3:`[]`]
 
-Parameter `p1` shows the typed syntax for parameters while `p2` shows the untyped. p3 shows how to 
+Parameter `p1` shows the  syntax for typed parameters while `p2` shows the syntax for untyped parameters.
+Parameter p3 shows how to 
 use the `superstring` syntax to specify types whose syntax Frame doesn't support - in this case 
 Python lists. 
 
-Frame's handling of types is covered in more detail next. 
-
-.. _variable_declarations:
-
-Variable Declarations
----------------------
-
-Variable and constant declarations have the following format:
-
-.. code-block::
-
-    var <name>:<type_opt> = <intializer_expr>
-
-    var x:int = 1
-    var name = "Boris"
-
-Frame variables do not require a type but the target language may. If a type is declared and 
-is required or optional in the target language, Frame will generate it. 
-Conversely, if a variable declaration does not have a type but one is required in the target langauge,
-Frame will generate `:<?>`. This type token is intended to generate an error when the target language program is compiled. 
 
 .. _methods:
 

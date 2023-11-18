@@ -1,5 +1,5 @@
 
-Quick Introduction to Frame Programming
+A Quick Introduction to Frame Programming
 ===========================
 
 The Frame language is primarily a system design language. As such, it has very different syntax 
@@ -69,7 +69,7 @@ behavior for our lamp.
         -machine-
 
         $Off                    // $Off state
-            |turnOn|            // event selector for 'turnOff' event message
+            |turnOn|            // event selector for 'turnOn' event message
                 -> $On          // transition to $On state
                 ^               // return from event handler
 
@@ -83,7 +83,7 @@ behavior for our lamp.
 Let's explore each aspect of the event handlers. 
 
 Event Handlers
-~~~~~~~~~~~~~~
+^^^^^^^
 
 Event handlers always begin with an **event selector** for an event message **|msg|** and end with an event handler terminator 
 which, in this case, is a return token **^** which terminates the event handler. 
@@ -91,11 +91,11 @@ which, in this case, is a return token **^** which terminates the event handler.
 .. code-block::
     :caption: Event Selector
 
-    |msg|  ^ // Simplest event handler
+    |msg|  ^ // Event handler with no behavior
     
 
-Event handlers contain the behavior of the system. Currently the only behavior our event handlers have
-are to **transiton** between the states. Frame transitions use the transition operator '->' which references the
+Event handlers contain the behavior of the system. The only behavior for our lamp so far is
+to **transiton** between the **$On** and **$Off** states. Frame transitions use the transition operator '->' which references the
 target state the machine will transition to.
 
 .. code-block::
@@ -108,7 +108,7 @@ Frame's notation makes it easy to
 understand the purpose and behavior of each state and how they respond to events. 
 
 The Interface Block
-~~~~~~~~~~~~~~
+^^^^^^^
 
 Despite having a simple lamp state machine defined, there is currently no way to send an event to the machine
 to make it do anything. To enable that capability we add an **-interface-** block containing two public interface methods 
@@ -136,7 +136,7 @@ which will generate the events we need to drive the machine activity:
 
     ##
 
-Identifiers in the `-interface` block generate public methods for the system. So now an external client of the 
+Identifiers in the `-interface-` block generate public methods for the system. So now an external client of the 
 system can interact with it and make it do something. 
 
 When `turnOn` and `turnOff` methods are called, Frame generates an event with the same name as the method and sends 
@@ -144,7 +144,7 @@ it into the machine which, in turn, will respond if it is in a state that handle
 current state does not handle the event it will simply be ignored. 
 
 Enter and Exit Events
-~~~~~~~~~~~~
+^^^^^^^
 
 Even though our system now switches between states, those states don't *really* do anything. For this simple demo we 
 will simply log that we have entered and exited our **$Off** and **$On** states. 
@@ -255,8 +255,8 @@ Let's see how to fix that.
 Metaprogramming
 ^^^^^^^^^^^^^^
 To solve a wide range of compatibility issues with target languages, Frame supports **superstrings**. 
-Superstrings are enclosed in backticks, the contents
-of which are pasted directly into the target language code. 
+Superstrings are arbitrary text enclosed in backticks, the contents
+of which are passed through directly into the generated target language code. 
 
 Here we can see how to add a Python import using a superstring: 
 
