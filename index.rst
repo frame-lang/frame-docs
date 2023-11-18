@@ -33,8 +33,8 @@ will follow as the project gains support and adoption.
     getting_started/interface_block
     getting_started/frame_events
     getting_started/machine_block
-    getting_started/domain_block
     getting_started/actions_block
+    getting_started/domain_block
     getting_started/controller
 
 .. toctree::
