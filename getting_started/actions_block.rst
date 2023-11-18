@@ -21,6 +21,7 @@ write and the second will add any separator strings.
     :caption: Actions in Python
  
     #HelloWorldSystem
+
         ...
 
         -actions- 
@@ -37,9 +38,13 @@ write and the second will add any separator strings.
 
 
 
-Unlike Interface Methods, Actions can contain code, both Frame code as well as code from target languages. 
+Unlike Interface Methods, Actions can contain code - both Frame code as well as code from target languages. 
 As this program is being transpiled into Python, we can use the built-in Python **print()** function
 to do the actual printing.
+
+.. note:: This is possible because the Python `print()` function conforms to the  
+          syntax Frame expects. Much of the syntax of other languages does **not** conform to 
+          Frame's lexing and parsing rules and must be enclosed in a superstring to properly parse. 
 
 .. code-block::
     :caption: Actions in Python
