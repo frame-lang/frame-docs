@@ -46,6 +46,11 @@ to do the actual printing.
           syntax Frame expects. Much of the syntax of other languages does **not** conform to 
           Frame's lexing and parsing rules and must be enclosed in a superstring to properly parse. 
 
+
+Next we add the two specialized actions **actionWriteHello()** and **actionWriteWorld()**. As these 
+actions take no parameters they do not have a parameter list (it would actually be an error to have 
+an empty list). They in turn call **actionWrite()** and pass the appropriate message and separator values.
+
 .. code-block::
     :caption: Actions in Python
  
@@ -70,10 +75,6 @@ to do the actual printing.
 
     ##
 
-Next we add the two specialized actions **actionWriteHello()** and **actionWriteWorld()**. As these 
-actions take no parameters they do not have a parameter list (it would actually be an error to have 
-an empty list). They in turn call **actionWrite()** and pass the appropriate message and separator values.
-
 Finally we update our event handlers to call these actions:  
 
 .. code-block::
@@ -96,12 +97,12 @@ Finally we update our event handlers to call these actions:
 
       $Hello
           |sayHello|  
-              actionWriteHello()
+              actionWriteHello() // call action
               -> $World 
               ^       
       $World    
           |sayWorld|  
-              actionWriteWorld()
+              actionWriteWorld() // call action
               -> $Done 
               ^     
 
@@ -121,7 +122,7 @@ Finally we update our event handlers to call these actions:
           print(msg, end=separator)
       }
 
-You can try running the `program here`_.
+You can try running the most complex Hello World `program ever here`_.
 
-.. _program here: https://onlinegdb.com/eQntTfaiT
+.. _program ever here: https://onlinegdb.com/eQntTfaiT
 
