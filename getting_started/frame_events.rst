@@ -25,15 +25,14 @@ To support these requirements, Frame defines three fields for a Frame Event:
 
 Here is a basic implementation of the FrameEvent class for Python:
 
-`Python 3`
-
-.. code-block:: Python
+.. code-block::
+    :caption: FrameEvent in Python
 
     class FrameEvent:
-    def __init__(self, message, parameters):
-        self._message = message
-        self._parameters = parameters
-        self._return = None
+      def __init__(self, message, parameters):
+          self._message = message
+          self._parameters = parameters
+          self._return = None
 
 To be precise about terminology, an "event" is an instance of a **FrameEvent** class type while the "message" is the 
 data field on the event. However events will often be referred to as a type, but what we really 
@@ -64,9 +63,9 @@ Here is a state supporting handling enter and exit events:
 
 .. code-block:: Enter and Exit events 
 
-  $S0 
-    |>| print("Entered state $S0.") ^
-    |<| print("Exited state $S0") ^
+    $S0 
+        |>| print("Entered state $S0.") ^
+        |<| print("Exited state $S0") ^
 
 
 Frame Notation for Accessing a Frame Event and Its Members
@@ -93,3 +92,6 @@ FrameEvent attributes has its own accessor symbol as well:
       - frameEvent._return
     * - ^(value)
       - frameEvent._return = value; return;
+
+Later articles will provide more in depth discussion on how to access and 
+manipulate FrameEvents.
