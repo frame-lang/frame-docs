@@ -84,30 +84,34 @@ This frequently requires that the expression that is assigned is also a superstr
 
 .. code-block::
     :caption: Superstring Typed Variable Declaration
+
     var <name>:<`type`> = <intializer_expr>
     var array:`[4][2]int` =  `[4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}`
 
+In future releases, Frame's syntax may support more native syntax for declarations and expressions. 
+
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
-Parameters are declared as follows:
-
-.. code-block::
-
-    identifier:type
-
-The name is required but the :type is optional. 
 
 Parameter lists are one or
 more parameter declarations separated by commas and enclosed in square brackets:
 
 .. code-block::
 
-    [p1:int, p2, p3:`[]`]
+    [p1, p2:int, p3:`[4][2]int`]
 
-Parameter `p1` shows the  syntax for typed parameters while `p2` shows the syntax for untyped parameters.
-Parameter p3 shows how to 
-use the `superstring` syntax to specify types whose syntax Frame doesn't support - in this case 
-Python lists. 
+
+As we can see, parameters are typed with the same kinds of options as variables:
+
+#. Untyped parameters
+#. Typed parameters
+#. Superstring typed parameters
+
+Frame parameters can not be assigned default values for missing arguments.
+
+.. code-block::
+
+    identifier:type
 
 
 .. _methods:
