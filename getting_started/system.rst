@@ -49,11 +49,11 @@ and terminated with the `##` token:
 .. code-block::
     :caption: An Empty System 
 
-    #TrafficLight
+    #HelloWorldSystem
     ##
 
-At this point `#TrafficLight` is an empty system spec and has no behavior. Next we will add the 
-structure needed to start to add functionality to our TrafficLight. 
+At this point `#HelloWorldSystem` is an empty system spec and has no behavior. Next we will add the 
+structure needed to start to add functionality to our system. 
 
 Blocks
 ======
@@ -70,8 +70,8 @@ Although each (or all) blocks are optional, if present they must be defined in a
 
 .. code-block::
     :caption: System Blocks 
-    
-    #TrafficLight
+
+    #HelloWorldSystem
 
     -interface-
     -machine-

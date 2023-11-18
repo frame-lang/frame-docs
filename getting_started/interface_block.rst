@@ -2,30 +2,31 @@
 Interface Block
 ==================
 
-The notation for the interface is very similar to the actions declaration
-notation - for the very reason they both define method calls.
+As implied by its name, the **Interface Block** contains the means by which the outside world
+interacts with the system. 
 
+The detailed syntax for interface methods and other callable routines is covered in the methods_ section.
 The most basic interface method has no parameters and no return values:
 
 .. code-block::
 
-    #Lamp
+    #HelloWorldSystem
 
     -interface-
 
-    turnOn
-    turnOff
-    setColor [color:string]
-    getColor : string
+    sayHello
+    sayWorld
 
     ##
 
-The interface declares four publicly accessible methods.  `turnOn` and `turnOff`
-do not take any parameters or return a value. `setColor` takes a color string
-and `getColor` returns a string. 
+Above we see our system now can be called to **sayHello** and **sayWorld**. However,  
+unlike other languages, Frame decisvely separates interface from behavior. Therefore these 
+inteface methods can't be programmed to actually execute those instructions. 
 
+Instead, interface methods are designed to interact with the rest of the system by 
+creating messages and sending them to the internal state machine. It is the job of the 
+state machine (or for simplicity just "the machine") to route these interface events 
+to the behavior they are intended to drive. 
 
-That is all that is needed for our #Lamp to become a working appliance!
+We will take a look at these events in detail next. 
 
-Next we will investigate the code these four blocks generate to make a
-functioning controller for a lamp.

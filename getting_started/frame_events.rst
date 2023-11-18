@@ -71,6 +71,10 @@ Here is a state supporting handling enter and exit events:
 Frame Notation for Accessing a Frame Event and Its Members
 ---------------------
 
+Frame notation enables access to all parts of a Frame Event. We will not go into detail about 
+its use here but later articles will provide more in depth discussion on how to access and 
+manipulate FrameEvents.
+
 Frame notation uses the `@` symbol to identify a FrameEvent. Each of the three
 FrameEvent attributes has its own accessor symbol as well:
 
@@ -93,5 +97,3 @@ FrameEvent attributes has its own accessor symbol as well:
     * - ^(value)
       - frameEvent._return = value; return;
 
-Later articles will provide more in depth discussion on how to access and 
-manipulate FrameEvents.
