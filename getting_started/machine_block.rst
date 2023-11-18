@@ -33,8 +33,8 @@ identifier. Let's add three states to our machine to give structure to our "Hell
     ##
 
 
-We now have three states, but no way to actually generate "Hello World!" yet. We need to learn a few 
-key concepts about states before we can do that. 
+We now have three states, but how do we get to them? We need to learn a few 
+key concepts before we can do that. 
 
 Start State
 ^^^^^^^^^^^
@@ -104,22 +104,29 @@ The `->` token is used to transition from the current state to the target state,
 
 
 .. code-block::
-    :caption: A Transition
-    ...
+    :caption: Transitions
+ 
+    #HelloWorldSystem
 
-    -machine-
+        -interface-
+        
+        sayHello 
+        sayWorld
 
-    $Hello
-        |sayHello|  
-            -> $World // Transition to $World state
-            ^       
-    $World    
-        |sayWorld|  
-            -> $Done // Transition to $Done state
-            ^     
+        -machine-
 
-    $Done 
-    ...
+        $Hello
+            |sayHello|  
+                -> $World // Transition to $World state
+                ^       
+        $World    
+            |sayWorld|  
+                -> $Done // Transition to $Done state
+                ^     
+
+        $Done 
+
+    ##
 
 So now our machine will transition to all the required states but won't actually print anything. 
 To accomplish that we need actions which we will introduce in the next article.
