@@ -119,82 +119,57 @@ Frame parameters can not be assigned default values for missing arguments.
 Functions, Interface Methods and Actions
 -------
 
-Frame has three flavors of function types:
+Frame has three flavors of sub-program types:
 
 #. Functions 
 #. System Interface Methods
 #. System Actions
 
-Frame functions are normal, globally scoped routines. 
+Frame functions are normal, globally scoped callable sub-programs. 
 
 .. NOTE::
-    In v0.11 Frame only supports a single `main()` function. This will be expanded 
+    In v0.11 Frame only supports an optional single `main()` function. This will be expanded 
     to support multiple functions in v0.12.
 
-Interface methods are publicaly accessible methods on systems. Frame itself does not currently 
-support general object oriented class-like types. However systems are implemented using object oriented classes.
+Interface methods are publicly accessible methods on systems. Although Frame does not  
+support general purpose object oriented class-like types, Frame systems generate object-oriented classes.
 
-All methods (for all blocks) have a similar syntax:
+All sub-program types have a similar signature syntax:
 
 .. code-block::
+    :caption: Sub-program Name Syntax 
 
-    <method-name> <parameters-opt> <return-value-opt>
+    <sub-program-name> <parameters-opt> <return-value-opt>
 
 As implied above, the parameters and return value are optional. Here are the
 permutations for method declarations:
 
 .. code-block::
 
-    method_name
-    method_name [param]
-    method_name [param:type]
-    method_name [param1 param2]
-    method_name [param1:type param2:type]
-    method_name : return_value
-    method_name [param1:type param2:type] : return_value
-
-Whitespace separators
----------------------
-
-One important difference between Frame and other languages is the lack of any
-commas or semicolons as separators. Instead Frame relies on whitespace to
-delineate tokens:
-
-.. code-block:: language
-
-    --- lists ---
-    [x y]
-    [x:int y:string]
-    (a b c)
-    (d() e() f())
-
-    --- statements ---
-
-    a() b() c()
-    var x:int = 1
-
-Unlike other languages where structured whitespace is significant (e.g. Python),
-Frame’s use of whitespace is unstructured. Frame only separates tokens with
-whitespace and does not insist on any pattern of use.
-
-The esthetic goal is to be as spare and clean as possible, but it may take some
-getting used to.
+    sub-program-name
+    sub-program-name [param]
+    sub-program-name [param:type]
+    sub-program-name [param1, param2]
+    sub-program-name [param1:type, param2:type]
+    sub-program-name : return_value
+    sub-program-name [param1:type, param2:type] : return_value
 
 Lists
 -----
 
-List come in two flavors - *parameter lists* and *expression lists*.
+Frame does not (yet) have any genernal list or array syntax. Instead, Frame only supports
+ *parameter lists* for sub-routines and event handlers.
 
 Frame uses square brackets to denote parameter lists:
 
 .. code-block::
+    :caption: Frame Parameter Lists
 
-    [x y]
-    [x:int y:string]
+    |msg| [x,y] ^           // Event Handler Parameter List
+    foo [x:int,y:string]    // Sub-routine Parameter List
 
 Next
 ----
 
-Now that you have a basic introduction to some common syntax, we are now ready
-to explore a central concept in the Frame architecture - the
-**FrameEvent**.
+With mastery of basic Frame syntax, we can now explore the central aspect of the Frame language - 
+the system. 
