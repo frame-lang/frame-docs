@@ -3,14 +3,19 @@ Actions Block
 ==================
 
 To enable our `#HelloWorldSystem` to actually print "Hello World!" we need to be able to call a 
-function to do that. Actions are the private methods of systems. Let's see how to create one. 
+function to do that. Actions are the private methods of systems and a good place to do that. 
+
+Let's see how to create one. 
 
 Declaring Actions
 -----------------
 
-Actions are declared in the -actions- block and observe all of the method
-declaration syntax discussed in the :ref:`methods` section. For simplicity we will create an 
-action for each message we need to write:
+Actions are declared in the `-actions-` block and observe all of the method
+declaration syntax discussed in the :ref:`methods` section. 
+
+We will start by creating a utility action `actionWrite()` that will be reused by other actions to do 
+the actual printing. This action will accept two parameters, **msg** and **separator**. The first parameter will be the string to 
+write and the second will add any separator strings.
 
 .. code-block::
     :caption: Actions in Python
@@ -30,9 +35,7 @@ action for each message we need to write:
 
     ##
 
-We will start by creating a utility action `actionWrite` that will be reused by other actions. 
-This action will accept two parameters, **msg** and **separator**. The first parameter will be the string to 
-write and the second will add any separator strings.
+
 
 Unlike Interface Methods, Actions can contain code, both Frame code as well as code from target languages. 
 As this program is being transpiled into Python, we can use the built-in Python **print()** function
