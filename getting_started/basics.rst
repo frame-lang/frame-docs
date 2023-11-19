@@ -131,6 +131,10 @@ Frame functions are normal, globally scoped callable sub-programs.
     In v0.11 Frame only supports an optional single `main()` function. This will be expanded 
     to support multiple functions in v0.12.
 
+The main() Function 
+~~~~~~~~~~~~~~~~~~
+
+
 Interface methods are publicly accessible methods on systems. Although Frame does not  
 support general purpose object oriented class-like types, Frame systems generate object-oriented classes.
 

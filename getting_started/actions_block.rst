@@ -121,8 +121,7 @@ Finally we update our event handlers to call these actions:
       actionWrite [msg,separator] {
           print(msg, end=separator)
       }
+  ##
 
-You can try running the most complex Hello World `program ever here`_.
-
-.. _program ever here: https://onlinegdb.com/eQntTfaiT
+We will explore the final block in Frame systems in the next article - the system domain. 
 
