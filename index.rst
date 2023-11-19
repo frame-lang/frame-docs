@@ -13,6 +13,7 @@ for documentation.
 In the future Frame will expand its target language set beyond Python to include JavaScript, Java, C#, C++, Golang and Rust. Other languages 
 will follow as the project gains support and adoption. 
 
+
 .. toctree::
     :hidden:
     :maxdepth: 1

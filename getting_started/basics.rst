@@ -115,17 +115,18 @@ Frame parameters can not be assigned default values for missing arguments.
 
 
 .. _methods:
+.. _functions:
 
 Functions, Interface Methods and Actions
 -------
 
-Frame has three flavors of sub-program types:
+Frame has three flavors of subroutine types:
 
 #. Functions 
 #. System Interface Methods
 #. System Actions
 
-Frame functions are normal, globally scoped callable sub-programs. 
+Frame functions are normal, globally scoped callable subroutines. 
 
 .. NOTE::
     In v0.11 Frame only supports an optional single `main()` function. This will be expanded 
@@ -134,29 +135,68 @@ Frame functions are normal, globally scoped callable sub-programs.
 The main() Function 
 ~~~~~~~~~~~~~~~~~~
 
+Frame currently supports having a single function for a program - `main()`. The reason for this limitation 
+is Frame development was focused, until recently, on adding features to the system aspect of the language.
+With the addition of a number of key language features to systems, developing a way to 
+test a system became a priority. Frame's support for a `main()` function is the first step in that 
+direction and - in time - becoming a more complete programming language. 
+
+Frame's syntax for functions is simple and has four variations: 
+
+.. code-block::
+    :caption: Frame Main Variations
+
+    // no parameters; no return value
+    fn main {
+    }
+
+    // no parameters; return value
+    fn main : int {
+        ^(0)
+    }
+
+    // parameters; no return value
+    fn main [sys_arg1, sys_arg2] {
+        print(sys_arg1 + "," + sys_arg2)
+    }
+
+    fn main [sys_arg1, sys_arg2] : int {
+        print(sys_arg1 + "," + sys_arg2)
+        ^(0)
+    }
+
+Functions are declared using the `fn` keyword and currently only `main` is a valid name. Functions 
+also accept parameters like actions and interface methods. However the current `main` function 
+does something special with parameters and assumes that these are command line arguments being passed 
+to the function. In the future this will be generalized but at the moment facilitates testing scenarios.
+
+Main, like other subroutine types, allows returning a value. 
+
+Interface Methods 
+~~~~~~~~~~~~~~~~~~
 
 Interface methods are publicly accessible methods on systems. Although Frame does not  
 support general purpose object oriented class-like types, Frame systems generate object-oriented classes.
 
-All sub-program types have a similar signature syntax:
+All subroutine types have a similar signature syntax:
 
 .. code-block::
-    :caption: Sub-program Name Syntax 
+    :caption: Subroutine Name Syntax 
 
-    <sub-program-name> <parameters-opt> <return-value-opt>
+    <subroutine-name> <parameters-opt> <return-value-opt>
 
 As implied above, the parameters and return value are optional. Here are the
 permutations for method declarations:
 
 .. code-block::
 
-    sub-program-name
-    sub-program-name [param]
-    sub-program-name [param:type]
-    sub-program-name [param1, param2]
-    sub-program-name [param1:type, param2:type]
-    sub-program-name : return_value
-    sub-program-name [param1:type, param2:type] : return_value
+    subroutine-name
+    subroutine-name [param]
+    subroutine-name [param:type]
+    subroutine-name [param1, param2]
+    subroutine-name [param1:type, param2:type]
+    subroutine-name : return_value
+    subroutine-name [param1:type, param2:type] : return_value
 
 Lists
 -----
