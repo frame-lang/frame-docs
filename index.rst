@@ -45,6 +45,15 @@ will follow as the project gains support and adoption.
     :name: sec-intermediate-frame
 
     intermediate_frame/index
+    intermediate_frame/states
+    intermediate_frame/transitions
+    intermediate_frame/control_flow
+    intermediate_frame/loops
+    intermediate_frame/enums
+    intermediate_frame/history
+    intermediate_frame/hsm
+    intermediate_frame/functions
+    intermediate_frame/systems
 
 .. toctree::
     :hidden:

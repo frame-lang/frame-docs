@@ -20,10 +20,4 @@ We will explore the four key big ideas of Statecharts and see how the Frame
 language supports them. For context we will start with a short, selective,
 incomplete and very opinionated history of state machine implementations.
 
-.. toctree::
-    :name: toc-intermediate-frame-introduction
 
-    machine_evolution
-    hsm
-    history
-    orthogonality

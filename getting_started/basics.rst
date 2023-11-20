@@ -116,6 +116,7 @@ Frame parameters can not be assigned default values for missing arguments.
 
 .. _methods:
 .. _functions:
+.. _functions and actions:
 
 Functions, Interface Methods and Actions
 -------
@@ -202,7 +203,7 @@ Lists
 -----
 
 Frame does not (yet) have any genernal list or array syntax. Instead, Frame only supports
- *parameter lists* for sub-routines and event handlers.
+ *parameter lists* for subroutine and event handlers.
 
 Frame uses square brackets to denote parameter lists:
 
