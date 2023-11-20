@@ -5,11 +5,11 @@ Interface
 The system interface block contains the set of publicly accessible methods. The block is 
 indicated by the **-interface-** keyword and must be the first block if it is present. 
 
-Interface methods have the following synatax:
+Interface methods have the following syntax:
 
-.. admonition:: \ \ 
+.. admonition:: Interface Method Syntax
 
-    <iface_method_name> ('[' (<param_name> (':' <param_type>)?)+ ']')? (':' <return_type>))? ('@(|' msg_alias '|)' )?
+    <method_name> ('[' (<prm_name> (':' <prm_type>)?)+ ']')? (':' <ret_type>))? ('@(|' msg_alias '|)' )?
 
 The following examples show the permitted variations in method signatures:
 
