@@ -1,5 +1,5 @@
 ==================
-System Interface
+Interface
 ==================
 
 The system interface block contains the set of publicly accessible methods. The block is 
@@ -7,7 +7,9 @@ indicated by the **-interface-** keyword and must be the first block if it is pr
 
 Interface methods have the following synatax:
 
-`<iface_method_name> ('[' (<param_name> (':' <param_type>)?)+ ']')? (':' <return_type>))? ('@(|' msg_alias '|)' )?`
+.. admonition:: \ \ 
+
+    <iface_method_name> ('[' (<param_name> (':' <param_type>)?)+ ']')? (':' <return_type>))? ('@(|' msg_alias '|)' )?
 
 The following examples show the permitted variations in method signatures:
 
