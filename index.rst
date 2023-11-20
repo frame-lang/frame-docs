@@ -45,6 +45,7 @@ will follow as the project gains support and adoption.
     :name: sec-intermediate-frame
 
     intermediate_frame/index
+    intermediate_frame/interface
     intermediate_frame/states
     intermediate_frame/transitions
     intermediate_frame/control_flow
