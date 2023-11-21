@@ -1,28 +1,24 @@
 ==================
-Interface
+Interface Block
 ==================
 
 The system interface block contains the set of publicly accessible methods. The block is 
 indicated by the **-interface-** keyword and must be the first block if it is present. 
 
-Interface methods have the following syntax:
+Interface methods have three responsibilities:
+
+#. Build a FrameEvent from the data provided by the caller 
+#. Return the event return value if set
+
+The four parts of the signature for interface methods are:
+
+#. Method name
+#. Parameter list
+#. Return type
 
 .. admonition:: Interface Method Syntax
 
-    <method_name> ('[' (<prm_name> (':' <prm_type>)?)+ ']')? (':' <ret_type>))? ('@(|' msg_alias '|)' )?
-
-The following examples show the permitted variations in method signatures:
-
-.. code-block::
-    :caption: Interface Examples
-
-    -interface-
-
-    simple_method
-    method_params [p1,p2] 
-    method_params_typed [p1:T1,p2:T2] 
-    method_params_ret [p1:T1,p2:T2] : T3
-    method_ret : T4
+    <method_name> ('[' (<prm_name> (':' <prm_type>)?)+ ']')? (':' <ret_type>))? 
   
 Interface Method Name 
 ---------------------
@@ -35,13 +31,32 @@ Interface Parameter List
 ---------------------
 
 The parameter list for interface methods follows the same rules as `functions and actions`_. 
+Although any combination of typed or untyped parameters is permitted, the target language must support 
+the generated syntax. It is a syntax error to have an empty parameter list. 
+
+Paramter types can be superstrings.
 
 Return Type
 ---------------------
 
-Message Alias
+As with variable typing, method return types are indicated by ': ret_type' syntax. 
+Return types are optional and can be any valid identifier or superstring. 
+
+
+ Examples
 ---------------------
 
-  -interface-
+The following examples show the permitted variations in method signatures:
 
-  start @(|>>|)
+.. code-block::
+    :caption: Interface Examples
+
+    -interface-
+
+    simple_method
+    method_params [p1,p2] 
+    method_superstring_params [p1:`[]int`] 
+    method_params_typed [p1:T1,p2:T2] 
+    method_params_ret [p1:T1,p2:T2] : T3
+    method_ret : T4
+    method_alias [p1,p2:T2] : T3 
