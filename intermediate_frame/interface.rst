@@ -5,10 +5,10 @@ Interface Block
 The system interface block contains the set of publicly accessible methods. The block is 
 indicated by the **-interface-** keyword and must be the first block if it is present. 
 
-Interface methods have three responsibilities:
+Interface methods have two responsibilities:
 
 #. Build a FrameEvent from the data provided by the caller 
-#. Return the event return value if set
+#. Return the event return value to the caller if it exists on the event.
 
 The four parts of the signature for interface methods are:
 
@@ -54,9 +54,9 @@ The following examples show the permitted variations in method signatures:
     -interface-
 
     simple_method
-    method_params [p1,p2] 
+    method_untyped_params [p1,p2] 
     method_superstring_params [p1:`[]int`] 
-    method_params_typed [p1:T1,p2:T2] 
+    method_typed_params [p1:T1,p2:T2] 
     method_params_ret [p1:T1,p2:T2] : T3
-    method_ret : T4
+    method_superstring_ret : `[]int`
     method_alias [p1,p2:T2] : T3 
