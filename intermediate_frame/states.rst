@@ -148,3 +148,67 @@ Transitions between states are affected by the use of the **->** operator.
 Run program_. 
 
 .. _program: https://onlinegdb.com/GDIh90nx5
+
+Variables
+-----------
+
+Event Handler Variables
+~~~~~~~
+
+Variables can be created in the scope of an event handler. They only remain valid during the invocation
+of the event handler and are invalidated upon return.
+
+.. code-block::
+    :caption: Event Handler Scoped Variables
+
+    fn main {
+        #EventHandlerVariablesDemo() 
+    }
+
+    #EventHandlerVariablesDemo
+
+        -machine-
+
+        $Begin
+            |>| 
+                var x = 21 * 2
+                print("Meaning of life = " + str(x))
+            ^
+    ##
+
+State Variables
+~~~~~~~
+
+.. code-block::
+    :caption: State Variables
+
+    fn main {
+        var svd:# = #StateVariablesDemo() 
+        svd.inc()
+        svd.inc()
+        svd.inc()
+        svd.inc()
+    }
+
+    #StateVariablesDemo
+
+        -interface-
+
+        inc
+
+        -machine-
+
+        $Begin
+
+            var counter = 0
+
+            |inc| 
+                counter = counter + 1
+                print("counter = " + str(counter))
+            ^
+    ##
+
+
+Run program_. 
+
+.. _program: https://onlinegdb.com/w1R57VTEo
