@@ -199,33 +199,37 @@ State Variables
 
         $Begin
 
-            var counter = 0
+            var counter = 0  // state variable initialized to 0
 
             |inc| 
-                counter = counter + 1
+                counter = counter + 1 
                 print("counter = " + str(counter))
             ^
     ##
 
+Above we see that the counter variable is declared in the $Begin state. This counter 
+does not go out of scope until the system leaves the $Begin state. Each time the **inc** interface 
+method is called counter is incremented by 1 and printed. This demonstrates counter is 
+scoped to the state itself. 
 
 Run the `program <https://onlinegdb.com/w1R57VTEo>`_. 
-
 
 
 State Parameters
 ~~~~~~~
 
 Frame enables the transfer of data from one state to another in state scope using **state parameters**. 
+State parameters are like state varibles but are intialized during the transition itself and 
+not upon entering the state. 
 
 .. code-block::
     :caption: Fibonacci Demo using State Parameters
 
     fn main {
         var spd:# = #FibonacciDemo() 
-        spd.next()
-        spd.next()
-        spd.next()
-        spd.next()
+        loop var x = 0; x < 10; x = x + 1 {
+            spd.next()
+        }
     }
 
     #FibonacciDemo
@@ -242,13 +246,16 @@ Frame enables the transfer of data from one state to another in state scope usin
                 var b = 1
                 print(a)
                 print(b)
-                -> $PrintStateParam(a,b) ^
+                -> $PrintNextFibonacciNumber(a,b) ^ // initalize $PrintNextFibonacciNumber parameters
             
-        $PrintStateParam [a,b] 
+        $PrintNextFibonacciNumber [c,d] // params [c,d] = (0,1)
             |next| 
-                var c = a + b
-                print(c) 
-                a = b
-                b = c
+                var sum = c + d
+                print(sum) 
+                c = d
+                d = sum
                 ^
     ##
+
+
+Run the `program <https://onlinegdb.com/r11_RhnY5>`_. 
