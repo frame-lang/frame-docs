@@ -145,9 +145,8 @@ Transitions between states are affected by the use of the **->** operator.
 
     ##
 
-Run `program`_. 
 
-.. _program: https://onlinegdb.com/GDIh90nx5
+Run the `program https://onlinegdb.com/GDIh90nx5`_. 
 
 Variables
 -----------
@@ -209,6 +208,11 @@ State Variables
     ##
 
 
-Run `program`_. 
+Run the `program https://onlinegdb.com/w1R57VTEo`_. 
 
-.. _program: https://onlinegdb.com/w1R57VTEo
+
+
+State Parameters
+~~~~~~~
+
+Frame enables the transfer of data from one state to another in state scope using **state parameters**. 
