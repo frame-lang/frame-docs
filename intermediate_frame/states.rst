@@ -146,7 +146,7 @@ Transitions between states are affected by the use of the **->** operator.
     ##
 
 
-Run the `program https://onlinegdb.com/GDIh90nx5`_. 
+Run the `program <https://onlinegdb.com/GDIh90nx5>`_. 
 
 Variables
 -----------
@@ -208,7 +208,7 @@ State Variables
     ##
 
 
-Run the `program https://onlinegdb.com/w1R57VTEo`_. 
+Run the `program <https://onlinegdb.com/w1R57VTEo>`_. 
 
 
 
@@ -216,3 +216,39 @@ State Parameters
 ~~~~~~~
 
 Frame enables the transfer of data from one state to another in state scope using **state parameters**. 
+
+.. code-block::
+    :caption: Fibonacci Demo using State Parameters
+
+    fn main {
+        var spd:# = #FibonacciDemo() 
+        spd.next()
+        spd.next()
+        spd.next()
+        spd.next()
+    }
+
+    #FibonacciDemo
+
+        -interface-
+
+        next
+
+        -machine-
+
+        $Setup
+            |>| 
+                var a = 0
+                var b = 1
+                print(a)
+                print(b)
+                -> $PrintStateParam(a,b) ^
+            
+        $PrintStateParam [a,b] 
+            |next| 
+                var c = a + b
+                print(c) 
+                a = b
+                b = c
+                ^
+    ##
