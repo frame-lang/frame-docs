@@ -145,7 +145,7 @@ Transitions between states are affected by the use of the **->** operator.
 
     ##
 
-Run program_. 
+Run `program`_. 
 
 .. _program: https://onlinegdb.com/GDIh90nx5
 
@@ -209,6 +209,6 @@ State Variables
     ##
 
 
-Run program_. 
+Run `program`_. 
 
 .. _program: https://onlinegdb.com/w1R57VTEo
