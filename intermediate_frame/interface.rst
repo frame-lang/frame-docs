@@ -10,7 +10,7 @@ Interface methods have two responsibilities:
 #. Build a FrameEvent from the data provided by the caller 
 #. Return the event return value to the caller if it exists on the event.
 
-The four parts of the signature for interface methods are:
+The three parts of the signature for interface methods are:
 
 #. Method name
 #. Parameter list
@@ -37,14 +37,14 @@ the generated syntax. It is a syntax error to have an empty parameter list.
 Paramter types can be superstrings.
 
 Return Type
----------------------
+-----------
 
-As with variable typing, method return types are indicated by ': ret_type' syntax. 
+As with variable typing, method return types are indicated by **': ret_type'** syntax. 
 Return types are optional and can be any valid identifier or superstring. 
 
 
- Examples
----------------------
+Examples
+--------
 
 The following examples show the permitted variations in method signatures:
 
