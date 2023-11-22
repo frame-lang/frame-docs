@@ -222,6 +222,54 @@ Frame enables the transfer of data from one state to another in state scope usin
 State parameters are like state varibles but are intialized during the transition itself and 
 not upon entering the state. 
 
+State parameters are declared by adding a paremeter list after the definition of the state name:
+
+.. code-block::
+    :caption: State Parameters
+        
+    $S [a,b] 
+
+Parameters **a** and **b** will remain in scope as long as the system remains in the state. 
+Upon leaving the state, state parameters are dropped and out of scope. 
+
+State parameters are set by arguments passed to the state during a transition or system initalization:
+
+.. code-block::
+    :caption: State Parameters
+
+    $A
+        |>| 
+            -> $B(0,1) ^ 
+        
+    $B [a,b] // a == 0, b == 1
+
+Above we see that **$B** is provided with two arguments (0,1) in the call expression during a transition.
+
+If a state with parameters is also the start state the parameters need to be initiaized through a 
+different mechanism when the system is created.
+
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+        
+    fn main {
+        #StartStateInitDemo($(0,1))
+    }
+
+    #StartStateInitDemo [$[a,b]]
+
+        -machine-
+
+        $StartState [a,b]
+            |>|
+                print(a)
+                print(b)
+                ^
+        ##
+
+
+Run the `program <https://onlinegdb.com/z74mE6iva5>`_. 
+
 .. code-block::
     :caption: Fibonacci Demo using State Parameters
 
@@ -248,14 +296,15 @@ not upon entering the state.
                 print(b)
                 -> $PrintNextFibonacciNumber(a,b) ^ // initalize $PrintNextFibonacciNumber parameters
             
-        $PrintNextFibonacciNumber [c,d] // params [c,d] = (0,1)
+        $PrintNextFibonacciNumber [a,b] // params [a,b] = (0,1)
             |next| 
-                var sum = c + d
+                var sum = a + b
                 print(sum) 
-                c = d
-                d = sum
+                a = b
+                b = sum
                 ^
     ##
+
 
 
 Run the `program <https://onlinegdb.com/r11_RhnY5>`_. 
