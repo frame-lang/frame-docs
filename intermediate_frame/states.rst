@@ -154,7 +154,7 @@ Variables
 Event Handler Variables
 ~~~~~~~
 
-Variables can be created in the scope of an event handler. They only remain valid during the invocation
+Variables can be defined in the scope of an event handler. They are valid during the invocation
 of the event handler and are invalidated upon return.
 
 .. code-block::
@@ -178,6 +178,36 @@ of the event handler and are invalidated upon return.
 State Variables
 ~~~~~~~
 
+In addition to variables in event handlers, states can have their own variables. 
+State variables are declared in the state scope before the event handlers. 
+
+.. code-block::
+    :caption: State Variables
+
+    -machine-
+
+    $S0
+
+        // State Variables are defined before event handlers
+
+        var age = nil           
+        var name = "Natasha"
+
+        |a| ^
+
+    $S1 
+        // no state variables
+        |b| ^
+
+
+State Variables are initialized upon entry to the state 
+and droped upon exit. Below we see that the counter variable is declared in 
+the **$Begin** state. This counter 
+does not go out of scope until the system leaves the **$Begin** state. Each time the **inc** interface 
+method is called counter is incremented by 1 and printed. This demonstrates that the 
+**counter** variable  is scoped to the state itself. 
+
+
 .. code-block::
     :caption: State Variables
 
@@ -185,6 +215,7 @@ State Variables
         var svd:# = #StateVariablesDemo() 
         svd.inc()
         svd.inc()
+        svd.cycle()
         svd.inc()
         svd.inc()
     }
@@ -194,6 +225,7 @@ State Variables
         -interface-
 
         inc
+        cycle
 
         -machine-
 
@@ -204,35 +236,28 @@ State Variables
             |inc| 
                 counter = counter + 1 
                 print("counter = " + str(counter))
-            ^
+                ^
+            |cycle| 
+                -> $Begin ^
     ##
 
-Above we see that the counter variable is declared in the $Begin state. This counter 
-does not go out of scope until the system leaves the $Begin state. Each time the **inc** interface 
-method is called counter is incremented by 1 and printed. This demonstrates counter is 
-scoped to the state itself. 
 
-Run the `program <https://onlinegdb.com/w1R57VTEo>`_. 
+Run the `program <https://onlinegdb.com/mJtxz-7Lb>`_. 
 
 
 State Parameters
 ~~~~~~~
 
-Frame enables the transfer of data from one state to another in state scope using **state parameters**. 
-State parameters are like state varibles but are intialized during the transition itself and 
-not upon entering the state. 
+One of the features Frame has to transfer data from one state to another is **state parameters**. 
 
 State parameters are declared by adding a paremeter list after the definition of the state name:
 
 .. code-block::
     :caption: State Parameters
         
-    $S [a,b] 
+    $S0 [a,b] 
 
-Parameters **a** and **b** will remain in scope as long as the system remains in the state. 
-Upon leaving the state, state parameters are dropped and out of scope. 
-
-State parameters are set by arguments passed to the state during a transition or system initalization:
+During a transition, state parameters are set by arguments passed to the target state.
 
 .. code-block::
     :caption: State Parameters
@@ -241,13 +266,38 @@ State parameters are set by arguments passed to the state during a transition or
         |>| 
             -> $B(0,1) ^ 
         
-    $B [a,b] // a == 0, b == 1
+    $B [zero,one] // zero == 0, one == 1
 
-Above we see that **$B** is provided with two arguments (0,1) in the call expression during a transition.
+The transition to state **$B** is "called" with two arguments (0,1) which are mapped respectively to the 
+**zero** and **one** parameters in state **$B**.
 
-If a state with parameters is also the start state the parameters need to be initiaized through a 
-different mechanism when the system is created.
+Transitions are one way to enter a state. However, start states are also "entered" during system 
+initalization and start states that have parameters still need to be provided arguments somehow. 
+However since during intializatin they are not actually "transitioned" into 
+this needs to happen through a different mechanism.
 
+To meet this requirement, Frame provides a special syntax for passing arguments 
+during system creation/initalization.
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+
+    fn main {
+        #StartStateInitDemo($(0,1))
+    }
+
+In this example the **#StartStateInitDemo()** is passed a strange looking argument **$(0,1)**. 
+We will see later that systems can have three types of data initalized during startup:
+
+#. Start state parameters
+#. Start state enter event handler parameters
+#. Domain variables
+
+We need to be able to distingush which scope is being initalized. To do so, Frame encloses
+arguments in a specially typed group for each scope target. Here we are targeting the 
+state state parameters which uses the group type **$(param1,param2,...)**.
+
+Systems need to declare the parameters for these arguments with a similar syntax: 
 
 .. code-block::
     :caption: System Initalized Start State Parameters
@@ -256,14 +306,59 @@ different mechanism when the system is created.
         #StartStateInitDemo($(0,1))
     }
 
-    #StartStateInitDemo [$[a,b]]
+    #StartStateInitDemo [$[zero,one]] 
+
+    ##
+
+Here we see the outer brackets 
+of the system parameters (**#StartStateInitDemo [...]***) enclose the parameters 
+specifically designated to be the start state parameters.
+
+Finally, the state itself has a parameter list. 
+
+.. note: 
+
+    The names of the system start state parameters 
+    need to match the names of the actual start state parameters.
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+        
+    fn main {
+        #StartStateInitDemo($(0,1)) // pass the system state state args group
+    }
+
+    #StartStateInitDemo [$[zero,one]] // declare the system start state params list
 
         -machine-
 
-        $StartState [a,b]
+        $StartState [zero,one] // system params list matches the system signature
+    ##
+
+To unambigously reference 
+.. code-block::
+    :caption: System Initalized Start State Parameters
+
+    $S0 [p1] 
+        |>|
+            print(p1)
+            print($[p1]) ^
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+        
+    fn main {
+        #StartStateInitDemo($(0,1))
+    }
+
+    #StartStateInitDemo [$[zero,one]]
+
+        -machine-
+
+        $StartState [zero,one]
             |>|
-                print(a)
-                print(b)
+                print($[zero])  // use state param scope syntax
+                print(one)      // resolves to state param scope
                 ^
         ##
 
@@ -274,13 +369,13 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
     :caption: Fibonacci Demo using State Parameters
 
     fn main {
-        var spd:# = #FibonacciDemo() 
+        var fib:# = #FibonacciStateParamsDemo($(0,1)) 
         loop var x = 0; x < 10; x = x + 1 {
-            spd.next()
+            fib.next()
         }
     }
 
-    #FibonacciDemo
+    #FibonacciStateParamsDemo [$[zero,one]]
 
         -interface-
 
@@ -288,13 +383,11 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
 
         -machine-
 
-        $Setup
+        $Setup [zero,one]
             |>| 
-                var a = 0
-                var b = 1
-                print(a)
-                print(b)
-                -> $PrintNextFibonacciNumber(a,b) ^ // initalize $PrintNextFibonacciNumber parameters
+                print($[zero])  // use state param scope syntax
+                print(one)      // resolves to state param scope
+                -> $PrintNextFibonacciNumber($[zero],one) ^ // initalize $PrintNextFibonacciNumber parameters
             
         $PrintNextFibonacciNumber [a,b] // params [a,b] = (0,1)
             |next| 
@@ -307,4 +400,4 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
 
 
 
-Run the `program <https://onlinegdb.com/r11_RhnY5>`_. 
+Run the `program <https://onlinegdb.com/aSfnAzMQCm>`_. 
