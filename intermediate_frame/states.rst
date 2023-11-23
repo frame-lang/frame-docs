@@ -335,15 +335,6 @@ Finally, the state itself has a parameter list.
         $StartState [zero,one] // system params list matches the system signature
     ##
 
-To unambigously reference 
-.. code-block::
-    :caption: System Initalized Start State Parameters
-
-    $S0 [p1] 
-        |>|
-            print(p1)
-            print($[p1]) ^
-
 .. code-block::
     :caption: System Initalized Start State Parameters
         
@@ -385,11 +376,14 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
 
         $Setup [zero,one]
             |>| 
-                print($[zero])  // use state param scope syntax
-                print(one)      // resolves to state param scope
-                -> $PrintNextFibonacciNumber($[zero],one) ^ // initalize $PrintNextFibonacciNumber parameters
+                print(zero)  
+                print(one)    
+
+                // initalize $PrintNextFibonacciNumber state parameters
+                -> $PrintNextFibonacciNumber(zero,one) ^ 
             
-        $PrintNextFibonacciNumber [a,b] // params [a,b] = (0,1)
+        // params [a,b] = (0,1)
+        $PrintNextFibonacciNumber [a,b] 
             |next| 
                 var sum = a + b
                 print(sum) 
@@ -398,6 +392,8 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
                 ^
     ##
 
-
-
 Run the `program <https://onlinegdb.com/aSfnAzMQCm>`_. 
+
+Notice that parameters **a** and **b** are mutable and persist their values between
+invocations of the **|next|** event handler. The parameter values will persist until 
+the state is exited, at which point they will be dropped. 
