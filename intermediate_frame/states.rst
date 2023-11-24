@@ -311,7 +311,7 @@ Run the `program <https://onlinegdb.com/GDIh90nx5>`_.
 
 In running the program you will see that the program generates the following output:
 
-.. code-block
+.. code-block::
     :caption: StateSystem Enter/Exit Output
 
     entering $Begin
