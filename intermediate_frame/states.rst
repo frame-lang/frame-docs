@@ -97,11 +97,11 @@ signature:
     :caption: Event Handler Parameters Demo
 
     fn main {
-        var ehv:# = #EventHandlerDemo()
-        ehv.init("Boris", 1959)
+        var ehpd:# = #EventHandlerParametersDemo()
+        ehpd.init("Boris", 1959)
     }
 
-    #EventHandlerDemo
+    #EventHandlerParametersDemo
 
         -interface-
 
@@ -118,7 +118,7 @@ signature:
     ##
 
 
-Run the `program <https://onlinegdb.com/GhepXQeo2>`_. 
+Run the `program <https://onlinegdb.com/yKZKs6pR6>`_. 
 
 
 Event Handler Terminators
@@ -184,7 +184,7 @@ Event Handler Continue Terminator
 As mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
 articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
 from other states and are created using the Frame *Dispatch Operator* **=>**. 
-While unhandled events are automatcially passed to parent states, the continue operator enables 
+While unhandled events are automatically passed to parent states, the continue operator enables 
 the capability to pass a handled event to a parent state as well:   
 
 .. code-block::
