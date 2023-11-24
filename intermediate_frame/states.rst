@@ -439,7 +439,7 @@ method is called counter is incremented by 1 and printed. This demonstrates that
 
 
 .. code-block::
-    :caption: State Variables
+    :caption: State Variables Demo
 
     fn main {
         var svd:# = #StateVariablesDemo() 
@@ -465,18 +465,35 @@ method is called counter is incremented by 1 and printed. This demonstrates that
 
             var counter = 0  
 
+            |>| 
+                print("Entering $Begin, counter = " + str(counter)) ^
+            |<| print("Exiting $Begin, counter = " + str(counter)) ^
+
             |inc| 
                 counter = counter + 1 
-                print("counter = " + str(counter))
+                print("Handling |inc|, counter = " + str(counter))
                 ^
             |cycle| 
+                print("Cycling")
                 -> $Begin ^
     ##
 
 
-Run the `program <https://onlinegdb.com/mJtxz-7Lb>`_. 
+Run the `program <https://onlinegdb.com/NBIKiLuH3>`_. 
 
+.. code-block::
+    :caption: State Variables Demo Output 
 
+    Entering $Begin, counter = 0
+    Handling |inc|, counter = 1
+    Handling |inc|, counter = 2
+    Cycling
+    Exiting $Begin, counter = 2
+    Entering $Begin, counter = 0
+    Handling |inc|, counter = 1
+    Handling |inc|, counter = 2
+
+Above we can see that each reentry to $Begin clears the counter state variable
 State Parameters
 ~~~~~~~
 
