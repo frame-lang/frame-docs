@@ -5,8 +5,8 @@ States and Transitions
 Machine Block 
 -------------
 
-States are defined inside the machine block. The machine block is optional by must be after the 
-interface block (if it exists) and before the actions block (if it exists). 
+States are defined inside the machine block. The machine block is optional but must be after the 
+interface block (if it exists) and before the actions and domain blocks (if they exist). 
 
 .. code-block::
     :caption: Empty Machine Block 
@@ -57,7 +57,7 @@ clauses:
  
 
 Message Selector
-----------------
+~~~~~~~~
 
 The message selector is indicated by two pipe characters which match an event message. Event messages
 are set to the name of interface method that generated it.
@@ -74,11 +74,130 @@ are set to the name of interface method that generated it.
         -machine- 
 
         $Working
+
             |foo| print("handled foo") ^
 
     ##
 
-Frame supports two special messages each with a special message token - enter (**>**) and exit (**<**). 
+
+Event Handler Parameters
+~~~~~~~~
+
+.. code-block::
+    :caption: Event Handler Parameters Demo
+
+    fn main {
+        var ehv:# = #EventHandlerDemo()
+        ehv.init("Boris", 1959)
+    }
+
+    #EventHandlerDemo
+
+        -interface-
+
+        init [name, birth_year] 
+
+        -machine-
+
+        $Start 
+
+            |init| [name,birth_year]
+                print("My name is " + name + " and I was born in " + str(birth_year))
+                ^
+
+    ##
+
+
+Run the `program <https://onlinegdb.com/GhepXQeo2>`_. 
+
+
+Event Handler Terminators
+~~~~~~~~
+
+Event handlers are terminated by either a return token **^** or an else-continue token **:>**. See the 
+else-continue_ (TODO) (not to be confused with the loop **continue** keyword) article for more details.
+
+In addition to the the standard return token we have seen, it is also possible to return a value 
+with it as well by returning an expression in parenthesis:
+
+
+.. code-block::
+    :caption: Event Handler Return Value
+
+    $Oracle
+        |getName| :  ^(name)
+        |getMeaning| ^(21*2) 
+        |getWeather| ^(weatherReport())
+
+As mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
+articles we will discuss **Hierarchical State Machines (HSMs)** which enable states to inherit behavior 
+from other states. HSMs are created using the *Dispatch Operator* **=>**. 
+Unhandled events are automatcially passed to parent states and the continue operator enables 
+passing a handled event on to a parent state as well:   
+
+.. code-block::
+    :caption: Event Handler Continue Terminator
+
+    fn main {
+        var hsm:# = #HSM_Preview()
+        hsm.passMe()
+    }
+
+    #HSM_Preview
+
+        -interface-
+
+        passMe
+
+        -machine-
+
+        //  Dispatch operator (=>) defines state hierarchy
+        $Child => $Parent 
+
+            // continue operator sends event to $Parent
+            |passMe| print("handled in $Child") :>
+
+        $Parent
+
+            |passMe| print("handled in $Parent") ^
+
+    ##
+
+Run the `program <https://onlinegdb.com/Q8Xk91PTIk>`_. 
+
+
+Event Handler Signature
+~~~~~~~~
+
+.. code-block::
+    :caption: Event Handler Return Demo
+
+    fn main {
+        var ehv:# = #EventHandlerDemo()
+        var ret = ehv.init("Boris", 1959)
+        print("Succeeded = " + str(ret))
+    }
+
+    #EventHandlerDemo
+
+        -interface-
+
+        init [name, birth_year] : bool 
+
+        -machine-
+
+        $Start 
+
+            |init| [name,birth_year] : bool 
+                print("My name is " + name + " and I was born in " + str(birth_year))
+                ^(true)
+
+    ##
+
+Run the `program <https://onlinegdb.com/bW8x6no_B>`_. 
+
+
+Frame supports two special messages each with a reserved message token - enter (**>**) and exit (**<**). 
 
 .. code-block::
     :caption: Enter and Exit Messages
@@ -108,6 +227,18 @@ Transitions
 -----------
 
 Transitions between states are affected by the use of the **->** operator.
+
+.. code-block::
+    :caption: Transitions
+
+    #S0 
+        |>|
+            -> $S1 ^
+    $S1
+
+Transitions are fully explored in another article. For the purposes of this article 
+they are important to understand state behavor. Here is a simple system machine with three 
+states. The main function instantiates the system and drives it to the **$End** state:
 
 .. code-block::
     :caption: Enter and Exit Messages
@@ -151,6 +282,16 @@ Run the `program <https://onlinegdb.com/GDIh90nx5>`_.
 Variables
 -----------
 
+States have three special scopes variables are declared in:
+
+#. Event Handler Variables
+#. Event Handler Parameters
+#. State Variables
+#. State Parameters
+
+
+We will explore each of these scopes in this article. 
+
 Event Handler Variables
 ~~~~~~~
 
@@ -174,6 +315,41 @@ of the event handler and are invalidated upon return.
                 print("Meaning of life = " + str(x))
             ^
     ##
+
+
+Event Handler Parameters
+~~~~~~~
+
+Event handlers for an event need to have the same signature (parameters and return types) as the interface method that generated 
+the message. 
+
+.. code-block::
+    :caption: Event Handler Demo
+
+    fn main {
+        var ehv:# = #EventHandlerDemo()
+        var ret = ehv.init("Boris", 1959)
+        print("Succeeded = " + str(ret))
+    }
+
+    #EventHandlerDemo
+
+        -interface-
+
+        init [name, birth_year] : bool // init method 
+
+        -machine-
+
+        $Start 
+
+            |init| [name,birth_year] : bool 
+                print("My name is " + name + " and I was born in " + str(birth_year))
+                ^(true)
+
+    ##
+
+Run the `program <https://onlinegdb.com/bW8x6no_B>`_. 
+
 
 State Variables
 ~~~~~~~
@@ -395,5 +571,6 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
 Run the `program <https://onlinegdb.com/aSfnAzMQCm>`_. 
 
 Notice that parameters **a** and **b** are mutable and persist their values between
-invocations of the **|next|** event handler. The parameter values will persist until 
+invocations of the **|next|** event handler. State parameter values, like state varibles,
+persist  until 
 the state is exited, at which point they will be dropped. 
