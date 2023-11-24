@@ -132,6 +132,40 @@ with it as well by returning an expression in parenthesis:
         |getMeaning| : number  ^(21*2) 
         |getWeather| : string ^(weatherReport())
 
+Event handlers that return values must be declared identidally to the interface methods 
+that they correspond to:
+
+.. code-block::
+    :caption: Event Handler Return Demo
+
+    fn main {
+        var ehv:# = #EventHandlerDemo()
+        var ret = ehv.init("Boris", 1959)
+        print("Succeeded = " + str(ret))
+    }
+
+    #EventHandlerDemo
+
+        -interface-
+
+        // interface signature matches event handler signature
+        init [name, birth_year] : bool 
+
+        -machine-
+
+        $Start 
+
+            // event handler signature matches interface signature
+            |init| [name, birth_year] : bool 
+                print("My name is " + name + " and I was born in " + str(birth_year))
+                ^(true)
+
+    ##
+
+Run the `program <https://onlinegdb.com/6GbktwNUW>`_. 
+
+
+
 Event Handler Continue Terminator
 +++++++++++
 
@@ -174,37 +208,6 @@ passing a handled event on to a parent state as well:
     ##
 
 Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
-
-
-Event Handler Signature
-~~~~~~~~
-
-.. code-block::
-    :caption: Event Handler Return Demo
-
-    fn main {
-        var ehv:# = #EventHandlerDemo()
-        var ret = ehv.init("Boris", 1959)
-        print("Succeeded = " + str(ret))
-    }
-
-    #EventHandlerDemo
-
-        -interface-
-
-        init [name, birth_year] : bool 
-
-        -machine-
-
-        $Start 
-
-            |init| [name,birth_year] : bool 
-                print("My name is " + name + " and I was born in " + str(birth_year))
-                ^(true)
-
-    ##
-
-Run the `program <https://onlinegdb.com/bW8x6no_B>`_. 
 
 
 Frame supports two special messages each with a reserved message token - enter (**>**) and exit (**<**). 
