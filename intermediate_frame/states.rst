@@ -499,6 +499,7 @@ Above we can see that each reentry to $Begin reinitializes the counter state var
 State Parameters
 ~~~~~~~
 
+States are compartmentalized environments 
 One of the features Frame has to transfer data from one state to another is **state parameters**. 
 State parameters are declared by adding a paremeter list after the definition of the state name.
 
@@ -519,10 +520,74 @@ During a transition, state parameters are set by arguments passed to the target 
     $S1 [zero,one] // zero == 0, one == 1
 
 The transition to state **$S1** is "called" with two arguments (0,1) which are mapped respectively to the 
-**zero** and **one** parameters in state **$B**.
+**zero** and **one** parameters in state **$S1**.
 
 Transitions are one way to enter a state. However, start states are also "entered" during system 
-initalization and start states that have parameters need to be provided arguments during system initalization. 
+initalization and need to be provided arguments from this avenue as well. 
+
+To meet this requirement, Frame allows for a **system parameters list** which permits callers a 
+mechanism for passing in initialization data directly to the system. There are three scopes of system 
+data that can be initalized using the system parameter list:
+
+#. Start state parameters
+#. Start state enter event handler parameters
+#. Domain variables
+
+The first two parameter types are specific to initalizing the start state and are the only ones 
+we will discuss in depth in this article. 
+
+System parameters have a very unusual syntax, as the parameters need to be grouped based on 
+the target scope they are for. To make it very clear which scope a parameter is for, Frame 
+specifies different groupings for each scope:
+
+=============== =====
+Domain          System Parameter Group 
+--------------- -------
+
+"Start state parameters"    $[...]
+"Start state enter event handler parameters" >(...)
+"Domain variables"                  #(...)
+
+
+.. code-block::
+    :caption: System Parameters
+
+    #SystemParameters [$[...],>(...),#(...)]
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+
+    #StartStateInitDemo [$[zero],>(one)]
+
+        -machine-
+
+        $StartState [zero]
+            |>| [one]
+                print(zero)  // use state param scope syntax
+                print(one)      // resolves to state param scope
+                ^
+        ##
+
+
+
+.. code-block::
+    :caption: System Initalized Start State Parameters
+        
+    fn main {
+        #StartStateInitDemo($(0,1))
+    }
+
+    #StartStateInitDemo [$[zero,one]]
+
+        -machine-
+
+        $StartState [zero,one]
+            |>|
+                print($[zero])  // use state param scope syntax
+                print(one)      // resolves to state param scope
+                ^
+        ##
+
 
 To meet this requirement, Frame provides a special syntax for passing arguments 
 during system creation/initalization.
