@@ -493,12 +493,13 @@ Run the `program <https://onlinegdb.com/NBIKiLuH3>`_.
     Handling |inc|, counter = 1
     Handling |inc|, counter = 2
 
-Above we can see that each reentry to $Begin clears the counter state variable
+Above we can see that each reentry to $Begin reinitializes the counter state variable to 0.
+
 State Parameters
 ~~~~~~~
 
 One of the features Frame has to transfer data from one state to another is **state parameters**. 
-State parameters are declared by adding a paremeter list after the definition of the state name:
+State parameters are declared by adding a paremeter list after the definition of the state name.
 
 .. code-block::
     :caption: State Parameters
