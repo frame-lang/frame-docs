@@ -146,30 +146,34 @@ passing a handled event on to a parent state as well:
 
     fn main {
         var hsm:# = #HSM_Preview()
-        hsm.passMe()
+        hsm.passMe1()
+        hsm.passMe2()
     }
 
     #HSM_Preview
 
         -interface-
 
-        passMe
+        passMe1
+        passMe2 
 
         -machine-
 
         //  Dispatch operator (=>) defines state hierarchy
         $Child => $Parent 
 
+            |passMe1|  :>
             // continue operator sends event to $Parent
-            |passMe| print("handled in $Child") :>
+            |passMe2|  print("handled in $Child") :>
 
         $Parent
 
-            |passMe| print("handled in $Parent") ^
+            |passMe1| print("handled in $Parent") ^
+            |passMe2| print("handled in $Parent") ^
 
     ##
 
-Run the `program <https://onlinegdb.com/Q8Xk91PTIk>`_. 
+Run the `program <https://onlinegdb.com/kZurjiUgc>`_. 
 
 
 Event Handler Signature
