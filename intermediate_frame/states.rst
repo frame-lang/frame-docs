@@ -148,12 +148,12 @@ that they correspond to:
     :caption: Event Handler Return Demo
 
     fn main {
-        var ehv:# = #EventHandlerDemo()
-        var ret = ehv.init("Boris", 1959)
+        var ehrd:# = #EventHandlerReturnDemo()
+        var ret = ehrd.init("Boris", 1959)
         print("Succeeded = " + str(ret))
     }
 
-    #EventHandlerDemo
+    #EventHandlerReturnDemo
 
         -interface-
 
@@ -174,7 +174,7 @@ that they correspond to:
 Notice the **^(true)** statement which sets the FrameEvent's return object which the 
 interface then passes back to the caller. 
 
-Run the `program <https://onlinegdb.com/6GbktwNUW>`_. 
+Run the `program <https://onlinegdb.com/Ad87kwvpz>`_. 
 
 
 
