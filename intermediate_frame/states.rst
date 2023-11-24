@@ -221,12 +221,12 @@ the capability to pass a handled event to a parent state as well:
 
 Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
 
-Event Handler Continue Terminator
+Enter and Exit Events
 ---------
 
 One of the most important features of the Frame language is the support of two special 
 messages - enter (**>**) and exit (**<**). Not surprisingly these messages are generated 
-in cirucmstances when the the state is being entered or exited. 
+by the Frame runtime in cirucmstances when the the state is being entered or exited. 
 
 .. code-block::
     :caption: Enter and Exit Messages
@@ -307,8 +307,31 @@ states. The main function instantiates the system and drives it to the **$End** 
 
     ##
 
-
 Run the `program <https://onlinegdb.com/GDIh90nx5>`_. 
+
+In running the program you will see that the program generates the following output:
+
+.. code-block
+    :caption: StateSystem Enter/Exit Output
+
+    entering $Begin
+    exiting $Begin
+    entering $Working
+    exiting $Working
+    entering $End
+
+Lining up this output with the system spec, we see that the start state **$Begin** 
+generates **entering $Begin** when the system is created and initialized. The 
+system is then sent the **next** message which results in a transition to the 
+**Working** state. Upon exit of **$Begin**, the exit event handler generates **exiting $Begin**
+followed by the **entering $Working** executed upon entry to **$Working**. 
+
+This pattern repeats and drives the system finally to the **$End** state. 
+
+Enter and exit events are key to enabling the initialization and cleanup of the system 
+as it transitions from one state to another. This powerful capability unlocks many improvements
+to code structure and readability of Frame based software. 
+
 
 Variables
 -----------
