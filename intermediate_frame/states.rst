@@ -434,8 +434,9 @@ State Variables are initialized upon entry to the state
 and dropped upon exit. Below we see that the counter variable is declared in 
 the **$Begin** state. This counter 
 does not go out of scope until the system leaves the **$Begin** state. Each time the **inc** interface 
-method is called counter is incremented by 1 and printed. This demonstrates that the 
-**counter** variable  is scoped to the state itself. 
+method is called counter is incremented by 1 and printed. When the system is cycled back to 
+**$Begin** we can see that the counter has been reset to 0. This demonstrates that the 
+**counter** variable is a state local variable scoped to the *instance* of the state. 
 
 
 .. code-block::
