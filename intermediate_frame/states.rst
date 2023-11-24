@@ -159,11 +159,11 @@ passing a handled event on to a parent state as well:
 
         -machine-
 
-        //  Dispatch operator (=>) defines state hierarchy
+        // Dispatch operator (=>) defines state hierarchy
         $Child => $Parent 
 
+            // Continue operator sends events to $Parent
             |passMe1|  :>
-            // continue operator sends event to $Parent
             |passMe2|  print("handled in $Child") :>
 
         $Parent
@@ -173,7 +173,7 @@ passing a handled event on to a parent state as well:
 
     ##
 
-Run the `program <https://onlinegdb.com/kZurjiUgc>`_. 
+Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
 
 
 Event Handler Signature
