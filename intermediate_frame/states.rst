@@ -63,17 +63,22 @@ The message selector is indicated by two pipe characters which match an event me
 are set to the name of interface method that generated it.
 
 .. code-block::
-    :caption: Empty States 
+    :caption: Sending Messages 
 
     #MessageSending
 
         -interface-
+
+        // The "foo" interface method sends the "foo" event message
 
         foo 
 
         -machine- 
 
         $Working
+
+            // This event handler is triggered when the state
+            // recieves a "foo" message. 
 
             |foo| print("handled foo") ^
 
@@ -82,6 +87,11 @@ are set to the name of interface method that generated it.
 
 Event Handler Parameters
 ~~~~~~~~
+
+Event handler signatures must align with the signature of interface method 
+that sends the event message it responds to. Here we can see that 
+the init interface method parameters are identical with the **|init|** event handler 
+signature:
 
 .. code-block::
     :caption: Event Handler Parameters Demo
@@ -114,15 +124,14 @@ Run the `program <https://onlinegdb.com/GhepXQeo2>`_.
 Event Handler Terminators
 ~~~~~~~~
 
-Event handlers are terminated by either a return token **^** or an else-continue token **:>**. See the 
-else-continue_ (TODO) (not to be confused with the loop **continue** keyword) article for more details.
+Event handlers are terminated by either a return token **^** or an else-continue token **:>**. 
 
 Event Handler Return Terminator
 +++++++++++
 
-In addition to the the standard return token we have seen, it is also possible to return a value 
-with it as well by returning an expression in parenthesis:
-
+In addition to the the standard return token we have seen which returns nothing from 
+the event handler, it is also possible to return a value to the interface  as well. 
+This is accomplished by adding an expression in parenthesis after the **^** token:
 
 .. code-block::
     :caption: Event Handler Return Value
@@ -162,6 +171,9 @@ that they correspond to:
 
     ##
 
+Notice the **^(true)** statement which sets the FrameEvent's return object which the 
+interface then passes back to the caller. 
+
 Run the `program <https://onlinegdb.com/6GbktwNUW>`_. 
 
 
@@ -170,10 +182,10 @@ Event Handler Continue Terminator
 +++++++++++
 
 As mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
-articles we will discuss **Hierarchical State Machines (HSMs)** which enable states to inherit behavior 
-from other states. HSMs are created using the *Dispatch Operator* **=>**. 
-Unhandled events are automatcially passed to parent states and the continue operator enables 
-passing a handled event on to a parent state as well:   
+articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
+from other states and are created using the Frame *Dispatch Operator* **=>**. 
+While unhandled events are automatcially passed to parent states, the continue operator enables 
+the capability to pass a handled event to a parent state as well:   
 
 .. code-block::
     :caption: Event Handler Continue Terminator
