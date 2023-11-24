@@ -309,7 +309,7 @@ states. The main function instantiates the system and drives it to the **$End** 
 
 Run the `program <https://onlinegdb.com/GDIh90nx5>`_. 
 
-In running the program you will see that the program generates the following output:
+The program generates the following output:
 
 .. code-block::
     :caption: StateSystem Enter/Exit Output
@@ -330,7 +330,7 @@ This pattern repeats and drives the system finally to the **$End** state.
 
 Enter and exit events are key to enabling the initialization and cleanup of the system 
 as it transitions from one state to another. This powerful capability unlocks many improvements
-to code structure and readability of Frame based software. 
+to code structure and readability of Frame generated software. 
 
 
 Variables
@@ -420,10 +420,10 @@ State variables are declared in the state scope before the event handlers.
 
         // State Variables are defined before event handlers
 
-        var age = nil           
         var name = "Natasha"
-
-        |a| ^
+        var age = "not saying"           
+     
+        |a| print("My name is " + name + " and I am " + age + " years old." ^
 
     $S1 
         // no state variables
@@ -431,7 +431,7 @@ State variables are declared in the state scope before the event handlers.
 
 
 State Variables are initialized upon entry to the state 
-and droped upon exit. Below we see that the counter variable is declared in 
+and dropped upon exit. Below we see that the counter variable is declared in 
 the **$Begin** state. This counter 
 does not go out of scope until the system leaves the **$Begin** state. Each time the **inc** interface 
 method is called counter is incremented by 1 and printed. This demonstrates that the 
@@ -461,7 +461,9 @@ method is called counter is incremented by 1 and printed. This demonstrates that
 
         $Begin
 
-            var counter = 0  // state variable initialized to 0
+            // state variable initialized to 0
+
+            var counter = 0  
 
             |inc| 
                 counter = counter + 1 
@@ -479,32 +481,29 @@ State Parameters
 ~~~~~~~
 
 One of the features Frame has to transfer data from one state to another is **state parameters**. 
-
 State parameters are declared by adding a paremeter list after the definition of the state name:
 
 .. code-block::
     :caption: State Parameters
         
-    $S0 [a,b] 
+    $S0 [x,y] 
 
 During a transition, state parameters are set by arguments passed to the target state.
 
 .. code-block::
     :caption: State Parameters
 
-    $A
+    $S0
         |>| 
-            -> $B(0,1) ^ 
+            -> $S1(0,1) ^ 
         
-    $B [zero,one] // zero == 0, one == 1
+    $S1 [zero,one] // zero == 0, one == 1
 
-The transition to state **$B** is "called" with two arguments (0,1) which are mapped respectively to the 
+The transition to state **$S1** is "called" with two arguments (0,1) which are mapped respectively to the 
 **zero** and **one** parameters in state **$B**.
 
 Transitions are one way to enter a state. However, start states are also "entered" during system 
-initalization and start states that have parameters still need to be provided arguments somehow. 
-However since during intializatin they are not actually "transitioned" into 
-this needs to happen through a different mechanism.
+initalization and start states that have parameters need to be provided arguments during system initalization. 
 
 To meet this requirement, Frame provides a special syntax for passing arguments 
 during system creation/initalization.
