@@ -221,8 +221,12 @@ the capability to pass a handled event to a parent state as well:
 
 Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
 
+Event Handler Continue Terminator
+---------
 
-Frame supports two special messages each with a reserved message token - enter (**>**) and exit (**<**). 
+One of the most important features of the Frame language is the support of two special 
+messages - enter (**>**) and exit (**<**). Not surprisingly these messages are generated 
+in cirucmstances when the the state is being entered or exited. 
 
 .. code-block::
     :caption: Enter and Exit Messages
@@ -247,6 +251,8 @@ The enter message is sent to a state under two conditions:
 #. when transitioning into the state 
 
 The exit message is sent only  when transtioning out of a state. 
+
+We will explore the means by which states are entered and exited next. 
 
 Transitions
 -----------
