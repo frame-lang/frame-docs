@@ -540,14 +540,14 @@ System parameters have a very unusual syntax, as the parameters need to be group
 the target scope they are for. To make it very clear which scope a parameter is for, Frame 
 specifies different groupings for each scope:
 
-=============== =====
+=============== ======================
 Domain          System Parameter Group 
---------------- -------
+--------------- ----------------------
 
-"Start state parameters"    $[...]
-"Start state enter event handler parameters" >(...)
-"Domain variables"                  #(...)
-
+SP              $[...]
+E               >(...)
+DV              #(...)
+=============== ======================
 
 .. code-block::
     :caption: System Parameters
