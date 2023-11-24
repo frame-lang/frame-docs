@@ -117,6 +117,9 @@ Event Handler Terminators
 Event handlers are terminated by either a return token **^** or an else-continue token **:>**. See the 
 else-continue_ (TODO) (not to be confused with the loop **continue** keyword) article for more details.
 
+Event Handler Return Terminator
++++++++++++
+
 In addition to the the standard return token we have seen, it is also possible to return a value 
 with it as well by returning an expression in parenthesis:
 
@@ -125,9 +128,12 @@ with it as well by returning an expression in parenthesis:
     :caption: Event Handler Return Value
 
     $Oracle
-        |getName| :  ^(name)
-        |getMeaning| ^(21*2) 
-        |getWeather| ^(weatherReport())
+        |getName| : string  ^(name)
+        |getMeaning| : number  ^(21*2) 
+        |getWeather| : string ^(weatherReport())
+
+Event Handler Continue Terminator
++++++++++++
 
 As mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
 articles we will discuss **Hierarchical State Machines (HSMs)** which enable states to inherit behavior 
