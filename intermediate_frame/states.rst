@@ -536,28 +536,36 @@ data that can be initalized using the system parameter list:
 The first two parameter types are specific to initalizing the start state and are the only ones 
 we will discuss in depth in this article. 
 
-System parameters have a very unusual syntax, as the parameters need to be grouped based on 
-the target scope they are for. To make it very clear which scope a parameter is for, Frame 
+System parameters have an unusual syntax, as the parameters need to be grouped based on 
+their target scope. To make it very clear which scope a parameter is for, Frame 
 specifies different groupings for each scope:
 
-=============== ======================
-Domain          System Parameter Group 
---------------- ----------------------
+=========================================== ======================
+Scope                                       System Parameter Group 
+------------------------------------------- ----------------------
 
-SP              $[...]
-E               >(...)
-DV              #(...)
-=============== ======================
+Start State Parameters                      $[...]
+Start state enter event handler parameters  >[...]
+Domain variables                            #[...]
+=========================================== ======================
+
+System parameter groups are optional, but must be in the specific order shown:
 
 .. code-block::
-    :caption: System Parameters
+    :caption: System Parameter Group Ordering
 
     #SystemParameters [$[...],>(...),#(...)]
+
+If no system parameters are declared, the enclosing list should not be present - it is 
+an error to declare an empty parameter list.
+
+In the next example we see how the start state is initialized with two parameters, one as a 
+state parameter and one as an enter event parameter.
 
 .. code-block::
     :caption: System Initalized Start State Parameters
 
-    #StartStateInitDemo [$[zero],>(one)]
+    #StartStateInitDemo [$[zero],>[one]]
 
         -machine-
 
@@ -566,120 +574,61 @@ DV              #(...)
                 print(zero)  // use state param scope syntax
                 print(one)      // resolves to state param scope
                 ^
-        ##
-
-
-
-.. code-block::
-    :caption: System Initalized Start State Parameters
-        
-    fn main {
-        #StartStateInitDemo($(0,1))
-    }
-
-    #StartStateInitDemo [$[zero,one]]
-
-        -machine-
-
-        $StartState [zero,one]
-            |>|
-                print($[zero])  // use state param scope syntax
-                print(one)      // resolves to state param scope
-                ^
-        ##
-
-
-To meet this requirement, Frame provides a special syntax for passing arguments 
-during system creation/initalization.
-
-.. code-block::
-    :caption: System Initalized Start State Parameters
-
-    fn main {
-        #StartStateInitDemo($(0,1))
-    }
-
-In this example the **#StartStateInitDemo()** is passed a strange looking argument **$(0,1)**. 
-We will see later that systems can have three types of data initalized during startup:
-
-#. Start state parameters
-#. Start state enter event handler parameters
-#. Domain variables
-
-We need to be able to distingush which scope is being initalized. To do so, Frame encloses
-arguments in a specially typed group for each scope target. Here we are targeting the 
-state state parameters which uses the group type **$(param1,param2,...)**.
-
-Systems need to declare the parameters for these arguments with a similar syntax: 
-
-.. code-block::
-    :caption: System Initalized Start State Parameters
-        
-    fn main {
-        #StartStateInitDemo($(0,1))
-    }
-
-    #StartStateInitDemo [$[zero,one]] 
-
     ##
 
-Here we see the outer brackets 
-of the system parameters (**#StartStateInitDemo [...]***) enclose the parameters 
-specifically designated to be the start state parameters.
 
-Finally, the state itself has a parameter list. 
+.. note::
 
-.. note: 
+    The names of the *system* start state parameters 
+    need to match the names of the start state's parameters.
 
-    The names of the system start state parameters 
-    need to match the names of the actual start state parameters.
+The final step is to initialize the system parameters with arguments upon 
+instantiation. 
+
+.. code-block::
+    :caption: Call groups
+
+    #StartStateInitDemo($(0),>(1))
+
+The system declaration passes parameters, all of which must be enclosed in the appropriate type of 
+call list (using parenthesis) for arguments. 
+
+Here is a demo with all of these aspects together:
 
 .. code-block::
     :caption: System Initalized Start State Parameters
         
     fn main {
-        #StartStateInitDemo($(0,1)) // pass the system state state args group
+        #StartStateInitDemo($(0),>(1))
     }
 
-    #StartStateInitDemo [$[zero,one]] // declare the system start state params list
+    #StartStateInitDemo [$[zero],>[one]]
 
         -machine-
 
-        $StartState [zero,one] // system params list matches the system signature
-    ##
-
-.. code-block::
-    :caption: System Initalized Start State Parameters
-        
-    fn main {
-        #StartStateInitDemo($(0,1))
-    }
-
-    #StartStateInitDemo [$[zero,one]]
-
-        -machine-
-
-        $StartState [zero,one]
-            |>|
-                print($[zero])  // use state param scope syntax
+        $StartState [zero]
+            |>| [one]
+                print(zero)  // use state param scope syntax
                 print(one)      // resolves to state param scope
                 ^
-        ##
+    ##
 
+Run the `program <https://onlinegdb.com/IajrHD80s8>`_. 
 
-Run the `program <https://onlinegdb.com/rh7fYLG3C>`_. 
+A final example will tie together all of these concepts neatly together and demo a practical
+application of these capabilities.
 
 .. code-block::
-    :caption: Fibonacci Demo using State Parameters
+    :caption: Fibonacci Demo using System Parameters
 
     fn main {
-        var fib:# = #FibonacciStateParamsDemo($(0,1)) 
+        var fib:# = #FibonacciSystemParamsDemo($(0),>(1)) 
         loop var x = 0; x < 10; x = x + 1 {
             fib.next()
         }
     }
 
-    #FibonacciStateParamsDemo [$[zero,one]]
+    #FibonacciSystemParamsDemo [$[zero],>[one]]
 
         -interface-
 
@@ -687,8 +636,8 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
 
         -machine-
 
-        $Setup [zero,one]
-            |>| 
+        $Setup [zero]
+            |>| [one]
                 print(zero)  
                 print(one)    
 
@@ -705,9 +654,9 @@ Run the `program <https://onlinegdb.com/rh7fYLG3C>`_.
                 ^
     ##
 
-Run the `program <https://onlinegdb.com/aSfnAzMQCm>`_. 
+Run the `program <https://onlinegdb.com/mCqbyq__p>`_. 
 
-Notice that parameters **a** and **b** are mutable and persist their values between
+Notice that $PrintNextFibonacciNumber stte parameters **a** and **b** are mutable and persist 
+their values between
 invocations of the **|next|** event handler. State parameter values, like state varibles,
-persist  until 
-the state is exited, at which point they will be dropped. 
+persist  until the state is exited, at which point they will be dropped. 
