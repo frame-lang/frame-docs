@@ -656,7 +656,23 @@ application of these capabilities.
 
 Run the `program <https://onlinegdb.com/mCqbyq__p>`_. 
 
+.. code-block::
+    :caption: Fibonacci Demo using System Parameters Output
+
+    0
+    1
+    1
+    2
+    3
+    5
+    8
+    13
+    21
+    34
+    55
+    89    
+
 Notice that $PrintNextFibonacciNumber stte parameters **a** and **b** are mutable and persist 
 their values between
 invocations of the **|next|** event handler. State parameter values, like state varibles,
-persist  until the state is exited, at which point they will be dropped. 
+persist until the state is exited, at which point they will be dropped. 
