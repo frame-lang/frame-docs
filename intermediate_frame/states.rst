@@ -27,7 +27,7 @@ The machine block can contain zero or more states. The first state in the machin
 called the **start state**.
 
 .. code-block::
-    :caption: Empty States 
+    :caption: Start State 
 
     #StatesSystem
 
@@ -120,11 +120,15 @@ signature:
 
 Run the `program <https://onlinegdb.com/yKZKs6pR6>`_. 
 
+.. code-block::
+    :caption: Event Handler Parameters Demo Output
+
+    My name is Boris and I was born in 1959
 
 Event Handler Terminators
 ~~~~~~~~
 
-Event handlers are terminated by either a return token **^** or an else-continue token **:>**. 
+Event handlers are terminated by either a return token **^** or a continue token **:>**. 
 
 Event Handler Return Terminator
 +++++++++++
@@ -141,8 +145,8 @@ This is accomplished by adding an expression in parenthesis after the **^** toke
         |getMeaning| : number  ^(21*2) 
         |getWeather| : string ^(weatherReport())
 
-Event handlers that return values must be declared identidally to the interface methods 
-that they correspond to:
+Event handlers that return values must be declared identically to the interface methods 
+that they correspond to.
 
 .. code-block::
     :caption: Event Handler Return Demo
@@ -158,6 +162,7 @@ that they correspond to:
         -interface-
 
         // interface signature matches event handler signature
+
         init [name, birth_year] : bool 
 
         -machine-
@@ -165,6 +170,7 @@ that they correspond to:
         $Start 
 
             // event handler signature matches interface signature
+
             |init| [name, birth_year] : bool 
                 print("My name is " + name + " and I was born in " + str(birth_year))
                 ^(true)
@@ -176,16 +182,21 @@ interface then passes back to the caller.
 
 Run the `program <https://onlinegdb.com/Ad87kwvpz>`_. 
 
+.. code-block::
+    :caption: Event Handler Return Demo Output 
+
+    My name is Boris and I was born in 1959
+    Succeeded = True
 
 
 Event Handler Continue Terminator
 +++++++++++
 
-As mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
+As previously mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
 articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
 from other states and are created using the Frame *Dispatch Operator* **=>**. 
 While unhandled events are automatically passed to parent states, the continue operator enables 
-the capability to pass a handled event to a parent state as well:   
+handled event to be passed to a parent state as well:   
 
 .. code-block::
     :caption: Event Handler Continue Terminator
@@ -206,9 +217,11 @@ the capability to pass a handled event to a parent state as well:
         -machine-
 
         // Dispatch operator (=>) defines state hierarchy
+
         $Child => $Parent 
 
             // Continue operator sends events to $Parent
+
             |passMe1|  :>
             |passMe2|  print("handled in $Child") :>
 
@@ -221,11 +234,19 @@ the capability to pass a handled event to a parent state as well:
 
 Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
 
+
+.. code-block::
+    :caption: Event Handler Continue Terminator Output
+
+    handled in $Parent
+    handled in $Child
+    handled in $Parent
+
 Enter and Exit Events
 ---------
 
 One of the most important features of the Frame language is the support of two special 
-messages - enter (**>**) and exit (**<**). Not surprisingly these messages are generated 
+messages - enter (**>**) and exit (**<**). Not surprisingly, these messages are generated 
 by the Frame runtime in cirucmstances when the the state is being entered or exited. 
 
 .. code-block::
@@ -250,8 +271,7 @@ The enter message is sent to a state under two conditions:
 #. to the **start state** when the system is initalized (1 time event)
 #. when transitioning into the state 
 
-The exit message is sent only  when transtioning out of a state. 
-
+The exit message is sent only  when transtioning out of a state.
 We will explore the means by which states are entered and exited next. 
 
 Transitions
@@ -268,19 +288,20 @@ Transitions between states are affected by the use of the **->** operator.
     $S1
 
 Transitions are fully explored in another article. For the purposes of this article 
-they are important to understand state behavor. Here is a simple system machine with three 
-states. The main function instantiates the system and drives it to the **$End** state:
+they are important in order to understand state behavior. 
+To see  them in action we will examine a simple system with three states that handle enter and exit events. 
+The main function instantiates the system and drives it to the **$End** state:
 
 .. code-block::
-    :caption: Enter and Exit Messages
+    :caption: Enter and Exit Messages Demo
 
-    fn main {
-        var ss:# = #StatesSystem() 
-        ss.next()
-        ss.next()
+        fn main {
+        var eemd:# = #EnterExitMessagesDemo() 
+        eemd.next()
+        eemd.next()
     }
 
-    #StatesSystem
+    #EnterExitMessagesDemo
 
         -interface-
 
@@ -307,12 +328,12 @@ states. The main function instantiates the system and drives it to the **$End** 
 
     ##
 
-Run the `program <https://onlinegdb.com/GDIh90nx5>`_. 
+Run the `program <https://onlinegdb.com/2XE6J5jzW>`_. 
 
 The program generates the following output:
 
 .. code-block::
-    :caption: StateSystem Enter/Exit Output
+    :caption: Enter and Exit Messages Demo Output
 
     entering $Begin
     exiting $Begin
@@ -321,36 +342,35 @@ The program generates the following output:
     entering $End
 
 Lining up this output with the system spec, we see that the start state **$Begin** 
-generates **entering $Begin** when the system is created and initialized. The 
+generates "**entering $Begin**"" when the system is created and initialized. The 
 system is then sent the **next** message which results in a transition to the 
-**Working** state. Upon exit of **$Begin**, the exit event handler generates **exiting $Begin**
-followed by the **entering $Working** executed upon entry to **$Working**. 
+**$Working** state. The **$Begin** exit event handler generates "**exiting $Begin**""
+followed by the "**entering $Working**"" printed upon entry to **$Working**. 
 
-This pattern repeats and drives the system finally to the **$End** state. 
+The system finally to the **$End** state where it stops. 
 
-Enter and exit events are key to enabling the initialization and cleanup of the system 
-as it transitions from one state to another. This powerful capability unlocks many improvements
-to code structure and readability of Frame generated software. 
+Enter and exit events are key to enabling fine grained initialization and cleanup of  system resources
+as it transitions from one state to another. 
+This powerful capability unlocks many improvements to code structure and readability of Frame generated software. 
 
 
 Variables
 -----------
 
-States have three special scopes variables are declared in:
+States have four special scopes where variables are declared in:
 
 #. Event Handler Variables
 #. Event Handler Parameters
 #. State Variables
 #. State Parameters
 
-
-We will explore each of these scopes in this article. 
+We will explore each of these scopes next. 
 
 Event Handler Variables
 ~~~~~~~
 
-Variables can be defined in the scope of an event handler. They are valid during the invocation
-of the event handler and are invalidated upon return.
+Variables can be defined in the scope of an event handler and are valid during the invocation
+of the event handler and are dropped when exiting it.
 
 .. code-block::
     :caption: Event Handler Scoped Variables
@@ -378,15 +398,15 @@ Event handlers for an event need to have the same signature (parameters and retu
 the message. 
 
 .. code-block::
-    :caption: Event Handler Demo
+    :caption: Event Handle Parameters Demo
 
     fn main {
-        var ehv:# = #EventHandlerDemo()
-        var ret = ehv.init("Boris", 1959)
+        var ehpd:# = #EventHandlerParametersDemo()
+        var ret = ehpd.init("Boris", 1959)
         print("Succeeded = " + str(ret))
     }
 
-    #EventHandlerDemo
+    #EventHandlerParametersDemo
 
         -interface-
 
@@ -402,8 +422,14 @@ the message.
 
     ##
 
-Run the `program <https://onlinegdb.com/bW8x6no_B>`_. 
+Run the `program <https://onlinegdb.com/Bhs0wGQ_P>`_. 
 
+
+.. code-block::
+    :caption: Event Handle Parameters Demo Output 
+
+    My name is Boris and I was born in 1959
+    Succeeded = True    
 
 State Variables
 ~~~~~~~
@@ -418,7 +444,7 @@ State variables are declared in the state scope before the event handlers.
 
     $S0
 
-        // State Variables are defined before event handlers
+        // State variables are defined before event handlers
 
         var name = "Natasha"
         var age = "not saying"           
@@ -434,8 +460,8 @@ State Variables are initialized upon entry to the state
 and dropped upon exit. Below we see that the counter variable is declared in 
 the **$Begin** state. This counter 
 does not go out of scope until the system leaves the **$Begin** state. Each time the **inc** interface 
-method is called counter is incremented by 1 and printed. When the system is cycled back to 
-**$Begin** we can see that the counter has been reset to 0. This demonstrates that the 
+method is called the counter variable is incremented by 1 and printed. When the system is transitioned
+to the current **$Begin** state we can see that the counter has been reset to 0. This demonstrates that the 
 **counter** variable is a state local variable scoped to the *instance* of the state. 
 
 
@@ -501,7 +527,7 @@ State Parameters
 
 States are compartmentalized environments 
 One of the features Frame has to transfer data from one state to another is **state parameters**. 
-State parameters are declared by adding a paremeter list after the definition of the state name.
+State parameters are declared by adding a parameter list after the definition of the state name.
 
 .. code-block::
     :caption: State Parameters
@@ -517,7 +543,7 @@ During a transition, state parameters are set by arguments passed to the target 
         |>| 
             -> $S1(0,1) ^ 
         
-    $S1 [zero,one] // zero == 0, one == 1
+    $S1 [zero,one] // zero = 0, one = 1
 
 The transition to state **$S1** is "called" with two arguments (0,1) which are mapped respectively to the 
 **zero** and **one** parameters in state **$S1**.
@@ -538,7 +564,7 @@ we will discuss in depth in this article.
 
 System parameters have an unusual syntax, as the parameters need to be grouped based on 
 their target scope. To make it very clear which scope a parameter is for, Frame 
-specifies different groupings for each scope:
+specifies different grouping syntax for each scope:
 
 =========================================== ======================
 Scope                                       System Parameter Group 
@@ -590,8 +616,8 @@ instantiation.
 
     #StartStateInitDemo($(0),>(1))
 
-The system declaration passes parameters, all of which must be enclosed in the appropriate type of 
-call list (using parenthesis) for arguments. 
+The system declaration sends arguments to the correct scopes, all of which must be enclosed in the 
+appropriate type of call group for the arguments. 
 
 Here is a demo with all of these aspects together:
 
@@ -614,6 +640,14 @@ Here is a demo with all of these aspects together:
     ##
 
 Run the `program <https://onlinegdb.com/IajrHD80s8>`_. 
+
+
+.. code-block::
+    :caption: System Initalized Start State Parameters Output
+   
+    0
+    1
+
 
 A final example will tie together all of these concepts neatly together and demo a practical
 application of these capabilities.
@@ -672,7 +706,7 @@ Run the `program <https://onlinegdb.com/mCqbyq__p>`_.
     55
     89    
 
-Notice that $PrintNextFibonacciNumber stte parameters **a** and **b** are mutable and persist 
+Notice that **$PrintNextFibonacciNumber** state parameters **a** and **b** are mutable and persist 
 their values between
 invocations of the **|next|** event handler. State parameter values, like state variables,
 persist until the state is exited, at which point they will be dropped. 
