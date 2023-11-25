@@ -273,8 +273,6 @@ start state.
         var sys:# = #ExitEventParametersDemo() 
         sys.one()
         sys.two()
-        sys.two()
-        sys.one()
     }
 
     #ExitEventParametersDemo
@@ -287,9 +285,9 @@ start state.
         -machine-
 
         $Start 
-            |<| [msg]
-                msg == "one" ? print(msg + " is a great number!") :>
-                msg == "two" ? print(msg + " is a greater number!") :| ^
+            |<| [event_msg]
+                event_msg == "one" ? print(event_msg + " is a great number!") :>
+                event_msg == "two" ? print(event_msg + " is a greater number!") :| ^
 
             |one| (@||) -> $Start ^
             |two| (@||) -> $Start ^       
@@ -301,7 +299,7 @@ the transition to the exit handler to print a customized message. This capabilit
 factoring out common cleanup behavior with a way to customize it based on the way 
 that the system is being exited. 
 
-Run the `program <https://onlinegdb.com/fkKpVyN_in>`_. 
+Run the `program <https://onlinegdb.com/axQHAdQPE>`_. 
 
 
 The program generates the following output:
@@ -311,8 +309,6 @@ The program generates the following output:
 
     one is a great number!
     two is a greater number!
-    two is a greater number!
-    one is a great number!
 
 
 Transition Labels
