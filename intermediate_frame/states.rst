@@ -676,9 +676,11 @@ application of these capabilities.
                 print(one)    
 
                 // initalize $PrintNextFibonacciNumber state parameters
+                
                 -> $PrintNextFibonacciNumber(zero,one) ^ 
             
         // params [a,b] = (0,1)
+
         $PrintNextFibonacciNumber [a,b] 
             |next| 
                 var sum = a + b
