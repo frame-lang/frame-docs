@@ -674,5 +674,5 @@ Run the `program <https://onlinegdb.com/mCqbyq__p>`_.
 
 Notice that $PrintNextFibonacciNumber stte parameters **a** and **b** are mutable and persist 
 their values between
-invocations of the **|next|** event handler. State parameter values, like state varibles,
+invocations of the **|next|** event handler. State parameter values, like state variables,
 persist until the state is exited, at which point they will be dropped. 
