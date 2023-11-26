@@ -65,6 +65,7 @@ create a new parent state and refactor the common behavior into it.
     ##
 
 .. image:: images/hsm_with_parent.png
+    :height: 300
 
 This hierarchy can continue to any desired depth. 
 
