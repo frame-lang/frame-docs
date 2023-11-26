@@ -66,25 +66,30 @@ create a new parent state and refactor the common behavior into it.
 
 .. image:: images/hsm_with_parent.png
 
+This hierarchy can continue to any desired depth. 
+
+Supporting the HSM architecture is one of the primary reasons the Frame runtime is event based which  
+makes supporting this feature requirement straightforward. 
+
 Event Handler Continue Terminator
 +++++++++++
 
-As previously mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
-articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
-from other states and are created using the Frame *Dispatch Operator* **=>**. 
-While unhandled events are automatically passed to parent states, the continue operator enables 
-handled event to be passed to a parent state as well:
+By default and by design, unhandled events such as **b** in states **$S1** and **$S2** in the example above pass 
+through to the parent state **$S0**. In some circumstances, however, it is desirable to execute 
+behavior in both the child and the parent. To facilitate this capability, event handlers are also able 
+to be terminated with a continue operator **:>**. After executing all statements in the child event handler,
+the continue operator will not return but allow the event to pass to the parent. 
 
 .. code-block::
     :caption: Event Handler Continue Terminator
 
     fn main {
-        var hsm:# = #HSM_Preview()
-        hsm.passMe1()
-        hsm.passMe2()
+        var sys:# = #ContinueTerminatorDemo()
+        sys.passMe1()
+        sys.passMe2()
     }
 
-    #HSM_Preview
+    #ContinueTerminatorDemo
 
         -interface-
 
@@ -109,8 +114,12 @@ handled event to be passed to a parent state as well:
 
     ##
 
-Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
+Above we see two scenarios in the **$Child** state. In the **|passMe1|** event handler, there are 
+no statements and the event is passed on to the **$Parent** state. In the **|passMe2|** event handler 
+a print statement is executed first and then the event is passed on to the **$Parent** for 
+further processing. 
 
+Run the `program <https://onlinegdb.com/l7WBIHtd7>`_. 
 
 .. code-block::
     :caption: Event Handler Continue Terminator Output
@@ -118,3 +127,62 @@ Run the `program <https://onlinegdb.com/nChYZ01BD>`_.
     handled in $Parent
     handled in $Child
     handled in $Parent
+
+
+A final example demonstrates that enter and exit messages obey the same rules as other events.
+
+.. code-block::
+    :caption: Parent Child Enter Exit Demo
+
+
+
+    fn main {
+        var sys:# = #ParentChildEnterExitDemo()
+        sys.next()
+        sys.next()   
+    }
+
+    #ParentChildEnterExitDemo
+
+        -interface-
+
+        next
+
+        -machine-
+
+        // Dispatch operator (=>) defines state hierarchy
+
+        $Child1 => $Parent  
+            |>|  print("enter handled in $Child1") :>
+            |<|  print("exit handled in $Child1") :>
+
+            |next| -> $Child2 ^
+        
+
+        $Child2 => $Parent  
+            |>|  print("enter handled in $Child2") :>
+            |<|  print("exit handled in $Child2") :>
+
+            |next| -> $Child1 ^   
+
+        $Parent 
+            |>| print("enter handled in $Parent") ^
+            |<| print("exit handled in $Parent") ^ 
+    ##
+
+
+Run the `program <https://onlinegdb.com/KFVFsIXav>`_. 
+
+.. code-block::
+    :caption: Parent Child Enter Exit Demo Output
+
+    enter handled in $Child1
+    enter handled in $Parent
+    exit handled in $Child1
+    exit handled in $Parent
+    enter handled in $Child2
+    enter handled in $Parent
+    exit handled in $Child2
+    exit handled in $Parent
+    enter handled in $Child1
+    enter handled in $Parent

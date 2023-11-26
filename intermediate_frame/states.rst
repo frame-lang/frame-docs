@@ -202,12 +202,12 @@ handled event to be passed to a parent state as well:
     :caption: Event Handler Continue Terminator
 
     fn main {
-        var hsm:# = #HSM_Preview()
-        hsm.passMe1()
-        hsm.passMe2()
+        var sys:# = #ContinueTerminatorDemo()
+        sys.passMe1()
+        sys.passMe2()
     }
 
-    #HSM_Preview
+    #ContinueTerminatorDemo
 
         -interface-
 
@@ -232,7 +232,7 @@ handled event to be passed to a parent state as well:
 
     ##
 
-Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
+Run the `program <https://onlinegdb.com/l7WBIHtd7>`_. 
 
 
 .. code-block::
