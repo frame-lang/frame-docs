@@ -399,7 +399,7 @@ be useful.
     ##
 
 Above we can see the system waits in the **$Waiting** state until a **|payment|** event arrives.
-However the **$Waiting** state is not designed to process the payment so it forwards it to 
+However the **$Waiting** state is not designed to process the payment so it forwards the **|payment|** event to 
 the **$ProcessPayment** state for processing. After processing the system cycles back to the 
 **$Waiting** state to take the next payment. 
 
