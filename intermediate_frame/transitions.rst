@@ -300,7 +300,6 @@ that the system is being exited.
 
 Run the `program <https://onlinegdb.com/axQHAdQPE>`_. 
 
-
 The program generates the following output:
 
 .. code-block::
@@ -333,10 +332,11 @@ In addition to code, the Framepiler can generate UML documentation for the syste
             |click| -> "Second Click" $Two ^
 
         $Two 
-            |click| -> "Third\nClick" $Done ^
+            |click| -> ("three") "Third\nClick" $Done ^
 
         $Done
-    
+            |>| [click_count] 
+                print("Done in " + click_count + " clicks.") ^
     ##
 
 The system above generates the following UML diagram:
@@ -348,10 +348,72 @@ The first transition in the example above has the default label which is the mes
 the state. 
 The second label shows 
 a default overridden label. Sometimes labels can be undesireably long. The third transition shows
-how to embed a '\n' escape character in the label to create a new line in the label. 
+how to embed a '\n' escape character in the label to create a new line in the label. In addition, 
+the third transition shows the correct ordering of the enter arguments group and the label with the 
+arguments group before the label.
 
 Forwarding Events
 ++++++++++++++++
+
+Frame syntax enables events to be forwarded from one state to another using the **dispatch operator =>**
+within a transition.  
+
+
+.. code-block::
+    :caption: Forward Event Using Dispatch Operator 
+
+    // Forward event with dispatch operator
+     -> => $TargetState
+
+The following example shows how to utilize this feature and a context it might 
+be useful.
+
+.. code-block::
+    :caption: Forward Event Demo 
+
+    fn main {
+        var sys:# = #ForwardEventDemo() 
+        sys.payment("$100")
+        sys.payment("$200")
+        sys.payment("$300")
+    }
+
+    #ForwardEventDemo
+
+        -interface-
+
+        payment [paymentData]
+
+        -machine-
+
+        $Waiting 
+            |payment| [paymentData] 
+                // Forward event using the dispatch operator => 
+                -> => $ProcessPayment ^
+
+        $ProcessPayment 
+            |payment| [paymentData] 
+                 print("Payment received: " + paymentData)
+                 -> $Waiting ^
+
+    ##
+
+Above we can see the system waits in the **$Waiting** state until a **|payment|** event arrives.
+However the **$Waiting** state is not designed to process the payment so it forwards it to 
+the **$ProcessPayment** state for processing. After processing the system cycles back to the 
+**$Waiting** state to take the next payment. 
+
+Run the `program <https://onlinegdb.com/PQ5EyxXqA>`_. 
+
+The program generates the following output:
+
+.. code-block::
+    :caption: Forward Event Demo Output
+
+    Payment received: $100
+    Payment received: $200
+    Payment received: $300
+
 
 Grouping Syntax
 ++++++++++++++++
