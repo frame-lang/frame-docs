@@ -10,6 +10,34 @@ Hierarchy is useful for factoring common behavior between states into a parent, 
 the implemenation of behavior and eliminating redundancy in the system. In an HSM, when  
 changes are made to the shared behavior there is a single place to make the modification. 
 
+Parent-child relationships are established between states using the **dispatch operator =>**. We 
+have seen this used elsewhere for forwarding events to other states during a transition. 
+
+
+.. code-block::
+    :caption: Defining Parent-Child States Using the Dispatch Operator
+
+    $Child => $Parent
+
+Multiple children can derive behavior from the same parent.
+
+.. code-block::
+    :caption: Defining Parent-Child States Using the Dispatch Operator
+
+    $Child1 => $Parent
+    $Child2 => $Parent 
+
+State hierarchy can extend to any depth.
+
+.. code-block::
+    :caption: State Hierarchy Depth
+
+    $S3 => $S2
+    $S2 => $S1
+    $S1 => $S0
+
+The next example will show refactoring of a common behavior between two states to a parent state. 
+
 .. code-block::
     :caption: Flat State Machine
 
