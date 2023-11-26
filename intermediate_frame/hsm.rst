@@ -11,9 +11,9 @@ the implemenation of behavior and eliminating redundancy in the system. In an HS
 changes are made to the shared behavior there is a single place to make the modification. 
 
 .. code-block::
-    :caption: Interface Examples
+    :caption: Flat State Machine
 
-    #RedundantSystem
+    #FlatStateMachine
 
         -interface-
 
@@ -34,11 +34,14 @@ changes are made to the shared behavior there is a single place to make the modi
 
     ##
 
-.. image:: images/hsm_no_parent.png
+.. image:: images/no_parent.png
 
 Above we see a simple system with three states. States **$S1** and **$S2** share the common behavior 
 of **|b| -> "b" $S3 ^**. To eliminate the redundancy, we will 
 create a new parent state and refactor the common behavior into it. 
+
+.. code-block::
+    :caption: Hierarchical State Machine
 
     #HSM1
 
