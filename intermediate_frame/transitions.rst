@@ -435,11 +435,12 @@ This transition will actually cause a transpiler error:
 
 The reason is simple - there is no exit handler for state **$Start** to send the value that **foo()** returns to. 
 Although it is unlikely that an expression would need to be grouped like this, the syntax supports it so 
-it is ideal for Frame syntax to provide a way to be unambiguos that the **(foo())** expression is not 
+it is ideal for Frame syntax to provide a way to be unambiguous that the **(foo())** expression is not 
 intended to be a clause of the transition. To make this situation transpile, Frame allows for a transition 
 to be enclosed in a group:
 
 .. code-block::
+    :caption: Transition Clause Grouping 
 
     $Start  
         |>|
@@ -449,35 +450,26 @@ With this final bit of syntax we have covered all clauses that comprise the two 
 
 .. admonition:: Transition Grammar Options
     
-    transition: ('(' exit_args ')')? '->' ('(' enter_args ')')? label? '$' state_identifier
-    transition: '(' '->' ('(' enter_args ')')? label? '$' state_identifier ')'
-
-.. code-block::
-    :caption: Forward Event Demo Output
+    transition: ('(' exit_args ')')? '->' ('(' enter_args ')')? label? '$' state_identifier ('(' state_params ')')?
+    transition: '(' '->' ('(' enter_args ')')? label? '$' state_identifier ('(' state_params ')')? ')'
 
 
 State Change
 ------------
 
-#ChangingState
+Frame **state change** use the **->>** operator to do a "lightweight" transition to a new state.
 
-    -interface-
+.. code-block::
 
-    transition
-    changeState
+    $Start  
+        |>|
+            ->> $End ^  
 
-    -machine-
+State changes are lightweight operations as they do not cause the system runtime to send exit and enter 
+events. Instead they simply update the current state to the target. 
 
-    $S0
-        |<| handleTransitionExitEvent() ^
-        |transition| -> "transition" $S1 ^
-
-    $S1
-        |>| handleTransitionEnterEvent() ^
-        |changeState| ->> "change state" $S0 ^
-
-    -actions-
-
-    handleTransitionExitEvent
-    handleTransitionEnterEvent
-##
+While the speed of the state change is a clear advantage,  
+state changes are disallowed out of states with an exit handler or into states with an enter handler.
+The purpose of these restrictions are to make it clear that the enter and exit event handers will 
+not be triggered during a state change. So since they won't be used, Frame disallows their existence
+in order to elimenate confusion why they are not triggered.  
