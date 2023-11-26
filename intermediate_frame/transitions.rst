@@ -418,6 +418,44 @@ The program generates the following output:
 Grouping Syntax
 ++++++++++++++++
 
+Frame notation related to transitions is complex and leads to one ambigous situation.  Consider this 
+transition:
+
+.. code-block::
+
+    $Start  
+        |>|
+            (foo()) -> $Bar ^   
+
+This transition will actually cause a transpiler error:
+
+.. code-block::
+
+    [line 15] Error at '$' : Transition exit args length not equal to exit handler parameter length for state $Start
+
+The reason is simple - there is no exit handler for state **$Start** to send the value that **foo()** returns to. 
+Although it is unlikely that an expression would need to be grouped like this, the syntax supports it so 
+it is ideal for Frame syntax to provide a way to be unambiguos that the **(foo())** expression is not 
+intended to be a clause of the transition. To make this situation transpile, Frame allows for a transition 
+to be enclosed in a group:
+
+.. code-block::
+
+    $Start  
+        |>|
+            (foo()) (-> $Bar) ^  
+
+With this final bit of syntax we have covered all clauses that comprise the two transition options: 
+
+.. admonition:: Transition Grammar Options
+    
+    transition: ('(' exit_args ')')? '->' ('(' enter_args ')')? label? '$' state_identifier
+    transition: '(' '->' ('(' enter_args ')')? label? '$' state_identifier ')'
+
+.. code-block::
+    :caption: Forward Event Demo Output
+
+
 State Change
 ------------
 
