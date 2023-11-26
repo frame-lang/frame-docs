@@ -65,3 +65,56 @@ create a new parent state and refactor the common behavior into it.
     ##
 
 .. image:: images/hsm_with_parent.png
+
+Event Handler Continue Terminator
++++++++++++
+
+As previously mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
+articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
+from other states and are created using the Frame *Dispatch Operator* **=>**. 
+While unhandled events are automatically passed to parent states, the continue operator enables 
+handled event to be passed to a parent state as well:
+
+.. code-block::
+    :caption: Event Handler Continue Terminator
+
+    fn main {
+        var hsm:# = #HSM_Preview()
+        hsm.passMe1()
+        hsm.passMe2()
+    }
+
+    #HSM_Preview
+
+        -interface-
+
+        passMe1
+        passMe2 
+
+        -machine-
+
+        // Dispatch operator (=>) defines state hierarchy
+
+        $Child => $Parent 
+
+            // Continue operator sends events to $Parent
+
+            |passMe1|  :>
+            |passMe2|  print("handled in $Child") :>
+
+        $Parent
+
+            |passMe1| print("handled in $Parent") ^
+            |passMe2| print("handled in $Parent") ^
+
+    ##
+
+Run the `program <https://onlinegdb.com/nChYZ01BD>`_. 
+
+
+.. code-block::
+    :caption: Event Handler Continue Terminator Output
+
+    handled in $Parent
+    handled in $Child
+    handled in $Parent
