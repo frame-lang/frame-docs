@@ -93,12 +93,11 @@ create a new parent state and refactor the common behavior into it.
     ##
 
 .. image:: images/hsm_with_parent.png
-    :height: 300
+    :height: 500
 
-This hierarchy can continue to any desired depth. 
 
 Supporting the HSM architecture is one of the primary reasons the Frame runtime is event based which  
-makes supporting this feature requirement straightforward. 
+makes supporting this feature using event passing straightforward to implement. 
 
 Event Handler Continue Terminator
 +++++++++++
