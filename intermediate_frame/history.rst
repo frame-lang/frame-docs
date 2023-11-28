@@ -3,18 +3,20 @@ State History
 =============
 
 It is sometimes useful to be able to be able to generically transition to a previous state.
-An example of this would be a state that
-manages a dialog that is useful in many different situations. Once it has
-been dismissed the user wants to go back to whatever the prior context was.
+An example of this situation is state that
+manages a dialog box that can be shown in many different situations. Once it has
+been dismissed, however, the system needs to go back to whatever the prior context which 
+might have been any number of possible previous states.
 
-To address this kind of scenario Statecharts introduce the “history” mechanism.
+To address this kind of scenario Frame supports a “history” mechanism.
 
 History 101
 -----------
 
 The following spec illustrates the limitation of state machines with regards
-to history. Below we see states `$B` and `$C` both transition into, and
-dead end in, state `$D`.
+to history. Below we see states `$B` and `$C` both transition into state `$D`.
+However, without using some kind of record keeping, there is no natural way for 
+the state machine to know whether to return to **$B** or **$C**.
 
 .. code-block::
 
@@ -36,11 +38,12 @@ dead end in, state `$D`.
 
     ##
 
-.. image:: images/intermediate_frame/history1.png
+.. image:: images/history1.png
 
 We want to be able to return to the previous state but would need to 
 pass some data to indicate which one to return to and 
 
+.. code-block::
 
     #History102
 
@@ -63,7 +66,7 @@ pass some data to indicate which one to return to and
 
     ##
 
-.. image:: images/intermediate_frame/history2.png
+.. image:: images/history2.png
 
     https://onlinegdb.com/W1VEQLSsrJ
 
@@ -108,7 +111,7 @@ Let’s see how these are used:
 
     ##
 
-.. image:: ../images/intermediate_frame/history201.png
+.. image:: images/history103.png
 
 What we see above is that the state stack push token precedes a transition to a
 new state:
@@ -172,7 +175,7 @@ while the state stack pop operator produces the state to be transitioned into:
 
     ##
 
-.. image:: images/intermediate_frame/history104.png
+.. image:: images/history104.png
 
 Run the `program <https://onlinegdb.com/uqUx2C2tlI>`_. 
 

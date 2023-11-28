@@ -2,6 +2,7 @@
 Advanced Frame Features
 =======================
 
+#. Scopes
 #. The Frame Runtime
 #. Annotations
 #. Persistance
