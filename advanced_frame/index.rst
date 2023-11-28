@@ -8,6 +8,7 @@ Advanced Frame Features
 #. Services (keeps running)
 
 Frame introduces a number of innovations that extend Statechart capabilities.
+* Scopes
 * Conditional tests
 * Transition Parameters
     * Exit Parameters

@@ -18,7 +18,7 @@ dead end in, state `$D`.
 
 .. code-block::
 
-    #History1
+    #History101
 
       -machine-
 
@@ -36,13 +36,13 @@ dead end in, state `$D`.
 
     ##
 
-.. image:: ../images/intermediate_frame/history1.png
+.. image:: images/intermediate_frame/history1.png
 
 We want to be able to return to the previous state but would need to 
 pass some data to indicate which one to return to and 
 
 
-    #History2
+    #History102
 
       -machine-
 
@@ -63,7 +63,7 @@ pass some data to indicate which one to return to and
 
     ##
 
-.. image:: ../images/intermediate_frame/history2.png
+.. image:: images/intermediate_frame/history2.png
 
     https://onlinegdb.com/W1VEQLSsrJ
 
@@ -93,7 +93,7 @@ Let’s see how these are used:
 
 .. code-block::
 
-    #History201
+    #History103
 
       -machine-
 
@@ -125,10 +125,10 @@ while the state stack pop operator produces the state to be transitioned into:
 
 
 .. code-block::
-    :caption: History 3 Demo 
+    :caption: History 104 Demo 
 
     fn main {
-        var sys:# = #History3()
+        var sys:# = #History104()
         sys.gotoB()
         sys.gotoD()
         sys.ret()
@@ -137,7 +137,7 @@ while the state stack pop operator produces the state to be transitioned into:
         sys.ret()
     }
 
-    #History3
+    #History104
 
         -interface-
     
@@ -172,12 +172,14 @@ while the state stack pop operator produces the state to be transitioned into:
 
     ##
 
-Run the `program <https://onlinegdb.com/W1VEQLSsrJ>`_. 
+.. image:: images/intermediate_frame/history104.png
+
+Run the `program <https://onlinegdb.com/uqUx2C2tlI>`_. 
 
 The program generates the following output:
 
 .. code-block::
-    :caption: History 3 Demo Output
+    :caption: History 104 Demo Output
 
     In $A
     In $B
