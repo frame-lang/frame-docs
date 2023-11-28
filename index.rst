@@ -55,6 +55,7 @@ will follow as the project gains support and adoption.
     intermediate_frame/transitions
     intermediate_frame/hsm
     intermediate_frame/history
+    intermediate_frame/scopes
 
 
 .. toctree::

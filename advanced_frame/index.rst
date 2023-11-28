@@ -2,6 +2,11 @@
 Advanced Frame Features
 =======================
 
+#. The Frame Runtime
+#. Annotations
+#. Persistance
+#. Services (keeps running)
+
 Frame introduces a number of innovations that extend Statechart capabilities.
 * Conditional tests
 * Transition Parameters

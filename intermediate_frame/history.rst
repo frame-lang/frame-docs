@@ -2,89 +2,77 @@
 State History
 =============
 
-Classical state machines (Turing machines for sticklers for accuracy)
-permit, but do not define, any specific mechanisms for remembering historical
-state transitions. This special case is common in use cases
-where multiple states can transition to a particular state and then want
-to return to the prior state.
-
+It is sometimes useful to be able to be able to generically transition to a previous state.
 An example of this would be a state that
 manages a dialog that is useful in many different situations. Once it has
 been dismissed the user wants to go back to whatever the prior context was.
 
 To address this kind of scenario Statecharts introduce the “history” mechanism.
 
-
 History 101
 -----------
 
 The following spec illustrates the limitation of state machines with regards
-to history. Below we see states `$A` and `$B` both transitioning into, and
-dead ending in, state `$C`.
+to history. Below we see states `$B` and `$C` both transition into, and
+dead end in, state `$D`.
 
 .. code-block::
 
-    #History101
+    #History1
 
       -machine-
 
         $A
-            |gotoC| -> $C ^
+            |gotoB| -> "B" $B ^
+            |gotoC| -> "C" $C ^
 
         $B
-            |gotoC| -> $C ^
+            |gotoD| -> "D" $D ^
 
         $C
-            |return| ^
+            |gotoD| -> "D" $D ^
+
+        $D
 
     ##
 
-.. image:: ../images/intermediate_frame/history101.png
+.. image:: ../images/intermediate_frame/history1.png
 
-Here we see that $C has no way to know what state preceded it. To solve this
-problem for a pure state machine we would have to do something like this:
+We want to be able to return to the previous state but would need to 
+pass some data to indicate which one to return to and 
 
-.. code-block::
 
-    #History102
+    #History2
 
       -machine-
 
         $A
-            |gotoC| -> $Ca ^
+            |gotoB| -> "B" $B ^
+            |gotoC| -> "C" $C ^
 
         $B
-            |gotoC| -> $Cb ^
+            |gotoD| -> "D" $D("B") ^
 
-        $Ca
-            |return| -> $A ^
+        $C
+            |gotoD| -> "D" $D("C") ^
 
-        $Cb
-            |return| -> $B ^
+        $D [previous_state]
+            |return| 
+                previous_state == "B" ? -> $B ^ :>
+                previous_state == "D" ? -> $C ^ :| ^
 
     ##
 
+.. image:: ../images/intermediate_frame/history2.png
 
-.. image:: ../images/intermediate_frame/history102.png
+    https://onlinegdb.com/W1VEQLSsrJ
 
-$Ca and $Cb would be identical except for the response to the |return| message.
-This is obviously inefficient.
-
-The Solution
+Compartments
 ------------
 
-Automata theory holds that there are are three levels of increasing complexity
-and capability for abstract machines:
 
-#. Finite State Machines
-#. Pushdown Automata
-#. Turing Machines
-
-Pushdown Automata and Turning Machines share the trait of being able to store
-information for future use. Pushdown Automata specifically use a stack for
-storing history while Turning Machines theoretically have a “tape” to store
-information on. In reality if a system can store off data and access it later
-to make a decision it is effectively a Turing Machine.
+State Stack Operators
+------------
 
 For our problem with remembering the last state, a stack will do nicely thus
 giving us the power of a Pushdown Automata. To support this, Frame has two
@@ -135,36 +123,77 @@ while the state stack pop operator produces the state to be transitioned into:
 
     -> $$[-]
 
-Recalling that FrameState is a delegate typedef in C# to allow references to
-methods, we can see that Frame generates a _stateStack_ variable which is
-initialized to a Stack<FrameState>() data structure. Also generated are the push
- and pop functions for the state stack operations.
-
-.. note::
-    Frame is in the process of converting from a code pattern focused on
-     simple states to a new, more advanced concept of **compartments**.
-    Compartments are a essentially a **state closure** data structure that
-    has a state as one of its data members but also other data members that
-    represent an *instance* of a state call. More about this later but for now
-    where you see *state*, or *FrameState* these will soon be converted to
-    the new compartments terminology as the code generators are updated.
 
 .. code-block::
+    :caption: History 3 Demo 
 
-    //=========== Machinery and Mechanisms ===========//
-
-    ...
-
-    private Stack<FrameState> _stateStack_ = new Stack<FrameState>();
-
-    private void _stateStack_push(FrameState state) {
-        _stateStack_.Push(state);
+    fn main {
+        var sys:# = #History3()
+        sys.gotoB()
+        sys.gotoD()
+        sys.ret()
+        sys.gotoC()
+        sys.gotoD()
+        sys.ret()
     }
 
-    private FrameState _stateStack_pop() {
-        FrameState state =  _stateStack_.back();
-        return _stateStack_.Pop();
-    }
+    #History3
+
+        -interface-
+    
+        gotoB
+        gotoC
+        gotoD
+        ret 
+ 
+
+        -machine-
+
+        $A
+            |>| print("In $A") ^
+            |gotoB| -> "B" $B ^
+            |gotoC| -> "C" $C ^
+
+        $B
+            |>| print("In $B") ^
+            |gotoC| -> "C" $C ^
+            |gotoD| $$[+] -> "D" $D ^
+
+        $C
+            |>| print("In $C") ^
+            |gotoB| -> "B" $B ^
+            |gotoD| $$[+] -> "D" $D ^
+
+        $D 
+            |>| print("In $D") ^
+            |ret| 
+                print("returning to ...") 
+                -> $$[-] ^
+
+    ##
+
+Run the `program <https://onlinegdb.com/W1VEQLSsrJ>`_. 
+
+The program generates the following output:
+
+.. code-block::
+    :caption: History 3 Demo Output
+
+    In $A
+    In $B
+    In $D
+    returning to ...
+    In $B
+    In $C
+    In $D
+    returning to ...
+    In $C
+
+
+
+
+
+
 
 History 202
 -----------
@@ -226,6 +255,7 @@ Refactoring Common Behavior
 Now lets refactor the common event handler into a new base state.
 
 .. code-block::
+    :caption: History 3 Demo 
 
     #History203
 
