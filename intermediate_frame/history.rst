@@ -45,6 +45,7 @@ To return to the previous state it would need to save that information and
 use it to decide between the two return transition paths. 
 
 .. code-block::
+    :caption: History 102 - Return to State Using a State Name
 
     #History102
 
@@ -69,17 +70,102 @@ use it to decide between the two return transition paths.
 
 .. image:: images/history2.png
 
+This approach enables us to return to our previous state, but not in a generic way. 
+Additionally, it does not allow us to return to the previous state *in the same 
+condition we left it*. Consider this update: 
 
-Compartments
+.. code-block::
+    :caption: History 102-1 - Return to State Using a State Name
+
+    fn main {
+        var sys:# = #History102_1()
+        sys.gotoB()
+        sys.gotoD()
+        sys.ret()
+    }
+
+    #History102_1
+
+    -interface-
+    
+    gotoB
+    gotoC
+    gotoD
+    ret 
+
+    -machine-
+
+    $A
+        |gotoB| -> "B" $B ^
+        |gotoC| -> "C" $C ^
+
+    $B
+        var b = 0
+
+        |>| 
+            print("Entering B. b = " + str(b)) ^
+
+        |gotoD| 
+            b = 1
+            print("Going to D. b = " + str(b))
+            -> "D" $D("B") ^
+
+    $C
+        |gotoD| -> "D" $D("C") ^
+
+    $D [previous_state]
+        |ret| 
+            previous_state == "B" ? -> "ret" $B ^ :>
+            previous_state == "D" ? -> "ret" $C ^ :| ^
+
+    ##
+
+This is behavior is fine, but for situations where we want to return to a state in 
+the condition we left it this approach does not work. To enable the capability to return 
+to a state in the condition we left it Frame provides a feature that takes advantage 
+of a hidden aspect of how it manages states - the **State Compartment**.
+
+Frame State Compartments
 ------------
 
+So far we have not delved into the architecture of the generated code Frame creates for 
+the system controllers. To understand how state history works, we have to look a little 
+under the covers and discuss State Compartments, or simply **Compartments**. This will 
+be covered in depth in the advanced section later. 
+
+Frame manages data for state instances using special Compartment objects. Here is the 
+Python code Frame generates for the example above: 
+
+.. code-block::
+    :caption: Frame Compartment 
+
+    # ===================== Compartment =================== #
+
+class History102_1Compartment:
+
+    def __init__(self,state):
+        self.state = state
+        self.state_args = {}
+        self.state_vars = {}
+        self.enter_args = {}
+        self.exit_args = {}
+        self.forward_event = None
+
+These objects are created during system intialization of the start state as well
+as for each transition to a new state. Therefore, when simply trnsitioning back to 
+**$B** Frame is creating a completely new instance of state **B**. 
+
+In many situations this is the desired behavior. In our situation, it is not. We 
+want to return to the very same state we left with the variable **b** equal to 1, not 0.
+
+Let's see how we can do that using Frame's history mechanism.
 
 State Stack Operators
 ------------
 
-For our problem with remembering the last state, a stack will do nicely thus
-giving us the power of a Pushdown Automata. To support this, Frame has two
-special operators:
+Frame implements a generic mechanism for state history utilizing a **state stack** mechanism. 
+Stacks have two basic operations - **push** and **pop**. Frame provides two tokens 
+for those operations:
 
 .. list-table:: State Stack Operators
     :widths: 25 25
@@ -125,6 +211,11 @@ while the state stack pop operator produces the state to be transitioned into:
 .. code-block::
 
     -> $$[-]
+
+In the next exmple we can see the state stack enable a way to generically return 
+to either state **$B** or **$C** from **$D**. No 
+
+.. image:: images/history201.png
 
 
 .. code-block::
@@ -175,7 +266,7 @@ while the state stack pop operator produces the state to be transitioned into:
 
     ##
 
-.. image:: images/history104.png
+
 
 Run the `program <https://onlinegdb.com/uqUx2C2tlI>`_. 
 
