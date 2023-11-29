@@ -40,8 +40,9 @@ the state machine to know whether to return to **$B** or **$C**.
 
 .. image:: images/history1.png
 
-We want to be able to return to the previous state but would need to 
-pass some data to indicate which one to return to and 
+The machine itself so far has no mechanism to remember where it came from.
+To return to the previous state it would need to save that information and 
+use it to decide between the two return transition paths. 
 
 .. code-block::
 
@@ -68,7 +69,6 @@ pass some data to indicate which one to return to and
 
 .. image:: images/history2.png
 
-    https://onlinegdb.com/W1VEQLSsrJ
 
 Compartments
 ------------
