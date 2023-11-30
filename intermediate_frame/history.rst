@@ -211,6 +211,8 @@ to either state **$B** or **$C** from **$D**.
 
 .. image:: images/history201.png
 
+The following example explores the differences between returning to a state using a transition 
+versus returning to it using the history mechanisms. 
 
 .. code-block::
     :caption: History 104 Demo 
