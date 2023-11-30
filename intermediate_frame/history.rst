@@ -217,62 +217,62 @@ to either state **$B** or **$C** from **$D**. No
 .. code-block::
     :caption: History 104 Demo 
 
-    fn main {
-        var sys:# = #History104()
-        sys.gotoB()
-        sys.gotoD()
-        sys.ret()
-        sys.gotoC()
-        sys.gotoD()
-        sys.ret()
-    }
+fn main {
+    var sys:# = #History104()
+    sys.gotoB()
+    sys.gotoD()
+    sys.ret()
+    sys.gotoC()
+    sys.gotoD()
+    sys.ret()
+}
 
-    #History104
+#History104
 
-        -interface-
-    
-        gotoB
-        gotoC
-        gotoD
-        ret 
- 
+    -interface-
 
-        -machine-
+    gotoB
+    gotoC
+    gotoD
+    ret
 
-        $A
-            |>| print("In $A") ^
-            |gotoB| -> "B" $B ^
-            |gotoC| -> "C" $C ^
 
-        $B
-            var b = 0
+    -machine-
 
-            |>| print("Entering $B. b = " + str(b)) ^
+    $A
+        |>| print("In $A") ^
+        |gotoB| -> "B" $B ^
+        |gotoC| -> "C" $C ^
 
-            |gotoC| -> "C" $C ^
-            |gotoD| 
-                b = 1
-                print("Going to $D. b = " + str(b))
-                $$[+]  -> "D" $D ^
+    $B
+        var b = 0
 
-        $C
-            var c = 0
+        |>| print("Entering $B. b = " + str(b)) ^
 
-            |>| print("Entering $C. c = " + str(c)) ^
+        |gotoC| -> "C" $C ^
+        |gotoD|
+            b = 1
+            print("Going to $D. b = " + str(b))
+            $$[+]  -> "D" $D ^
 
-            |gotoB| -> "B" $B ^
-            |gotoD| 
-                c = 1
-                print("Going to $D. c = " + str(c))
-                $$[+]  -> "D" $D ^
+    $C
+        var c = 0
 
-        $D 
-            |>| print("In $D") ^
-            |ret| 
-                print("returning to ...") 
-                -> $$[-] ^
+        |>| print("Entering $C. c = " + str(c)) ^
 
-    ##
+        |gotoB| -> "B" $B ^
+        |gotoD|
+            c = 1
+            print("Going to $D. c = " + str(c))
+            $$[+]  -> "D" $D ^
+
+    $D
+        |>| print("In $D") ^
+        |ret|
+            print("returning to ...")
+            -> "ret" $$[-] ^
+
+##
 
 .. image:: images/history104.png
 
