@@ -274,6 +274,7 @@ to either state **$B** or **$C** from **$D**. No
 
     ##
 
+.. image:: images/history104.png
 
 Run the `program <https://onlinegdb.com/kUIdya0s3>`_. 
 
@@ -295,6 +296,8 @@ The program generates the following output:
     Entering $C. c = 1
 
 Notice these lines in particular:
+
+.. code-block::
 
     In $D
     returning to ...
