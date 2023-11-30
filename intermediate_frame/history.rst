@@ -115,11 +115,12 @@ condition we left it*. Consider this update:
 
     $D [previous_state]
         |ret| 
-            previous_state == "B" ? -> "ret" $B ^ :>
-            previous_state == "D" ? -> "ret" $C ^ :| ^
+            previous_state == "B" ? -> "return to $B" $B ^ :>
+            previous_state == "D" ? -> "return to $C" $C ^ :| ^
 
     ##
 
+.. image:: images/history102_1.png
 
 Run the `program <https://onlinegdb.com/bcCp8EByJ9>`_. 
 
