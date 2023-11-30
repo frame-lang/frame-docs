@@ -274,7 +274,7 @@ to either state **$B** or **$C** from **$D**.
 
 .. image:: images/history104.png
 
-Run the `program <https://onlinegdb.com/kUIdya0s3>`_. 
+Run the `program <https://onlinegdb.com/QTa13Oozk>`_. 
 
 The program generates the following output:
 
@@ -285,12 +285,12 @@ The program generates the following output:
     Entering $B. b = 0
     Going to $D. b = 1
     In $D
-    returning to ...
-    Entering $B. b = 1
+    Returning to $B
+    Entering $B. b = 0
     Entering $C. c = 0
     Going to $D. c = 1
     In $D
-    returning to ...
+    Returning to $C
     Entering $C. c = 1
 
 Notice these lines in particular:
@@ -298,11 +298,11 @@ Notice these lines in particular:
 .. code-block::
 
     In $D
-    returning to ...
-    Entering $B. b = 1
+    Returning to $B
+    Entering $B. b = 0
 
     In $D
-    returning to ...
+    Returning to $C
     Entering $C. c = 1
 
 This is evidence that the states **B** and **C** were not reinitalized using the history 
