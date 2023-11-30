@@ -169,7 +169,7 @@ To do so we will utilize special events that Frame generates when a system trans
 
         ...
 
-When a transition occurs Frame sends two special events. In the example above, if the system is in the `$Off` state 
+When a transition occurs Frame sends two special events - **Exit** and **Enter**. In the example above, if the system is in the `$Off` state 
 and receives the `|turnOn|` event it will transition to `$On`. In doing so, the system will first send an exit event ``<``
 to `$Off` which will print "Exiting $Off". Next the system will update the state to  ``$On`` and subsequently send 
 an enter event ``>`` to `$On` which will print "Entering $On".
