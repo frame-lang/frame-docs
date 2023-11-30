@@ -120,52 +120,35 @@ condition we left it*. Consider this update:
 
     ##
 
-This is behavior is fine, but for situations where we want to return to a state in 
-the condition we left it this approach does not work. To enable the capability to return 
-to a state in the condition we left it Frame provides a feature that takes advantage 
-of a hidden aspect of how it manages states - the **State Compartment**.
 
-Frame State Compartments
-------------
+Run the `program <https://onlinegdb.com/bcCp8EByJ9>`_. 
 
-So far we have not delved into the architecture of the generated code Frame creates for 
-the system controllers. To understand how state history works, we have to look a little 
-under the covers and discuss State Compartments, or simply **Compartments**. This will 
-be covered in depth in the advanced section later. 
-
-Frame manages data for state instances using special Compartment objects. Here is the 
-Python code Frame generates for the example above: 
+The program generates the following output:
 
 .. code-block::
-    :caption: Frame Compartment 
+    :caption: History 102-1 Output
 
-    # ===================== Compartment =================== #
+    Hello World
+    Entering B. b = 0
+    Going to D. b = 1
+    Entering B. b = 0
 
-class History102_1Compartment:
+As we can see var b is reset to 0 again after transitioning from $D -> $B.
 
-    def __init__(self,state):
-        self.state = state
-        self.state_args = {}
-        self.state_vars = {}
-        self.enter_args = {}
-        self.exit_args = {}
-        self.forward_event = None
+This is behavior is fine. However, if we want to return to a state *in 
+the condition it was prior to the transition* this approach does not work. 
+In order to support this capability, Frame provides a **history** feature which 
+enables preservation of the previous state's data (low level state).
 
-These objects are created during system intialization of the start state as well
-as for each transition to a new state. Therefore, when simply trnsitioning back to 
-**$B** Frame is creating a completely new instance of state **B**. 
-
-In many situations this is the desired behavior. In our situation, it is not. We 
-want to return to the very same state we left with the variable **b** equal to 1, not 0.
-
-Let's see how we can do that using Frame's history mechanism.
+Let's explore the 
 
 State Stack Operators
 ------------
 
-Frame implements a generic mechanism for state history utilizing a **state stack** mechanism. 
+Frame implements a generic mechanism for **history** utilizing a special **state stack** 
+runtime mechanism. 
 Stacks have two basic operations - **push** and **pop**. Frame provides two tokens 
-for those operations:
+to perform those operations:
 
 .. list-table:: State Stack Operators
     :widths: 25 25
@@ -267,7 +250,6 @@ to either state **$B** or **$C** from **$D**. No
     ##
 
 
-
 Run the `program <https://onlinegdb.com/uqUx2C2tlI>`_. 
 
 The program generates the following output:
@@ -284,12 +266,6 @@ The program generates the following output:
     In $D
     returning to ...
     In $C
-
-
-
-
-
-
 
 History 202
 -----------
@@ -416,3 +392,37 @@ showed its implementation in Frame. In addition, it showed how it works in
 conjunction with Hierarchical State Machines. The combination of these two
 capabilities makes Statecharts and Frame a powerful and efficient way to both
 model and create complex software systems.
+
+
+Frame State Compartments
+------------
+
+So far we have not delved deeply into the architecture of the Frame generated code for 
+the system controllers. To understand how Frame's state history feature works, we have to look a little 
+under the covers and discuss State Compartments, or simply **Compartments**. This will 
+be covered in depth in the advanced section later. 
+
+Frame manages data for state instances using special Compartment objects. Here is the 
+Python code Frame generates for the example above: 
+
+.. code-block::
+    :caption: Frame Compartment 
+
+    # ===================== Compartment =================== #
+
+class History102_1Compartment:
+
+    def __init__(self,state):
+        self.state = state
+        self.state_args = {}
+        self.state_vars = {}
+        self.enter_args = {}
+        self.exit_args = {}
+        self.forward_event = None
+
+These objects are created and initalized during system intialization of the start state as well
+as for each transition to a new state. Therefore, when simply transitioning back to 
+**$B** Frame is creating a completely new instance of state **B**. 
+
+In many situations this is the desired behavior. In our situation, it is not. We 
+want to return to the very same state we left with the variable **b** equal to 1, not 0.
