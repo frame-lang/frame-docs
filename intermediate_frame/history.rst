@@ -321,8 +321,18 @@ Notice these lines in particular:
     Returning to $C
     Entering $C. c = 1
 
-This is evidence that the states **B** and **C** were not reinitalized using the history 
-operators. This behavior is possible due to how Frame implements states as first-class objects called
-**State Compartments** or simply **Compartments**. **Compartments** will 
+When transitioning from $D -> $B we can see that the state variable **b** is reset to 0.
+When using the history mechanism to go from $D -> $C we can see that c still has its previous 
+value of 1. 
+
+This behavior is possible due to how Frame implements states as first-class objects called
+**State Compartments** or simply **Compartments**. When pushing a state to the state stack
+using the **$$[+]** operator, the 
+Frame runtime is actually pushing the current state compartment onto a stack that the 
+runtime maintains. Likewise, when popping the state with **$$[-]**, the runtime removes
+the compartment from the stack. If the popped state is also the target of a transition, 
+the runtime will then set that state as the current state and transition to it as well. 
+
+**Compartments** will 
 be covered in depth in the advanced section later. 
 
