@@ -4,9 +4,9 @@ State History
 
 It is sometimes useful to be able to be able to generically transition to a previous state.
 An example of this situation is state that
-manages a dialog box that can be shown in many different situations. Once it has
-been dismissed, however, the system needs to go back to whatever the prior context which 
-might have been any number of possible previous states.
+manages a dialog box that can be shown in many different situations. When the dialog
+is dismissed, however, the system needs to return to its previous context, which  
+may have been any number of possible states that launched the dialog.
 
 To address this kind of scenario Frame supports a “history” mechanism.
 
@@ -14,9 +14,8 @@ History 101
 -----------
 
 The following spec illustrates the limitation of state machines with regards
-to history. Below we see states `$B` and `$C` both transition into state `$D`.
-However, without using some kind of record keeping, there is no natural way for 
-the state machine to know whether to return to **$B** or **$C**.
+to history. Below we see states **$B** and **$C** both transition into state **$D**.
+
 
 .. code-block::
 
@@ -40,10 +39,9 @@ the state machine to know whether to return to **$B** or **$C**.
 
 .. image:: images/history1.png
 
-The machine itself so far has no mechanism to remember where it came from.
-To return to the previous state it would need to save that information and 
+To return to the previous state there needs to be a way to save that information and 
 use it to decide between the two return transition paths. There are a few 
-ways we could do this but we will choose to pass a state argument containing 
+ways we could do this but for this example we will simply choose to pass a state argument containing 
 the name of the state that we transitioned from. This value will be used 
 in **$D** to determine which state to return to.
 
@@ -76,7 +74,7 @@ in **$D** to determine which state to return to.
 This approach enables us to return to our previous state, but not in a generic way. 
 Every time we add another state that transtions to **$D** we will need to add 
 another contitional to make a test to determine if the machine should return 
-to that new state. Functional, but not elegant or truly scalable. 
+to that new state. Functional, but not elegant or scalable. 
 
 In addtion this approach does not allow us to return to the previous state *in the same 
 condition we left it*. Consider this update: 
@@ -209,7 +207,7 @@ while the state stack pop operator produces the state to be transitioned into:
     -> $$[-]
 
 In the next exmple we can see the state stack enable a way to generically return 
-to either state **$B** or **$C** from **$D**. No 
+to either state **$B** or **$C** from **$D**.  
 
 .. image:: images/history201.png
 
