@@ -65,9 +65,9 @@ in **$D** to determine which state to return to.
             |gotoD| -> "D" $D("C") ^
 
         $D [previous_state]
-            |return| 
-                previous_state == "B" ? -> $B ^ :>
-                previous_state == "D" ? -> $C ^ :| ^
+            |ret| 
+                previous_state == "B" ? -> "ret" $B ^ :>
+                previous_state == "D" ? -> "ret" $C ^ :| ^
 
     ##
 
