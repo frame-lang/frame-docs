@@ -42,7 +42,10 @@ the state machine to know whether to return to **$B** or **$C**.
 
 The machine itself so far has no mechanism to remember where it came from.
 To return to the previous state it would need to save that information and 
-use it to decide between the two return transition paths. 
+use it to decide between the two return transition paths. There are a few 
+ways we could do this but we will choose to pass a state argument containing 
+the name of the state that we transitioned from. This value will be used 
+in **$D** to determine which state to return to.
 
 .. code-block::
     :caption: History 102 - Return to State Using a State Name
@@ -71,7 +74,11 @@ use it to decide between the two return transition paths.
 .. image:: images/history2.png
 
 This approach enables us to return to our previous state, but not in a generic way. 
-Additionally, it does not allow us to return to the previous state *in the same 
+Every time we add another state that transtions to **$D** we will need to add 
+another contitional to make a test to determine if the machine should return 
+to that new state. Functional, but not elegant or truly scalable. 
+
+In addtion this approach does not allow us to return to the previous state *in the same 
 condition we left it*. Consider this update: 
 
 .. code-block::
@@ -100,12 +107,14 @@ condition we left it*. Consider this update:
         |gotoC| -> "C" $C ^
 
     $B
+        // b is set to 0 when $B is initalized
         var b = 0
 
         |>| 
             print("Entering B. b = " + str(b)) ^
 
         |gotoD| 
+            // b set to 1 when leaving $B
             b = 1
             print("Going to D. b = " + str(b))
             -> "D" $D("B") ^
@@ -134,11 +143,14 @@ The program generates the following output:
     Going to D. b = 1
     Entering B. b = 0
 
-As we can see var b is reset to 0 again after transitioning from $D -> $B.
+The first time the system entered **$B** it initialized **b** to 0. 
+When transitioning from $B -> $D this variable was set to 1, but 
+when transitioning $D -> $B we can see it is reset to 0 again.
 
-This is behavior is fine. However, if we want to return to a state *in 
+This is behavior is fine, and in many cases desireable. 
+However, if we want to return to a state *in 
 the condition it was prior to the transition* this approach does not work. 
-In order to support this capability, Frame provides a **history** feature which 
+In order to support returning to the *same* state we left, Frame provides a **history** feature which 
 enables preservation of the previous state's data (low level state).
 
 Let's explore the 
@@ -233,14 +245,26 @@ to either state **$B** or **$C** from **$D**. No
             |gotoC| -> "C" $C ^
 
         $B
-            |>| print("In $B") ^
+            var b = 0
+
+            |>| print("Entering $B. b = " + str(b)) ^
+
             |gotoC| -> "C" $C ^
-            |gotoD| $$[+] -> "D" $D ^
+            |gotoD| 
+                b = 1
+                print("Going to $D. b = " + str(b))
+                $$[+]  -> "D" $D ^
 
         $C
-            |>| print("In $C") ^
+            var c = 0
+
+            |>| print("Entering $C. c = " + str(c)) ^
+
             |gotoB| -> "B" $B ^
-            |gotoD| $$[+] -> "D" $D ^
+            |gotoD| 
+                c = 1
+                print("Going to $D. c = " + str(c))
+                $$[+]  -> "D" $D ^
 
         $D 
             |>| print("In $D") ^
@@ -251,7 +275,7 @@ to either state **$B** or **$C** from **$D**. No
     ##
 
 
-Run the `program <https://onlinegdb.com/uqUx2C2tlI>`_. 
+Run the `program <https://onlinegdb.com/kUIdya0s3>`_. 
 
 The program generates the following output:
 
@@ -259,171 +283,29 @@ The program generates the following output:
     :caption: History 104 Demo Output
 
     In $A
-    In $B
+    Entering $B. b = 0
+    Going to $D. b = 1
     In $D
     returning to ...
-    In $B
-    In $C
+    Entering $B. b = 1
+    Entering $C. c = 0
+    Going to $D. c = 1
     In $D
     returning to ...
-    In $C
+    Entering $C. c = 1
 
-History 202
------------
+Notice these lines in particular:
 
-In our next example we will combine HSMs for refactoring behavior out of two
-states and show how it can work together with the state history mechansism.
+    In $D
+    returning to ...
+    Entering $B. b = 1
 
-The History202 spec below starts in a `$Waiting` state and then transitions
-to `$A` or `$B` depending on how the client drives it.
+    In $D
+    returning to ...
+    Entering $C. c = 1
 
-From there both states have an identical handler to transition to `$C`.
-
-.. code-block::
-
-    #History202
-
-     -interface-
-
-     gotoA
-     gotoB
-     gotoC
-     goBack
-
-     -machine-
-
-       $Waiting
-           |>| print("In $Waiting") ^
-           |gotoA| print("|gotoA|") -> $A ^
-           |gotoB| print("|gotoB|") -> $B ^
-
-       $A
-           |>| print("In $A") ^
-           |gotoB| print("|gotoB|") -> $B ^
-           |gotoC| print("|gotoC|") $$[+] -> "$$[+]" $C ^
-
-       $B
-           |>| print("In $B") ^
-           |gotoA| print("|gotoA|") -> $A ^
-           |gotoC| print("|gotoC|") $$[+] -> "$$[+]" $C ^
-
-       $C
-           |>| print("In $C") ^
-           |goBack| print("|goBack|") -> "$$[-]" $$[-] ^
-
-       -actions-
-
-       print [msg:string]
-
-   ##
-
-.. image:: ../images/intermediate_frame/history202.png
-
-.. raw:: html
-
-    <iframe width="100%" height="475" src="https://dotnetfiddle.net/Widget/aofLnO" frameborder="0"></iframe>
-
-Refactoring Common Behavior
----------------------------
-Now lets refactor the common event handler into a new base state.
-
-.. code-block::
-    :caption: History 3 Demo 
-
-    #History203
-
-       -interface-
-
-       gotoA
-       gotoB
-       gotoC
-       goBack
-
-       -machine-
-
-       $Waiting
-           |>| print("In $Waiting") ^
-           |gotoA| print("|gotoA|") -> $A ^
-           |gotoB| print("|gotoB|") -> $B ^
-
-       $A => $AB
-           |>| print("In $A") ^
-           |gotoB| print("|gotoB|") -> $B ^
-
-       $B => $AB
-           |>| print("In $B") ^
-           |gotoA| print("|gotoA|") -> $A ^
-
-       $AB
-           |gotoC| print("|gotoC| in $AB") $$[+] -> "$$[+]" $C ^
-
-       $C
-           |>| print("In $C") ^
-           |goBack| print("|goBack|") -> "$$[-]" $$[-] ^
-
-       -actions-
-
-       print [msg:string]
-
-    ##
-
-We can see that the duplicated |gotoC| event handler is now moved into $AB and
-both $A and $B inherit behavior from it.
-
-.. image:: ../images/intermediate_frame/history203.png
-
-
-.. raw:: html
-
-    <iframe width="100%" height="475" src="https://dotnetfiddle.net/Widget/U1axyV" frameborder="0"></iframe>
-
-.. note::
-    History203 demonstrates the recommended best practice of using a Frame
-    specification to define a base class (in this case _History203_) and then
-    derive a subclass to provide the implemented actions for behavior.
-
-Conclusion
-----------
-
-The History mechanism is one of the most valuable contributions of Statecharts
-to the evolution of the state machine.
-
-This article introduced the base concept and use case for state history and
-showed its implementation in Frame. In addition, it showed how it works in
-conjunction with Hierarchical State Machines. The combination of these two
-capabilities makes Statecharts and Frame a powerful and efficient way to both
-model and create complex software systems.
-
-
-Frame State Compartments
-------------
-
-So far we have not delved deeply into the architecture of the Frame generated code for 
-the system controllers. To understand how Frame's state history feature works, we have to look a little 
-under the covers and discuss State Compartments, or simply **Compartments**. This will 
+This is evidence that the states **B** and **C** were not reinitalized using the history 
+operators. This behavior is possible due to how Frame implements states as first-class objects called
+**State Compartments** or simply **Compartments**. **Compartments** will 
 be covered in depth in the advanced section later. 
 
-Frame manages data for state instances using special Compartment objects. Here is the 
-Python code Frame generates for the example above: 
-
-.. code-block::
-    :caption: Frame Compartment 
-
-    # ===================== Compartment =================== #
-
-class History102_1Compartment:
-
-    def __init__(self,state):
-        self.state = state
-        self.state_args = {}
-        self.state_vars = {}
-        self.enter_args = {}
-        self.exit_args = {}
-        self.forward_event = None
-
-These objects are created and initalized during system intialization of the start state as well
-as for each transition to a new state. Therefore, when simply transitioning back to 
-**$B** Frame is creating a completely new instance of state **B**. 
-
-In many situations this is the desired behavior. In our situation, it is not. We 
-want to return to the very same state we left with the variable **b** equal to 1, not 0.
