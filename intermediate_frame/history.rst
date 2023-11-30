@@ -217,66 +217,75 @@ versus returning to it using the history mechanisms.
 .. code-block::
     :caption: History 104 Demo 
 
-    fn main {
-        var sys:# = #History104()
-        sys.gotoB()
-        sys.gotoD()
-        sys.ret()
-        sys.gotoC()
-        sys.gotoD()
-        sys.ret()
-    }
+fn main {
+    var sys:# = #History104()
+    print("--------------")
+    sys.gotoB()
+    sys.gotoD()
+    sys.retToB()
+    sys.gotoC()
+    sys.gotoD()
+    sys.retToC()
+    print("--------------")
+}
 
-    #History104
+#History104
 
-        -interface-
+    -interface-
 
-        gotoB
-        gotoC
-        gotoD
-        ret
+    gotoB
+    retToB
+    gotoC
+    retToC
+    gotoD
 
+    -machine-
 
-        -machine-
+    $A
+        |>| print("In $A") ^
+        |gotoB| -> "B" $B ^
 
-        $A
-            |>| print("In $A") ^
-            |gotoB| -> "B" $B ^
-            |gotoC| -> "C" $C ^
+    $B
+        var b = 0
 
-        $B
-            var b = 0
+        // upon reentry using a transition, b == 0
+        |>| print("Entering $B. b = " + str(b)) ^
 
-            |>| print("Entering $B. b = " + str(b)) ^
+        |gotoC| 
+            print("--------------")
+            print("Going to $C.")
+            print("--------------")
+            -> "C" $C ^
+        |gotoD|
+            b = 1
+            print("Going to $D. b = " + str(b))
+            -> "D" $D ^
 
-            |gotoC| -> "C" $C ^
-            |gotoD|
-                b = 1
-                print("Going to $D. b = " + str(b))
-                $$[+]  -> "D" $D ^
+    $C
+        var c = 0
 
-        $C
-            var c = 0
+        // upon reentry using history pop, c == 1
+        |>| print("Entering $C. c = " + str(c)) ^
 
-            |>| print("Entering $C. c = " + str(c)) ^
+        |gotoD|
+            c = 1
+            print("Going to $D. c = " + str(c))
+            $$[+]  -> "D" $D ^
 
-            |gotoB| -> "B" $B ^
-            |gotoD|
-                c = 1
-                print("Going to $D. c = " + str(c))
-                $$[+]  -> "D" $D ^
+    $D
+        |>| print("In $D") ^
+        |retToB|
+            print("Returning to $B")
+            -> "retToB" $B ^
+        |retToC|
+            print("Returning to $C")
+            -> "retToC" $$[-] ^
 
-        $D
-            |>| print("In $D") ^
-            |ret|
-                print("returning to ...")
-                -> "ret" $$[-] ^
-
-    ##
+##
 
 .. image:: images/history104.png
 
-Run the `program <https://onlinegdb.com/QTa13Oozk>`_. 
+Run the `program <https://onlinegdb.com/GWZya9TRJ>`_. 
 
 The program generates the following output:
 
@@ -284,16 +293,21 @@ The program generates the following output:
     :caption: History 104 Demo Output
 
     In $A
+    --------------
     Entering $B. b = 0
     Going to $D. b = 1
     In $D
     Returning to $B
     Entering $B. b = 0
+    --------------
+    Going to $C.
+    --------------
     Entering $C. c = 0
     Going to $D. c = 1
     In $D
     Returning to $C
     Entering $C. c = 1
+    --------------
 
 Notice these lines in particular:
 
