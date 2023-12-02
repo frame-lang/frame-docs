@@ -58,17 +58,17 @@ Boolean tests have the following syntax:
     :header-rows: 1
 
     * - Operator
-        - Name
-        - Purpose
+      - Name
+      - Purpose
     * - '?' | '?!'
-        - Boolean Test Operators
-        - Indicates the statement is a test of the preceeding expression
+      - Boolean Test Operators
+      - Indicates the statement is a test of the preceeding expression
     * - ':'
-        - Else Operator (optional)
-        - Performs as an 'else' in other languages
+      - Else Operator (optional)
+      - Performs as an 'else' in other languages
     * - ':|'
-        - Test Terminator
-        - Closes test statement  
+      - Test Terminator Token
+      - Closes test statement  
 
 
 
