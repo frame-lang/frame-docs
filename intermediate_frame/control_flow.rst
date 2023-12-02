@@ -3,11 +3,65 @@ Control Flow
 ==================
 
 
-Frame is an evolving language and the current version (v0.3.23 at this <i>instant</i>) only supports branching syntax of various flavors. So at the moment you can't loop (no **for**, **while** or any other way to spin around), but that limitation turns out not to be critical for the problem domain Frame is intended to address.
+Frame control flow has a compact syntax for various forms of control flow branching.  
+It is inspired by the 'C' ternary expression:
 
-The two flavors of branching are a boolean if-then-else syntax and a similar pattern matching syntax, both loosely inspired by the [ternary operator](https://en.wikipedia.org/wiki/%3F:) which I always thought came from `C` but apparently was stolen from `CPL` (one of the many languages I've never programmed in).
+.. code-block::
+    :caption: 
 
-The basic syntax for both classes of test are:
+    condition ? value_if_true : value_if_false
+
+The following example sets the variable **x** to 10:
+
+.. code-block::
+    :caption: 
+
+    int a = 10, b = 20, x;
+
+    x = (a < b) ? a : b; // x = a
+
+
+In 'C' the ternary operator is an expression that returns a value. Above we see 
+that **x** is assigned the value of **a** which is 10. 
+
+Frame takes a different approach and uses simlar syntax as a statement, not an expression 
+meaning that no values are returned for assignment. Let's see how this approach works in 
+a simple boolean test first.
+
+Boolean Tests 
+--------
+
+Boolean tests have the following syntax:
+
+.. code-block::
+    :caption: 
+
+    <boolean_expresion> '?' <true_statements> ':' <false_statements> ':|'
+
+.. list-table:: State Stack Operators
+    :widths: 25 25
+    :header-rows: 1
+
+    * - Operator
+      - Name
+      - Purpose
+    * - '?'
+      - Test Operator
+      - Tests the preceeding expression
+    * - ':'
+      - Else Operator (optional)
+      - Performs as an 'else' in other languages
+    * - ':|'
+      - Test Terminator
+      - Closes test statement  
+
+
+The boolean expression can be any expression that evaluates to a boolean. T
+.. code-block::
+    :caption: 
+
+    var x:bool = true
+    x ? print("x is true") :|
 
 ```
     x ?<type> <branches> : <else clause> ::
