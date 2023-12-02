@@ -31,131 +31,136 @@ a simple boolean test first.
 Boolean Tests 
 --------
 
-Boolean tests have the following syntax:
+Frame supports both an "if-then-else" syntax as well as optional "else-if" clauses. Frame 
+uses special tokens instead of keywords for this syntax.
 
-.. code-block::
-    :caption: Frame Boolean Test Statement
-
-    <boolean_expresion> ('?' | '?!') <true_statements> ':' <false_statements> ':|'
-
-.. list-table:: Title
-   :widths: 25 25 50
-   :header-rows: 1
-
-   * - Heading row 1, column 1
-     - Heading row 1, column 2
-     - Heading row 1, column 3
-   * - Row 1, column 1
-     -
-     - Row 1, column 3
-   * - Row 2, column 1
-     - Row 2, column 2
-     - Row 2, column 3
-
-
-.. list-table:: State Stack Operators
+.. list-table:: Boolean Test Operators
     :widths: 25 25 50
     :header-rows: 1
 
     * - Operator
       - Name
       - Purpose
-    * - '?' | '?!'
+    * - ? | ?!
       - Boolean Test Operators
-      - Indicates the statement is a test of the preceeding expression
-    * - ':'
+      - Test if condition is true or not true
+    * - :>
+      - Else Continue Operator
+      - Else-if functionality
+    * - :
       - Else Operator (optional)
       - Performs as an 'else' in other languages
-    * - ':|'
-      - Test Terminator Token
-      - Closes test statement  
+    * - :|
+      - Test Terminator Token 
+      - Ends a Boolean test
 
 
-
+Boolean tests have the following syntax:
 
 .. code-block::
-    :caption: TODO
+    :caption: Frame Boolean Test Syntax
+
+    <condition> ('?' | '?!') <if_true_statements> 
+                ( ':>' <condition> ('?' | '?!') <else_if_statements> )* 
+                ( ':' <if_false_statements> )? ':|'
+
+Boolean tests support "if" and "if not" conditions as well as an "else" clause as shown here: 
+
+.. code-block::
+    :caption: Basic Boolean Tests Demo
 
     var x:bool = true
     x ? print("x is true") :|
 
-```
-    x ?<type> <branches> : <else clause> ::
-```
+    x = true 
+    x ? print("x is true")  :
+        print("x is false") :|
 
-The `:` token is "else" and `::` terminates the statement for all branching statement types.
+    x = false 
+    x ? print("x is true")  :
+        print("x is false") :|
 
-Let's explore the boolean test first.
+    x = true 
+    x ?! print("x is true")  :
+        print("x is false")  :|
 
-## Boolean Tests
+    x = false 
+    x ?! print("x is true")  :
+        print("x is false")  :|
 
-The basic boolean test in Frame is:
+The output of the code above is shown here: 
 
-```
-    x ? callIfTrue() : callIfFalse() ::
-```
-This generates this in `C#`:
-{% highlight csharp %}
-    if (x) {
-        callIfTrue_do();
-    } else {
-        callIfFalse_do();
-    }
-{% endhighlight %}
+.. code-block::
+    :caption: Basic Boolean Tests Demo Output 
 
-To reinforce the point that branching in Frame is not an expression evaluation, see how we can call multiple statements inside each branch:
+    x is true
+    x is true
+    x is false
+    x is false
+    x is true
 
-`Frame`
-```
-x ?
-    a()
-    b()
-:
-    c()
-    d()
-::
-```
-`C#`
-{% highlight csharp %}
-    if (x) {
-        a_do();
-        b_do();
-    } else {
-        c_do();
-        d_do();
-    }
-{% endhighlight %}
+Equality Tests 
+--------
 
+To highlight uses of the test syntax, the next demo shows output of a series of tests 
+organized as "if" statements. In this demo, multiple tests can be true for a given 
+value of y in the loop. 
 
-To negate the test use the `?!` operator:
+.. code-block::
+    :caption: Individual Equality Tests Demo
 
-`Frame`
-```
-x ?! callIfFalse() : callIfTrue() ::
-```
-`C#`
-{% highlight csharp %}
-    if (!(x)) {
-        callIfFalse_do();
-    } else {
-        callIfTrue_do();
-    }
-{% endhighlight %}
+    print("y|")
+    print("--")
+    loop var y = 0; y <= 5; y = y + 1 {
+        prefix = str(y) + "| "
+        y == 0 ? print(prefix + "y == 0") :|
+        y == 1 ? print(prefix + "y == 1") :|
+        y <  2 ? print(prefix + "y <  2") :|
+        y >= 3  && y < 4 ? print(prefix + "y >= 3  && y < 4") :|        
+    }    
 
-Next we will explore the Frame equivalent of the switch statement for string matching.
+.. code-block::
+    :caption: Individal Equality Tests Demo
 
-## Pattern Matching Statements
+    y|
+    --
+    0| y == 0
+    0| y <  2
+    1| y == 1
+    1| y <  2
+    3| y >= 3  && y < 4
 
-Frame uses a novel but easy to understand notation for switch-like statements:
+Frame also supports an if-then-else syntax as well. 
+In contrast, use of the "Else Continue" operator with the same tests from above
+will result in only one clause selected for each increment of y in the loop. 
+Additionally, this demo provides an else clause if none of the conditioned branches 
+match the test criteria. 
 
-```
-test ?<type>
-    /pattern1/ statements :>
-    /pattern2/ statements :
-               statements ::
-```
+.. code-block::
+    :caption: Individual Equality Tests Demo
 
-The currently supported operators are `?~` for string matching and `?#` for number/range matching. The `:` token indicates else/default and `::` terminates the pattern matching statement.
+    print("y|")
+    print("--")
+    loop var y = 0; y <= 5; y = y + 1 {
+        prefix = str(y) + "| "
+        y == 0 ? print(prefix + "y == 0") :>
+        y == 1 ? print(prefix + "y == 1") :>
+        y <  2 ? print(prefix + "y <  2") :>
+        y >= 3  && y < 4 ? print(prefix + "y >= 3  && y < 4") :
+                           print(prefix + "No match") :|        
+    }    
+
+.. code-block::
+    :caption: Individal Equality Tests Demo
+
+    y|
+    --
+    0| y == 0
+    1| y == 1
+    2| No match
+    3| y >= 3  && y < 4
+    4| No match
+    5| No match
 
 ## String Matching
 
