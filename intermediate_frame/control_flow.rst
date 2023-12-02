@@ -4,17 +4,17 @@ Control Flow
 
 
 Frame control flow has a compact syntax for various forms of control flow branching.  
-It is inspired by the 'C' ternary expression:
+It is inspired by the 'C' langauge ternary expression:
 
 .. code-block::
-    :caption: 
+    :caption: 'C' langauge ternary syntax
 
     condition ? value_if_true : value_if_false
 
 The following example sets the variable **x** to 10:
 
 .. code-block::
-    :caption: 
+    :caption: Tenary Expression Example
 
     int a = 10, b = 20, x;
 
@@ -24,8 +24,8 @@ The following example sets the variable **x** to 10:
 In 'C' the ternary operator is an expression that returns a value. Above we see 
 that **x** is assigned the value of **a** which is 10. 
 
-Frame takes a different approach and uses simlar syntax as a statement, not an expression 
-meaning that no values are returned for assignment. Let's see how this approach works in 
+Frame takes a different approach and uses simlar syntax as a statement, not an expression. 
+This means that no values are returned for assignment. Let's see how this works in 
 a simple boolean test first.
 
 Boolean Tests 
@@ -34,9 +34,9 @@ Boolean Tests
 Boolean tests have the following syntax:
 
 .. code-block::
-    :caption: 
+    :caption: Frame Boolean Test Statement
 
-    <boolean_expresion> '?' <true_statements> ':' <false_statements> ':|'
+    <boolean_expresion> ('?' | '?!') <true_statements> ':' <false_statements> ':|'
 
 .. list-table:: State Stack Operators
     :widths: 25 25
@@ -45,9 +45,9 @@ Boolean tests have the following syntax:
     * - Operator
       - Name
       - Purpose
-    * - '?'
-      - Test Operator
-      - Tests the preceeding expression
+    * - '?' | '?!'
+      - Boolean Test Operators
+      - Indicates the statement is a test of the preceeding expression
     * - ':'
       - Else Operator (optional)
       - Performs as an 'else' in other languages
@@ -56,9 +56,10 @@ Boolean tests have the following syntax:
       - Closes test statement  
 
 
-The boolean expression can be any expression that evaluates to a boolean. T
+The boolean expression can be any expression that evaluates to a boolean. 
+
 .. code-block::
-    :caption: 
+    :caption: TODO
 
     var x:bool = true
     x ? print("x is true") :|
