@@ -45,8 +45,8 @@ uses special tokens instead of keywords for this syntax.
       - Boolean Test Operators
       - Test if condition is true or not true
     * - :>
-      - Else Continue Operator
-      - Else-if functionality
+      - Else Continue Operator (optional)
+      - Performs as an 'else if' in other languages
     * - :
       - Else Operator (optional)
       - Performs as an 'else' in other languages
@@ -82,11 +82,11 @@ Boolean tests support "if" and "if not" conditions as well as an "else" clause a
 
     x = true 
     x ?! print("x is true")  :
-        print("x is false")  :|
+         print("x is false") :|
 
     x = false 
     x ?! print("x is true")  :
-        print("x is false")  :|
+         print("x is false") :|
 
 The output of the code above is shown here: 
 
@@ -161,6 +161,9 @@ match the test criteria.
     3| y >= 3  && y < 4
     4| No match
     5| No match
+
+
+Run the `program <https://onlinegdb.com/YQPlNSxCf>`_. 
 
 ## String Matching
 
