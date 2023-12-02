@@ -39,24 +39,24 @@ Boolean tests have the following syntax:
     <boolean_expresion> ('?' | '?!') <true_statements> ':' <false_statements> ':|'
 
 .. list-table:: State Stack Operators
-    :widths: 25 25
+    :widths: 25 25 50
     :header-rows: 1
 
     * - Operator
-      - Name
-      - Purpose
+        - Name
+        - Purpose
     * - '?' | '?!'
-      - Boolean Test Operators
-      - Indicates the statement is a test of the preceeding expression
+        - Boolean Test Operators
+        - Indicates the statement is a test of the preceeding expression
     * - ':'
-      - Else Operator (optional)
-      - Performs as an 'else' in other languages
+        - Else Operator (optional)
+        - Performs as an 'else' in other languages
     * - ':|'
-      - Test Terminator
-      - Closes test statement  
+        - Test Terminator
+        - Closes test statement  
 
 
-The boolean expression can be any expression that evaluates to a boolean. 
+
 
 .. code-block::
     :caption: TODO
