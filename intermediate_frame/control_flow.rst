@@ -38,6 +38,21 @@ Boolean tests have the following syntax:
 
     <boolean_expresion> ('?' | '?!') <true_statements> ':' <false_statements> ':|'
 
+.. list-table:: Title
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Heading row 1, column 1
+     - Heading row 1, column 2
+     - Heading row 1, column 3
+   * - Row 1, column 1
+     -
+     - Row 1, column 3
+   * - Row 2, column 1
+     - Row 2, column 2
+     - Row 2, column 3
+
+
 .. list-table:: State Stack Operators
     :widths: 25 25 50
     :header-rows: 1
