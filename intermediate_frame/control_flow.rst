@@ -165,51 +165,60 @@ match the test criteria.
 
 Run the `program <https://onlinegdb.com/YQPlNSxCf>`_. 
 
-## String Matching
+Matching Tests
+-----------------
 
-The string matching statement looks like this:
+Frame supports a number of testing variants based on a standardized matching syntax.
+Each match type has a different match test format:
 
-`Frame`
-```
-name() ?~
-    /Elizabeth/ hiElizabeth()   :>
-    /Robert/    hiRobert()      :
-                whoAreYou()     ::
-```
-And results in this code:
 
-`C#`
-{% highlight csharp %}
-    if (name_do() == "Elizabeth") {
-        hiElizabeth_do();
-    } else if (name_do() == "Robert") {
-        hiRobert_do();
-    } else {
-        whoAreYou_do();
-    }
-{% endhighlight %}
+.. list-table:: Match Test Tokens
 
-Frame also permits multiple string matches per pattern:
+    :header-rows: 1
 
-`Frame`
-```
-name() ?~
-    /Elizabeth|Beth/ hiElizabeth()   :>
-    /Robert|Bob/     hiRobert()      :
-                     whoAreYou()     ::
-```
-With this output:
+    * - Match Test Type
+      - Test Operator
+      - Match Operator
+    * - Boolean 
+      - ? | ?!
+      - N/A
+    * - String 
+      - ?~
+      - ~/<string>/
+    * - Number
+      - ?#
+      - #/<number>/
+    * - Enumerator
+      - ?:(EnumType) 
+      - :/<enum_value>/
 
-`C#`
-{% highlight csharp %}
-    if (name_do() == "Elizabeth") || (name_do() == "Beth") {
-        hiElizabeth_do();
-    } else if (name_do() == "Robert") || (name_do() == "Bob") {
-        hiRobert_do();
-    } else {
-        whoAreYou_do();
-    }
-{% endhighlight %}
+String Matching
+++++++++++
+
+.. code-block::
+    :caption: String Matching Test Grammar
+
+    <reference_string> '?~' 
+                        ( '~/' <match_string> ( '|' <match_string> )* '/' statements*
+                        ( ':>' ( '~/' <match_string> '/' statements* )* 
+                        ( ':' <if_false_statements> )? ':|'
+
+String match tests determine if a test string is equal to one or more options. If so, 
+the following statements are executed. 
+
+.. code-block::
+    :caption: String Matching Test Examples 
+
+    letter ?~
+        ~/a|e|i|o|u/    vowel(letter)     :>
+        ~/y/            notSure(letter)   :>
+        :               consonant(letter) :|
+
+    food ?~
+        ~/Pea|Potato/     logFoodKind("Vegetable")  :>
+        ~/Apple|Bananna/  logFoodKind("Fruit")      :>
+        ~/Kansas|City/    logFoodKind("Not a food") :>
+        :                 logFoodKind("Not sure")   :|
 
 ## Number Matching
 
