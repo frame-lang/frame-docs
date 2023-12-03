@@ -171,9 +171,7 @@ Matching Tests
 Frame supports a number of testing variants based on a standardized matching syntax.
 Each match type has a different match test format:
 
-
 .. list-table:: Match Test Tokens
-
     :header-rows: 1
 
     * - Match Test Type
@@ -191,6 +189,16 @@ Each match type has a different match test format:
     * - Enumerator
       - ?:(EnumType) 
       - :/<enum_value>/
+
+Each match operator accepts one or more possible values separarated by a '|' token. 
+
+.. code-block::
+    :caption: Multiple Match Syntax
+
+    ~/Alice|Bob/    :> // string test for Alice or Bob
+    #/1|2|3/        :> // number test for 1 or 2 or 3
+    :/Peach|Pear/   :> // enum test for Fruit.Peach or Fruit.Pear 
+
 
 String Matching
 ++++++++++
