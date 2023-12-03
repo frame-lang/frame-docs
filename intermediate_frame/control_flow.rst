@@ -190,6 +190,7 @@ Each match type has a different match test format:
       - ?:(EnumType) 
       - :/<enum_value>/
 
+
 Each match operator accepts one or more possible values separarated by a '|' token. 
 
 .. code-block::
