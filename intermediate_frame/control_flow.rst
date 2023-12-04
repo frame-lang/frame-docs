@@ -169,43 +169,45 @@ Matching Tests
 -----------------
 
 Frame supports a number of testing variants based on a standardized matching syntax.
-Each match type has a different match test format:
+Each match type has a different match test format
 
 .. list-table:: Match Test Tokens
     :header-rows: 1
 
     * - Match Test Type
       - Test Operator
-      - Match Operator
+      - Single Match Example 
+      - Multiple Match Example 
+      - Special Match Tokens
     * - Boolean 
       - ? | ?!
       - N/A
+      - N/A
+      - N/A
     * - String 
       - ?~
-      - ~/<string>/
+      - ~/Roy/
+      - ~/Alice|Bob/
+      - ~// (empty string) !// (null)
     * - Number
       - ?#
-      - #/<number>/
+      - #/42/
+      - #/1|2|3/ 
+      - N/A
     * - Enumerator
       - ?:(EnumType) 
-      - :/<enum_value>/
+      - :/Apple/
+      - :/Peach|Pear/
+      - N/A
 
-
-Each match operator accepts one or more possible values separarated by a '|' token. 
-
-.. code-block::
-    :caption: Multiple Match Syntax
-
-    ~/Alice|Bob/    :> // string test for Alice or Bob
-    #/1|2|3/        :> // number test for 1 or 2 or 3
-    :/Peach|Pear/   :> // enum test for Fruit.Peach or Fruit.Pear 
+As shown in the table, if multiple values should match a branch, separate each by a '|' token.
 
 
 String Matching
 ++++++++++
 
 .. code-block::
-    :caption: String Matching Test Grammar
+    :caption: Basic String Matching Test Grammar
 
     <reference_string> '?~' 
                         ( '~/' <match_string> ( '|' <match_string> )* '/' statements*
@@ -213,10 +215,11 @@ String Matching
                         ( ':' <if_false_statements> )? ':|'
 
 String match tests determine if a test string is equal to one or more options. If so, 
-the following statements are executed. 
+the associated statements are executed. 
+
 
 .. code-block::
-    :caption: String Matching Test Examples 
+    :caption: String Matching Examples 
 
     letter ?~
         ~/a|e|i|o|u/    vowel(letter)     :>
@@ -229,123 +232,48 @@ the following statements are executed.
         ~/Kansas|City/    logFoodKind("Not a food") :>
         :                 logFoodKind("Not sure")   :|
 
-## Number Matching
 
-Number matching is very similar to string pattern matching:
+The string match syntax has two special match operators for **empty strings** and **null** 
+values. String matching uses the token **~** to differentiate the match type. 
 
-`Frame`
-```
-n ?#
-    /1/ print("It's a 1")   :>
-    /2/ print("It's a 2")   :
-        print("It's a lot") ::
-```
-The output is:
+.. code-block::
+    :caption: Special String Matching 
 
-`C#`
-{% highlight csharp %}
-    if (n == 1)) {
-        print_do("It's a 1");
-    } else if (n == 2)) {
-        print_do("It's a 2");
-    } else {
-        print_do("It's a lot");
-    }
-{% endhighlight %}
+    name ?~
+        ~/Alice|Bob/    log("person")       :>
+        ~//             log("empty string") :>
+        !//             log("null")         :>
+        :               log("unknown")      :|
 
-Frame can also pattern match multiple numbers to a single branch as well as compare decimals:
+Number Matching
+++++++++++
 
-`Frame`
-```
-n ?#
-    /1|2/           print("It's a 1 or 2")  :>
-    /101.1|100.1/   print("It's over 100")  :
-                    print("It's a lot")     ::
-```
-The output is:
+Number matching follows the same pattern as string matching but does not have any special 
+match patterns. Number matching uses the token **#** to differentiate the match type. 
 
-`C#`
-{% highlight csharp %}
-    if (n == 1) || (n == 2)) {
-        print_do("It's a 1 or 2");
-    } else if (n == 101.1) || (n == 100.1)) {
-        print_do("It's over 100");
-    } else {
-        print_do("It's a lot");
-    }
-{% endhighlight %}
+.. code-block::
+    :caption: Number Matching Tests
 
-## Branches and Transitions
+    number ?#
+        #/1|2/        log("small")      :>
+        #/3|4/        log("medium")     :>
+        #/5|6/        log("large")      :>
+        #/1.2|7.1/    log("mixed")      :>
+        :             log("unknown")    :|
 
-The default behavior of Frame is to label transitions with the message that generated the transition. This is fine when an event handler only contains a single transition:
+Enumeration Value Matching
+++++++++++
 
-`Frame`
-```
-#GottaBranch
+Enumeration matching follows a similar pattern as string matching but does not have any special 
+match patterns. Enumeration matching uses the token **:** to differentiate the match type
+and also requires identifying the enum type in the test token. 
 
-  -machine-
+.. code-block::
+    :caption: Enumeration Matching 
 
-    $A
-        |e1| -> $B ^
+    today ?:(Day) 
+        :/Monday/                       print("I don't like today") :>
+        :/Tuesday|Wednesday|Thursday/   print("Not great either.")  :>
+        :/Friday/                       print("Pretty good day")    :>
+        :                               print("Yea!")               :|
 
-    $B
-
-##
-```
-
-![](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuG8oIb8L71MgkMgXR2SmErehLa5Nrqx1aSiHH0D5hHJKb0sDJAnJ3I4qbqDgNWhG2000)
-
-However this leads to ambiguity with two or more transitions from the same event handler:
-
-`Frame`
-```
-#GottaBranch_v2
-
-  -machine-
-
-    $Uncertain
-        |inspect|
-            foo() ?
-                -> $True
-            :
-                -> $False
-            :: ^
-
-    $True
-
-    $False
-
-##
-```
-
-![](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuG8oIb8LGlEIKujA4ZFp5AgvQg5Y8KMbgKXSjyISOWW_MYjMGLVN3g692yu2YKCqMYceAHiQcLXdvXKNf2QNG3Ye2i56ubBfa9gN0dGV0000)
-
-Transition labels provide clarity as to which transition is which:
-
-`Frame`
-```
-#GottaBranch_v3
-
-  -machine-
-
-    $Uncertain
-        |inspect|
-            foo() ?
-                -> "true foo" $True
-            :
-                -> "foo not true" $False
-            :: ^
-
-    $True
-
-    $False
-
-##
-```
-
-![](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuG8oIb8LGlEIKujA4ZFp5AgvQg5Y8KMbgKXSjyISOWW_MYjMGLVN3g692yu2YKCqMYcKWAYq_7nKMQWvLY0PXRpy4h0oBeVKl1IWQm00)
-
-
-## Conclusion
-
-The three core branching statements - boolean test, string pattern match and number pattern match - provide a surprisingly useful set of functionality for most common branching needs despite currently being rather limited in expressive power. Look for advancement in the robustness and capability of the pattern matching statements in the future.
