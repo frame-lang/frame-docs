@@ -9,15 +9,5 @@ Statechart notation is used in both UML software
 modeling and the SYSML systems modeling languages as the standard flavor of
 state machine visual languages.
 
-Although Frame has some deviations from a strict interpretation
-of some of the more complex aspects of the Statechart semantics, these
-differences enable a simplified implementation of the generated controller code
-as well as new capabilities
-not addressed in Statecharts. These advanced features will be discussed in
-detail in the advanced section.
-
-We will explore the four key big ideas of Statecharts and see how the Frame
-language supports them. For context we will start with a short, selective,
-incomplete and very opinionated history of state machine implementations.
 
 
