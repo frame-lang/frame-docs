@@ -21,22 +21,63 @@ Frame uses the **#** token special type token to identify a system.
 
 The token **##** indicates the end of the system definition.
 
-System Parameters
+
+System Parameters 
+-----------
+
+Frame provides a way to pass initialization arguments to systems. There are three 
+kinds of system data that can be initialized:
+
+#. Start state parameters
+#. Start state enter event parameters
+#. Domain variables 
+
+Frame system parameters are declared just after the name of the system.
+
+.. code-block::
+    :caption: System Parameters
+
+    #SystemWithParameters [<system_params>]
+
+As mentioned there are three types of system parameters, each with a particular 
+aspect of the system to intialize. To differentiate these categories, Frame 
+groups the parameter types with special parameter lists.
+
+
+.. list-table:: System Parameter Types
+    :widths: 25 25 25
+    :header-rows: 1
+
+    * - Parameter Type
+      - Parameter List Syntax
+      - Example
+    * - Start state parameters
+      - $[<params>]
+      - $[name,dateOfBirth]
+    * - Start state enter event parameters
+      - >[<params>]
+      - >[age,favoriteColor]
+    * - Domain Variables
+      - #[<params>]
+      - #[city,state]
+
+    #SystemWithParameters [$[<start_state_params>], >[<start_state_enter_params>], #[domain_params]]
+
+    #SystemWithParameters [$[msg,msg2], >[p1,p2], #[var1,var2]]
+System With No Parameters
 ------------
 
-Frame enables clients 
 
+Frame's syntax for instantiating a system that takes no parameters is 
 .. code-block::
     :caption: System Instantiation with no Parameters Demo
 
     fn main {
 
-        // No Parameters Demo 
-
-        #NoParameters()
+        #NoParameters() // no arguments passed 
     }
 
-    #NoParameters
+    #NoParameters // no system parameters declared 
 
         -machine-
 
@@ -53,16 +94,6 @@ Run the `program <https://onlinegdb.com/Q6sB6hmvQ>`_.
 
 Above we can see **#NoParameters** is instantiated in **main**. Upon launch, the system is sent 
 a **>** message which is handled in the start state and prints "System1 started".
-
-System Parameters 
------------
-
-Frame provides a way to pass initialization arguments to systems. There are three 
-kinds of system data that can be initialized:
-
-#. Start state parameters
-#. Start state enter event parameters
-#. Domain data
 
 Start State Parameters 
 +++++++++++
