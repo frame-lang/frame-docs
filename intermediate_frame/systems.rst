@@ -53,17 +53,23 @@ groups the parameter types with special parameter lists.
       - Example
     * - Start state parameters
       - $[<params>]
-      - $[name,dateOfBirth]
+      - $[prefix,loopCount]
     * - Start state enter event parameters
       - >[<params>]
       - >[age,favoriteColor]
     * - Domain Variables
       - #[<params>]
-      - #[city,state]
+      - #[startMessage,endMessage]
+
+.. code-block::
+    :caption: System Parameter Groups
 
     #SystemWithParameters [$[<start_state_params>], >[<start_state_enter_params>], #[domain_params]]
+    ##
 
-    #SystemWithParameters [$[msg,msg2], >[p1,p2], #[var1,var2]]
+    #SystemWithParametersExample [$[name,dateOfBirth], $[prefix,loopCount], #[startMessage,endMessage]]
+    ##
+
 System With No Parameters
 ------------
 
