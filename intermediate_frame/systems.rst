@@ -2,7 +2,14 @@
 Systems
 ==================
 
-Frame's focus is on helping softwre architects and developers design systems.
+Frame's focus is on helping softwre architects and developers design and deploy systems.
+Behind the scenes, Frame is utilizing "object-oriented" classes (or equivalent) to 
+implement a system design pattern and injecting a supporing runtime kernel. This 
+pattern will be explored in more depth in advanced articles on Frame's implementation.
+
+System Syntax 
+---------
+
 Frame uses the **#** token special type token to identify a system.  
 
 .. code-block::
@@ -14,9 +21,13 @@ Frame uses the **#** token special type token to identify a system.
 
 The token **##** indicates the end of the system definition.
 
+System Parameters
+------------
+
+Frame enables clients 
 
 .. code-block::
-    :caption: System Instance Launch  
+    :caption: System Instantiation with no Parameters Demo
 
     fn main {
 
@@ -36,11 +47,11 @@ The token **##** indicates the end of the system definition.
 Run the `program <https://onlinegdb.com/Q6sB6hmvQ>`_. 
 
 .. code-block::
-    :caption: System Instance Launch Output 
+    :caption: System Instantiation with no Parameters Demo Output 
     
     #NoParameters started
 
-Above we can see **#SystemParams1** is instantiated in **main**. Upon launch, the system is sent 
+Above we can see **#NoParameters** is instantiated in **main**. Upon launch, the system is sent 
 a **>** message which is handled in the start state and prints "System1 started".
 
 System Parameters 
