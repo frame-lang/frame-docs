@@ -50,16 +50,16 @@ groups the parameter types with special parameter lists.
 
     * - Parameter Type
       - Parameter List Syntax
-      - Example
+      - Argument List Syntax
     * - Start state parameters
       - $[<params>]
-      - $[prefix,loopCount]
+      - $(<args>)
     * - Start state enter event parameters
       - >[<params>]
-      - >[age,favoriteColor]
+      - >(args)
     * - Domain Variables
       - #[<params>]
-      - #[startMessage,endMessage]
+      - #(args)
 
 .. code-block::
     :caption: System Parameter Groups
@@ -67,14 +67,14 @@ groups the parameter types with special parameter lists.
     #SystemWithParameters [$[<start_state_params>], >[<start_state_enter_params>], #[domain_params]]
     ##
 
-    #SystemWithParametersExample [$[name,dateOfBirth], $[prefix,loopCount], #[startMessage,endMessage]]
+    #SystemWithParametersExample [$[prefix,loopCount], >[age,favoriteColor], #[startMessage,endMessage]]
     ##
 
 System With No Parameters
 ------------
 
+Systems taking no parameters have an empty system list and take no arguments when instantiated.
 
-Frame's syntax for instantiating a system that takes no parameters is 
 .. code-block::
     :caption: System Instantiation with no Parameters Demo
 
@@ -99,7 +99,7 @@ Run the `program <https://onlinegdb.com/Q6sB6hmvQ>`_.
     #NoParameters started
 
 Above we can see **#NoParameters** is instantiated in **main**. Upon launch, the system is sent 
-a **>** message which is handled in the start state and prints "System1 started".
+a **>** message which is handled in the start state and prints "NoParameters started".
 
 Start State Parameters 
 +++++++++++
@@ -108,14 +108,15 @@ Start State Parameters
     :caption: Start State Parameters Demo
 
     fn main {
+        // System Start State Arguments 
         #StartStateParameters($("#StartStateParameters started"))
     }
 
-    #StartStateParameters [$[msg]]
+    #StartStateParameters [$[msg]] // Start Start State Parameters Declared
 
         -machine-
 
-        $Start [msg]
+        $Start [msg] // Start State Parameters
             |>| print(msg) ^
     ##
 
@@ -133,14 +134,16 @@ Start State Enter Parameters
     :caption: Start State Enter Parameters Demo
 
     fn main {
+        // System Start State Enter Arguments 
         #StartStateEnterParameters(>("#StartStateEnterParameters started"))
     }
 
-    #StartStateEnterParameters [>[msg]]
+    #StartStateEnterParameters [>[msg]] // // System Start State Enter Parameters 
 
         -machine-
 
         $Start 
+            // Start State Enter Parameters
             |>| [msg] print(msg) ^
     ##
 
@@ -158,10 +161,11 @@ System Domain Parameters
     :caption: System Domain Parameters Demo 
 
     fn main {
+        // System Domain Arguments
         #SystemDomainParameters(#("SystemDomainParameters started"))
     }
 
-    #SystemDomainParameters [#[msg]]
+    #SystemDomainParameters [#[msg]] // System Domain Parameters
 
         -machine-
 
@@ -170,6 +174,7 @@ System Domain Parameters
 
         -domain-
 
+        // System Domain Argument initialization overridden 
         var msg = nil 
 
     ##
@@ -180,3 +185,48 @@ Run the `program <https://onlinegdb.com/6W0B4Mgap>`_.
     :caption: System Domain Parameters Demo Output 
 
     SystemDomainParameters started
+
+
+System Factory 
++++++++++++
+
+Systems are intatiated and initialized by a runtime **system factory**. The implementation 
+of the system factory is explained in the advanced section. The system factory does the 
+following steps when launching a system: 
+
+#. Initialize the start state parameters 
+#. Initialize the state state event parameters 
+#. Initialize any specficed domain variables 
+#. Sends the enter event to the start state 
+
+.. code-block::
+    :caption: System Initialization Demo  
+
+    fn main {
+        #SystemInitializationDemo($("a","b"),>("c","d"),#("e","f"))
+    }
+
+    #SystemInitializationDemo [$[A,B], >[C,D], #[E,F]]
+
+        -machine-
+
+        $Start [A,B]
+            |>| [C,D] print(A + B + C + D + E + F) ^
+
+    
+        -domain-
+
+        var E = nil
+        var F = nil 
+    ## 
+
+Above we see that the lower case letters a..f are mapped to the equivalent system 
+parameters or domain variables.
+
+
+Run the `program <https://onlinegdb.com/exFLCwgAl>`_. 
+
+.. code-block::
+    :caption: System Initialization Demo Output 
+
+    abcdef
