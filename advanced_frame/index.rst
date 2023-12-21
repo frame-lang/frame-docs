@@ -2,10 +2,12 @@
 Advanced Frame Features
 =======================
 
+#. Operations
+#. Persistance
 #. Scopes
 #. The Frame Runtime
 #. Annotations
-#. Persistance
+
 #. Services (keeps running)
 
 Frame introduces a number of innovations that extend Statechart capabilities.

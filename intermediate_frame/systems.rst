@@ -196,8 +196,8 @@ following steps when launching a system:
 
 #. Initialize the start state parameters 
 #. Initialize the state state event parameters 
-#. Initialize any specficed domain variables 
-#. Sends the enter event to the start state 
+#. Initialize any specified domain variables 
+#. Send the enter event to the start state 
 
 .. code-block::
     :caption: System Initialization Demo  
