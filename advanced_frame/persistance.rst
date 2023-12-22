@@ -24,6 +24,19 @@ of the system.
             ^(jsonpickle.encode(self))
         }
 
+.. code-block::
+    :caption: Use of marshal functionality
+
+        var demo:# = #PersistDemo()
+    
+        // get deep copy
+        var data = demo.marshal()
+
+        // remove reference to system
+        demo = nil
+
+To reconstitute a runninng system in the state it was previously in, first create 
+an **unmarshal [data]** static operation: 
 
 .. code-block::
     :caption: System Reconstitution 
@@ -34,6 +47,17 @@ of the system.
         unmarshal [data] {
             ^(jsonpickle.decode(data)) 
         } 
+
+Then call the **unmrshall** operation through the system type specifier: 
+
+.. code-block::
+    :caption: Persistence Mechanisms
+
+        // Restore system using static operation
+        demo = #PersistDemo.unmarshal(data)
+
+The demo variable now references the **#PersistDemo** instance in the state it 
+was previously in.
 
 .. code-block::
     :caption: Persistence Mechanisms
@@ -88,7 +112,7 @@ of the system.
         demo = nil
 
         loop var i = 0; i < 10; i = i + 1 {
-        
+
             // Restore system using static operation
             demo = #PersistDemo.unmarshal(data)
 
