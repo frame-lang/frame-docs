@@ -2,12 +2,142 @@ Persistance
 ==========
 
 An important capability of many types of software is supporting **workflows**. 
-In general a workflow is an asynchronously executed flow of 
-steps that may result in different outcomes or actions being executed. Most commonly
+A workflow is an asynchronously executed sequence of event driven 
+steps . Most commonly
 the asychronous aspect of a workflow means that the it must be able to be persisted 
-until a new event or condition occurs to drive the next step in the process. 
+between each step in the process. 
+
+Frame for Python supports persistence using the `**jsonpickle** library <https://jsonpickle.github.io/>`_ 
+combined with Frame operations. 
+
+To perform a deep copy of a system, create an operation (ours is called **marshal**) 
+that uses **jsonpickle.encode(self)** to get a JSON data structure of the state 
+of the system.
 
 
+.. code-block::
+    :caption: Deep Copy of System State
+
+        -operations-
+
+        marshal : JSON {
+            ^(jsonpickle.encode(self))
+        }
+
+
+.. code-block::
+    :caption: System Reconstitution 
+
+        -operations-
+
+        #[static]
+        unmarshal [data] {
+            ^(jsonpickle.decode(data)) 
+        } 
+
+.. code-block::
+    :caption: Persistence Mechanisms
+
+    #PersistDemo
+
+        -interface-
+
+        revived 
+
+        -machine-
+
+        $Start 
+            var revived_count = 0
+
+            |>| 
+                print("Started") ^
+
+            |revived| 
+                revived_count = revived_count + 1
+                print("Revived = " + str(revived_count) + " times") 
+            ^
+
+        -operations-
+
+        #[static]
+        unmarshal [data] {
+            ^(jsonpickle.decode(data)) 
+        } 
+
+        marshal {
+            ^(jsonpickle.encode(self))
+        }
+        
+    ##
+
+.. code-block::
+    :caption: Persistence Demo
+
+    `import sys`
+    `import time`
+    `import jsonpickle`
+
+    fn main {
+
+        var demo:# = #PersistDemo()
+    
+        // get deep copy
+        var data = demo.marshal()
+
+        // remove reference to system
+        demo = nil
+
+        loop var i = 0; i < 10; i = i + 1 {
+        
+            // Restore system using static operation
+            demo = #PersistDemo.unmarshal(data)
+
+            // increment revived count
+            demo.revived()
+
+            // get deep copy
+            data = demo.marshal()
+
+            // remove reference to system
+            demo = nil
+        }
+
+    }
+
+    #PersistDemo
+
+        -interface-
+
+        revived 
+
+        -machine-
+
+        $Start 
+            var revived_count = 0
+
+            |>| 
+                print("Started") ^
+
+            |revived| 
+                revived_count = revived_count + 1
+                print("Revived = " + str(revived_count) + " times") 
+                ^
+
+        -operations-
+
+        #[static]
+        unmarshal [data] {
+            ^(jsonpickle.decode(data)) 
+        } 
+
+        marshal : JSON {
+            ^(jsonpickle.encode(self))
+        }
+        
+    ##
+
+.. code-block::
+    :caption: Workflow Demo
 
     `import sys`
     `import time`
