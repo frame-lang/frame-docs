@@ -1,7 +1,7 @@
 Persistance
 ==========
 
-An important capability of many types of software is supporting **workflows**. 
+An important capability of many types of software applications is supporting **workflows**. 
 A workflow is an asynchronously executed sequence of event driven 
 steps . Most commonly
 the asychronous aspect of a workflow means that the it must be able to be persisted 
@@ -23,9 +23,9 @@ of the system:
             ^(jsonpickle.encode(self))
         }
 
-Persisting the system is as simple as calling the operation and then saving the data 
-on disk, in a database or other in some other durable way. In our case we will simply keep
-the data in memory.
+Persisting the system is as simple as calling the **marschal** operation and then saving the data 
+to disk, in a database or other in some other durable manner. For simplicity we will simply keep
+the data in memory in these demos.
 
 .. code-block::
     :caption: Use of marshal functionality
@@ -106,7 +106,7 @@ be incremented and printed when the **revived** event is received. To do so, we 
             ^(demo) 
         } 
 
-We will do a simple test on the system by creating it and then immeditely persisting it:
+We will start by creating the system and then immeditely persisting it:
 
 
 .. code-block::
@@ -124,11 +124,11 @@ Upon creating the demo we will see the following output from the **$Start** stat
 event handler: 
 
 .. code-block::
-    :caption: todo
+    :caption: Start State Enter Message
 
     Started
 
-Next we will loop 3 times and revive and persist the system with each loop: 
+Next we will loop 3 times, reviving and persisting the system with each loop: 
 
 .. code-block::
     :caption: todo
@@ -229,7 +229,7 @@ As an incremental step towards a workflow example, the Traffic Light system in t
 demo implements a cycle of persisted state transitions.
 
 .. code-block::
-    :caption: Persisted Traffic Light
+    :caption: Traffic Light Demo
 
     `import sys`
     `import time`
@@ -239,7 +239,7 @@ demo implements a cycle of persisted state transitions.
 
         var tl:# = #TrafficLight()
         var data = tl.marshal()
-        tl = None
+        tl = nil
         time.sleep(.5)
 
         loop var x = 0; x < 9; x = x + 1 {
@@ -293,15 +293,29 @@ demo implements a cycle of persisted state transitions.
         
     ##
 
+.. code-block::
+    :caption: Traffic Light Demo Output
+
+    Green
+    Yellow
+    Red
+    Green
+    Yellow
+    Red
+    Green
+    Yellow
+    Red
+    Green
 
 Workflows
 ----------
 
-Our final demo is a true workflow. It is basically the same functionality as the Traffic 
-Light demo but results in an end state that ties together many of the capabilities 
-shown in the previous demos. The flow progresses from a **$Ready** state through a couple 
-of "work" steps and completes in an end state of **$Done**. If further events are sent 
-to progress, the state detects that and notifies the caller that the workflow is complete.
+Our final demo is a true workflow which builds upon the core functionality of the Traffic 
+Light demo and ties together many of the capabilities 
+shown in the previous demos. The flow progresses from an initial **$Ready** state through a couple 
+of "work" steps and completes in an end state of **$Done**. Any additional events 
+to progress the flow after reaching **Done** results in an increasingly urgent
+response to the caller that the workflow is complete.
 
 .. code-block::
     :caption: Workflow Demo
@@ -312,6 +326,7 @@ to progress, the state detects that and notifies the caller that the workflow is
 
     fn main {
 
+        // instantiate system
         var flow:# = #Workflow()
 
         // delay
@@ -367,17 +382,17 @@ to progress, the state detects that and notifies the caller that the workflow is
                 -> $Done ^
 
         $Done
-            var exclamation_count = 1
+            var exclaimation_count = 1
 
             |>|
                 print("Done.") ^
 
             |next|
                 print("I told you I was done", end="") 
-                loop var i = 0; i < exclamation_count; i = i + 1 {
+                loop var i = 0; i < exclaimation_count; i = i + 1 {
                     print("!",end="")
                 }
-                exclamation_count = exclamation_count + 1
+                exclaimation_count = exclaimation_count + 1
                 print("")
                 
                 ^
