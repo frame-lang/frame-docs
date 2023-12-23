@@ -7,22 +7,26 @@ steps . Most commonly
 the asychronous aspect of a workflow means that the it must be able to be persisted 
 between each step in the process. 
 
-Frame for Python supports persistence using the `**jsonpickle** library <https://jsonpickle.github.io/>`_ 
+Frame for Python supports a pattern for persistence using the `**jsonpickle** library <https://jsonpickle.github.io/>`_ 
 combined with Frame operations. 
 
 To perform a deep copy of a system, create an operation (ours is called **marshal**) 
-that uses **jsonpickle.encode(self)** to get a JSON data structure of the state 
+that uses **jsonpickle.encode(self)** to get a JSON object containing the state 
 of the system.
 
 
 .. code-block::
-    :caption: Deep Copy of System State
+    :caption: Operation to Deep Copy the System State
 
         -operations-
 
         marshal : JSON {
             ^(jsonpickle.encode(self))
         }
+
+Utilization is as simple as calling the operation and then persisting the data 
+on disk, database or other durable location. In our case we will simply keep in 
+memory.
 
 .. code-block::
     :caption: Use of marshal functionality
@@ -35,8 +39,8 @@ of the system.
         // remove reference to system
         demo = nil
 
-To reconstitute a runninng system in the state it was previously in, first create 
-an **unmarshal [data]** static operation: 
+To reconstitute a system, first create 
+an **unmarshal [data]** *static* operation and return the output of **jsonpickle.decode(data)** : 
 
 .. code-block::
     :caption: System Reconstitution 
@@ -48,7 +52,7 @@ an **unmarshal [data]** static operation:
             ^(jsonpickle.decode(data)) 
         } 
 
-Then call the **unmrshall** operation through the system type specifier: 
+Next call the **unmrshall** operation through the system type specifier: 
 
 .. code-block::
     :caption: Persistence Mechanisms
@@ -58,6 +62,10 @@ Then call the **unmrshall** operation through the system type specifier:
 
 The demo variable now references the **#PersistDemo** instance in the state it 
 was previously in.
+
+The following example demonstrates this functionality. The **#PersistDemo** system 
+has a single state **$Started** which has a state variable **revived_count** which will be used to 
+track how many times the state (and by proxy the system in this case) has been revived. 
 
 .. code-block::
     :caption: Persistence Mechanisms
@@ -111,13 +119,10 @@ was previously in.
         // remove reference to system
         demo = nil
 
-        loop var i = 0; i < 10; i = i + 1 {
+        loop var i = 0; i < 3; i = i + 1 {
 
             // Restore system using static operation
             demo = #PersistDemo.unmarshal(data)
-
-            // increment revived count
-            demo.revived()
 
             // get deep copy
             data = demo.marshal()
@@ -150,8 +155,10 @@ was previously in.
         -operations-
 
         #[static]
-        unmarshal [data] {
-            ^(jsonpickle.decode(data)) 
+        unmarshal [data] : #PersistDemo  {
+            var demo:# = jsonpickle.decode(data)
+            demo.revived()
+            ^(demo) 
         } 
 
         marshal : JSON {
