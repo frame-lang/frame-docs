@@ -65,6 +65,8 @@ will follow as the project gains support and adoption.
     :name: sec-advanced-frame
 
     advanced_frame/index
+    advanced_frame/operations
+    advanced_frame/persistance
 
 .. toctree::
     :hidden:
