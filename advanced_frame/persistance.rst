@@ -228,6 +228,14 @@ Persisted Traffic Light
 As an incremental step towards a workflow example, the Traffic Light system in the next 
 demo implements a cycle of persisted state transitions.
 
+
+.. image:: images/traffic_light.png
+    :height: 300
+
+The main loop will first instantiate and then persist the TrafficLight system. After sleeping 
+the program will enter a loop that reloads the system, sends a tick to it and then 
+persists and sleeps again. 
+
 .. code-block::
     :caption: Traffic Light Demo
 
@@ -283,11 +291,11 @@ demo implements a cycle of persisted state transitions.
         -operations-
 
         #[static]
-        unmarshal [data] {
+        unmarshal [data] : #TrafficLight  {
             ^(jsonpickle.decode(data)) 
         } 
 
-        marshal {
+        marshal : JSON {
             ^(jsonpickle.encode(self))
         }
         
@@ -393,18 +401,16 @@ response to the caller that the workflow is complete.
                     print("!",end="")
                 }
                 exclaimation_count = exclaimation_count + 1
-                print("")
-                
-                ^
+                print("") ^
 
         -operations-
 
         #[static]
-        unmarshal [data] {
+        unmarshal [data] : #Workflow  {
             ^(jsonpickle.decode(data)) 
         } 
 
-        marshal {
+        marshal : JSON {
             ^(jsonpickle.encode(self))
         }
         

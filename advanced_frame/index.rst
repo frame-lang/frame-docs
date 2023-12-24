@@ -2,29 +2,13 @@
 Advanced Frame Features
 =======================
 
+#. Annotations
+#. Compartments
 #. Operations
 #. Persistance
 #. Scopes
 #. The Frame Runtime
-#. Annotations
-
 #. Services (keeps running)
-
-Frame introduces a number of innovations that extend Statechart capabilities.
-* Scopes
-* Conditional tests
-* Transition Parameters
-    * Exit Parameters
-    * Enter Parameters
-    * State Parameters
-* State Variables
-* Compartments
-* Deferred transitions
-* Event Forwarding
-* System Parameters and Initialization
-* Persistance
-
-
 
 .. toctree::
     :name: toc-advanced-frame
