@@ -233,8 +233,8 @@ demo implements a cycle of persisted state transitions.
     :height: 300
 
 The main loop will first instantiate and then persist the TrafficLight system. After sleeping 
-the program will enter a loop that reloads the system, sends a tick to it and then 
-persists and sleeps again. 
+the program will enter a loop that reloads the system, sends a tick to it,  
+persists the system again and then sleeps. 
 
 .. code-block::
     :caption: Traffic Light Demo
