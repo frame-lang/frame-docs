@@ -1,4 +1,4 @@
-Services and CLI Programs
+Services
 ==========
 
 
