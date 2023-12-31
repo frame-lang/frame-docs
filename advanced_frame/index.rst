@@ -2,19 +2,13 @@
 Advanced Frame Features
 =======================
 
+#. Configuration
 #. Annotations
-#. Compartments
 #. Operations
 #. Persistance
 #. Scopes
 #. The Frame Runtime
-#. Services (keeps running)
+#. Services
+#. CLI Programs
 
-.. toctree::
-    :name: toc-advanced-frame
 
-    control_flow
-    transition_parameters
-    state_variables
-    compartments
-    simple_machines

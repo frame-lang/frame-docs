@@ -1,6 +1,8 @@
 Compartments
 ============
 
+
+
 In the sections on transition and state parameters, as well as state variables,
 no details were given as
 to how this data is passed to the state, intialized and/or preserved.

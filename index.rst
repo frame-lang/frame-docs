@@ -65,6 +65,8 @@ will follow as the project gains support and adoption.
     :name: sec-advanced-frame
 
     advanced_frame/index
+    advanced_frame/attributes
+    advanced_frame/compartments
     advanced_frame/operations
     advanced_frame/persistance
     advanced_frame/cli_programs
