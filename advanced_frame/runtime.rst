@@ -1,8 +1,9 @@
 The Frame Runtime
 ============
 
-Frame supports a highly specialized set of capabilities related to Frame's first class entitites 
-- states and events. 
+Frame supports a highly specialized set of capabilities related to Frame's first class entitites - states and events. 
+
+
 Frame syntax is enabled by the code generated Frame runtime code needed to implement the following capabilities:
 
 #. System intitialization
@@ -13,13 +14,24 @@ Frame syntax is enabled by the code generated Frame runtime code needed to imple
 #. State history
 #. Services
 
+
+Frame Runtime Architecture 
+--------------------------
+
+Frame states have two aspects - 
+
+#. the state method that contains the code for the state
+#. state compartments which contain all the data for a particular instance of a state
+
+Let's explore the details of the compartment data next. 
+
 State Compartments 
 ------------
 
 Most of Frame's advanced capabilities stem from langauge support for **State Compartments**. A compartment 
 is a data structure containing the following data:
 
-#. The name of the type of state the compartment relates to
+#. The name of the state method the compartment relates to
 #. The state argugments
 #. The state local variables 
 #. The enter event arguments 
@@ -40,6 +52,20 @@ is a data structure containing the following data:
             self.enter_args = {}
             self.exit_args = {}
             self.forward_event = None
+
+
+Frame maintains two core references to compartents to make the architecture work:
+
+#. A reference to the current state (self.__compartment) 
+#. A reference to the next state to transition to (self.__next_compartment)
+
+The **__next_compartment** variable is only set while executing a transition and is otherwise unset. 
+
+.. code-block::
+    :caption: Compartment References 
+
+        self.__compartment: 'Runtime2Compartment' = Runtime2Compartment(self.__state)
+        self.__next_compartment: 'Runtime2Compartment' = None
 
 Let's explore each of these aspects, starting with how state compartments are used during system initialization. 
 
@@ -262,7 +288,8 @@ immediately updating the  **self.__compartment** variable (which references the 
 instead caches off the new compartment and returns. This approach *defers* the transition execution 
 for the kernel to handle. This approach, though complex, enbles Frame to support long running services
 that continually transition upon entry to a new state. If this approach was not taken (as was the case in 
-previous runtime implementations) then the stack would quickly blow up with repeated transitions.
+previous runtime implementations) then the stack would quickly blow up with repeated transitions that did not 
+fully pop the stack by returning to the caller.
 
 When **$S0** returns to the kernel from the **self.__router(e)** call, it then enters a loop testing 
 if there is a **self__next_compartment** to transition to:
@@ -422,13 +449,196 @@ Here is the full runtime code listing for this system:
     if __name__ == '__main__':
         main()
 
+Transition Parameters 
+---------------------
 
-        
+The demo below shows how enter, exit and state parameters are implemented using the same basic pattern 
+as before. A **Runtime2** system is instantiated and then its next interface method is called. 
 
-Event Forwarding
+.. code-block::
+    :caption: todo 
+
+    fn main {
+        var runtime_demo:# = #Runtime2()
+        runtime_demo.next(1,2,3)
+    }
+
+    #Runtime2
+
+        -interface-
+
+        next [a,b,c]
+
+        -machine-
+
+        $S0 
+            |<| [a] 
+                print("a=" + str(a), end="") ^
+
+            |next| [a,b,c]
+                (a) -> (b) $S1(c) ^
+
+        $S1 [c]
+            |>| [b]
+                print("; b=" + str(b) + "; c=" + str(c)) ^
+
+    ##  
+
+The **next()** interface method recieves three arguments which are added to a FrameEvent as parameters
+and passed to the kernel.
+
+.. code-block::
+    :caption: todo 
+
+    def next(self,a,b,c):
+        parameters = {}
+        parameters["a"] = a
+        parameters["b"] = b
+        parameters["c"] = c
+        e = FrameEvent("next",parameters)
+        self.__kernel(e)
+
+The **next** event handler is then executed and the a,b,c parameters are distributed respectively to 
+the exit parameters to the current state compartment and the enter arguments and the state arguments 
+to the next state compartment. The deferred transition is then set and subsequently control is passed back to 
+the router and then the kernel methods.   
+
+.. code-block::
+    :caption: todo 
+
+    # ----------------------------------------
+    # $S0
+    
+    def __runtime2_state_S0(self, e):
+        if e._message == "<":
+            print("a=" + str(e._parameters["a"]),end = "")
+            return
+        elif e._message == "next":
+            self.__compartment.exit_args["a"] = e._parameters["a"]
+            compartment = Runtime2Compartment('__runtime2_state_S1')
+            compartment.enter_args["b"] = e._parameters["b"]
+            compartment.state_args["c"] = e._parameters["c"]
+            self.__transition(compartment)
+            return   
+
+As we can see, the event handlers contain the code initializing the compartment and transition that will actually execute in 
+the kernel. The event handlers also contain the exit event handler code triggered from the kernel:
+
+.. code-block::
+    :caption: Kernel Exit Event Handler Call 
+
+    
+    # ==================== System Runtime =================== #
+    
+    def __kernel(self, e):
+
+        ...
+
+        # exit current state
+        self.__router(FrameEvent( "<", self.__compartment.exit_args))
+        # change state
+        self.__compartment = next_compartment
+
+                
+.. code-block::
+    :caption: $S1 Frame Code 
+
+        $S1 [c]
+            |>| [b]
+                print("; b=" + str(b) + "; c=" + str(c)) ^
+
+.. code-block::
+    :caption: $S1 Python Code 
+
+    # ----------------------------------------
+    # $S1
+    
+    def __runtime2_state_S1(self, e):
+        if e._message == ">":
+            print("; b=" + str(e._parameters["b"]) + "; c=" + str((self.__compartment.state_args["c"])))
+            return
+
+Event Forwarding Runtime Support
 -----------
 
-Transitions are effected by a two step process:
+The Frame event forwarding mechanism provides the ability to recieve an event in one state and 
+then pass it to another state to handle. Below we see a simple example where state **$S0** recieves 
+the **next** event and simply forwards it to state **$S1** to handle and print.
+
+.. code-block::
+    :caption: Event Forwarding Demo
+
+    fn main {
+        var runtime_demo:# = #Runtime3()
+        runtime_demo.next(1,2,3)
+    }
+
+    #Runtime3
+
+        -interface-
+
+        next [a,b,c]
+
+        -machine-
+
+        $S0 
+            |next| [a,b,c]
+                -> => $S1 ^
+
+        $S1
+            |next| [a,b,c]
+                print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c)) ^
+
+
+Frame enables this capability by utilizing a special **forward_event** attribute on compartments 
+to store a reference to the event that should be forwarded:
+
+.. code-block::
+    :caption: Event Forwarding Code in Originating State
+
+    # ----------------------------------------
+    # $S0
+    
+    def __runtime3_state_S0(self, e):
+        if e._message == "next":
+            compartment = Runtime3Compartment('__runtime3_state_S1')
+            compartment.forward_event = e
+            self.__transition(compartment)
+            return
+
+In the kernel logic for a transition a test is performed for the existence of a forwarded event. 
+If the forwarded event was an enter event then this event is simply passed to the router. If 
+it is some other event type then the kernel logic sends a new enter event to the router first and then 
+follows it with the forwarded event:
+
+.. code-block::
+    :caption: Event Forwarding Code in Kernel
+
+    def __kernel(self, e):
+        
+        ...
+
+        # loop until no transitions occur
+        while self.__next_compartment != None:
+
+        ...
+
+            if next_compartment.forward_event is None:
+                # send normal enter event
+                self.__router(FrameEvent(">", self.__compartment.enter_args))
+            else: # there is a forwarded event
+                if next_compartment.forward_event._message == ">":
+                    # forwarded event is enter event
+                    self.__router(next_compartment.forward_event)
+                else:
+                    # forwarded event is not enter event
+                    # send normal enter event
+                    self.__router(FrameEvent(">", self.__compartment.enter_args))
+                    # and now forward event to new, intialized state
+                    self.__router(next_compartment.forward_event)
+                next_compartment.forward_event = None
+
+In all cases the forwarded event property on the compartment is unset. 
 
 History State Stack
 -----------
