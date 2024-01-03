@@ -109,27 +109,37 @@ condition we left it*. Consider this update:
         var b = 0
 
         |>| 
-            print("Entering B. b = " + str(b)) ^
+            print("Entering $B. b = " + str(b)) ^
 
         |gotoD| 
             // b set to 1 when leaving $B
             b = 1
-            print("Going to D. b = " + str(b))
+            print("Going to $D. b = " + str(b))
             -> "D" $D("B") ^
 
     $C
-        |gotoD| -> "D" $D("C") ^
+        // c is set to 0 when $B is initalized
+        var c = 0
+
+        |>| 
+            print("Entering $C. c = " + str(c)) ^
+
+        |gotoD| 
+            // c set to 1 when leaving $C
+            c = 1
+            print("Going to $D. $C = " + str(c))
+            -> "D" $D("C") ^
 
     $D [previous_state]
         |ret| 
             previous_state == "B" ? -> "return to $B" $B ^ :>
-            previous_state == "D" ? -> "return to $C" $C ^ :| ^
+            previous_state == "C" ? -> "return to $C" $C ^ :| ^
 
     ##
 
 .. image:: images/history102_1.png
 
-Run the `program <https://onlinegdb.com/bcCp8EByJ9>`_. 
+Run the `program <https://onlinegdb.com/6FnhU1jUR>`_. 
 
 The program generates the following output:
 

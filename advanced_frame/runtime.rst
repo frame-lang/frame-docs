@@ -607,9 +607,13 @@ to store a reference to the event that should be forwarded:
             return
 
 In the kernel logic for a transition a test is performed for the existence of a forwarded event. 
-If the forwarded event was an enter event then this event is simply passed to the router. If 
+If there isn't one then the kernel sends an enter event along with the enter parameters. 
+
+If there was a forwarded event then the kernel takes two different paths depending on if 
+the forwarded event was an enter event or not. If it is it then it is simply passed to the router. If 
 it is some other event type then the kernel logic sends a new enter event to the router first and then 
-follows it with the forwarded event:
+follows it with the forwarded event. The important aspect to the logic is that in all code paths the kernel 
+makes sure the new state receives an enter event, whether forwarded or newly created.
 
 .. code-block::
     :caption: Event Forwarding Code in Kernel
@@ -638,12 +642,207 @@ follows it with the forwarded event:
                     self.__router(next_compartment.forward_event)
                 next_compartment.forward_event = None
 
-In all cases the forwarded event property on the compartment is unset. 
+This completes our exploration of the kernel aspect to the runtime. Next we will take a look at system instantiation 
+and how system parameters are intialized.  
+
+
+System Initalization
+-----------
+
+There are three aspects of system startup that are parameterized and can be externally initalizaed:
+
+#. Start state parameters
+#. Start state enter event parameters 
+#. Domain variables
+
+.. code-block::
+    :caption: System Initalization Parameters
+
+    fn main {
+        #Runtime4($(1), >(2), #(3))
+    }
+
+    #Runtime4 [$[a], >[b], #[c]]
+
+        -machine-
+
+        $S0 [a] 
+            |>| [b]
+                print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c)) ^
+
+        -domain-
+
+        var c = nil
+    ##
+
+Above we see that each aspect of the system is intialized with one argument. The system factory (__init__([...])) handles all of 
+the logic for setting the start state parameters and domain variables:
+
+
+.. code-block::
+    :caption: System Initalization Parameters
+
+    def main():
+        Runtime4(1,2,3)
+
+    class Runtime4:
+        
+        
+        # ==================== System Factory =================== #
+        
+        def __init__(self,start_state_state_param_a,start_state_enter_param_b,domain_param_c):
+            
+            # Create and intialize start state compartment.
+            
+            self.__compartment: 'Runtime4Compartment' = Runtime4Compartment('__runtime4_state_S0')
+            self.__next_compartment: 'Runtime4Compartment' = None
+            self.__compartment.state_args["a"] = start_state_state_param_a
+            self.__compartment.enter_args["b"] = start_state_enter_param_b
+            
+            # Initialize domain
+            
+            self.c  = domain_param_c
+            
+            # Send system start event
+            frame_event = FrameEvent(">", self.__compartment.enter_args)
+            self.__kernel(frame_event)
+        
+        # ===================== Machine Block =================== #
+        
+        # ----------------------------------------
+        # $S0
+        
+        def __runtime4_state_S0(self, e):
+            if e._message == ">":
+                print("a=" + str((self.__compartment.state_args["a"])) + "; b=" + str(e._parameters["b"]) + "; c=" + str(self.c))
+                return
+    
+    ...
+
+We can see above how the start state can access all of the initialized parameters on the compartment as well as the domain.
 
 History State Stack
 -----------
 
+.. code-block::
+    :caption: State Stack Demo
+
+    fn main {
+        var ss:# = #StateStack()
+        ss.next()
+        ss.next()
+        ss.ret()
+        ss.ret()
+    }
+    
+    #StateStack
+
+        -interface-
+
+        next
+        ret
+
+        -machine-
+
+            $A
+                |>| print("$A") ^
+                |next| $$[+] -> "$$[+]" $B ^
+
+            $B
+                |>| print("$B") ^
+                |next| $$[+] -> "$$[+]" $C ^
+                |ret| -> "$$[-]" $$[-] ^
+
+            $C
+                |>| print("$C") ^
+                |ret| -> "$$[-]" $$[-] ^
+
+    ##
 
 
+.. code-block::
+    :caption: State Stack Demo Output 
 
+    $A
+    $B
+    $C
+    $B
+    $A
+
+The system mechanisms for accomplishing this capability are first to create a **self.__state_stack** array during 
+system initialization. Then, when transitioning from a state that will be returned to later, push the 
+current compartment on the state stack before the transition: 
+
+.. code-block::
+    :caption: State Stack Push and Transition
+
+    self.__state_stack_push(self.__compartment)
+    compartment = StateStackCompartment('__statestack_state_C')
+    self.__transition(compartment)
+
+
+.. code-block::
+    :caption: State Stack Pop and Return
+
+    compartment = self.__state_stack_pop()
+    self.__transition(compartment)
+
+Focusing on state **$B** here is what these mechanics looks like in context: 
+
+.. code-block::
+    :caption: State Stack Demo Listing
+
+    ...
+
+    class StateStack:
+        
+        
+        # ==================== System Factory =================== #
+        
+        def __init__(self):
+            
+            # Create state stack.
+            
+            self.__state_stack = []
+            
+        ...
+      
+        # ===================== Machine Block =================== #
+      
+        ...
+
+        # ----------------------------------------
+        # $B
+        
+        def __statestack_state_B(self, __e):
+            if __e._message == ">":
+                print("$B")
+                return
+            elif __e._message == "next":
+                self.__state_stack_push(self.__compartment)
+                # $$[+]
+                compartment = StateStackCompartment('__statestack_state_C')
+                self.__transition(compartment)
+                return
+            elif __e._message == "ret":
+                # $$[-]
+                compartment = self.__state_stack_pop()
+                self.__transition(compartment)
+                return
+        
+        ...
+
+        # ==================== System Runtime =================== #
+        
+        ...
+
+        def __state_stack_push(self, compartment: 'StateStackCompartment'):
+            self.__state_stack.append(compartment)
+        
+        def __state_stack_pop(self):
+            return self.__state_stack.pop()
+        
+
+
+        
     
