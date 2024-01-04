@@ -1,14 +1,14 @@
 Operations
 ==========
 
-Frame's syntax is focused on the modeling, design and implementation of systems 
-using state machines. Frame's basic syntax  restricts access to the system through
-the system intialization parameters and interface.
+Frame's mission is the design and implementation of systems 
+using state machines. To that end Frame's core syntax restricts access to the system through
+the system intialization mechanisms (system parameters) and the interface methods.
 
-However it is in some cases desirable to have direct access to the inner workings of 
+However it can be desirable to have direct access to the inner state of 
 the system. To facilitate this use case, Frame supports **Operations**. Operations 
 are publically accessible access calls that do not create FrameEvents or interact 
-with the state machine. 
+with the system state machine. 
 
 Operations are declared in the **-operations-** block which must be declared, if it 
 exists, in the following block order:
@@ -19,10 +19,10 @@ exists, in the following block order:
 
     #OperationsBlock
 
+        -operations- 
         -interface-
         -machine-
         -actions-
-        -operations- 
         -domain-
 
     ##
