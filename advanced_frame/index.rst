@@ -1,14 +1,16 @@
 
-Advanced Frame Features
+Advanced Frame 
 =======================
 
-#. Configuration
-#. Annotations
+Frame has a few capabilities that support important use cases. In this section 
+we will explore the following topics: 
+
+#. Attributes
 #. Operations
 #. Persistance
-#. Scopes
 #. The Frame Runtime
 #. Services
 #. CLI Programs
+
 
 
