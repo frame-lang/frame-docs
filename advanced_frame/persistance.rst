@@ -7,7 +7,7 @@ steps . Most commonly
 the asychronous aspect of a workflow means that the it must be able to be persisted 
 between each step in the process. 
 
-Frame for Python supports a pattern for persistence using the `**jsonpickle** library <https://jsonpickle.github.io/>`_ 
+Frame for Python supports a pattern for persistence using the `jsonpickle library <https://jsonpickle.github.io/>`_ 
 combined with Frame operations. 
 
 To perform a deep copy of a system, create an operation (ours is called **marshal**) 
@@ -23,7 +23,7 @@ of the system:
             ^(jsonpickle.encode(self))
         }
 
-Persisting the system is as simple as calling the **marschal** operation and then saving the data 
+Persisting the system is as simple as calling the **marshal** operation and then saving the data 
 to disk, in a database or other in some other durable manner. For simplicity we will simply keep
 the data in memory in these demos.
 
@@ -70,7 +70,7 @@ Persistance Demo
 Let's create a persitable system that tracks how many times its been 
 saved and restored. Our **#PersistDemo** system 
 has a single state **$Started** which has a state variable **revived_count** which will be used to 
-track how many times the state (and by proxy the system in this case) has been revived. 
+track how many times the state (and by proxy the system) has been revived. 
 
 .. code-block::
     :caption: State with Counter for Revival Count
@@ -415,3 +415,14 @@ response to the caller that the workflow is complete.
         }
         
     ##
+
+
+.. code-block::
+    :caption: Workflow Demo Output
+    
+    Ready
+    Doing Step1
+    Doing Step2
+    Done.
+    I told you I was done!
+    I told you I was done!!
