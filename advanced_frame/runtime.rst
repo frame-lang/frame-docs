@@ -1,10 +1,9 @@
 The Frame Runtime
 ============
 
-Frame supports a highly specialized set of capabilities related to Frame's first class entitites - states and events. 
-
-
-Frame syntax is enabled by the code generated Frame runtime code needed to implement the following capabilities:
+Frame is a highly opinionated language focused on the semantics of its first class entitites - 
+systems, states and events. These entities have special runtime code related to the following 
+capabilities they support: 
 
 #. System intitialization
 #. Event creation
@@ -14,14 +13,20 @@ Frame syntax is enabled by the code generated Frame runtime code needed to imple
 #. State history
 #. Services
 
+This article will discuss these capabilbities in depth and explore their implementation in Python. 
 
 Frame Runtime Architecture 
 --------------------------
 
-Frame states have two aspects - 
+At the heart of each Frame system is a state machine comprised of one or more states. This fact makes
+the architecture of Frame states a defining aspect to the runtime implementation. For object-oriented languages 
+Frame's code generator implements Frame systems, not surprisingly, as object-oriented classes. 
 
-#. the state method that contains the code for the state
-#. state compartments which contain all the data for a particular instance of a state
+Frame makes a deliberate choice regarding how to implement states, as there are many possible approaches. 
+In the current implementation, Frame states possess two defining aspects. 
+
+#. state *functionality* is defined in a class method that contains the code for that *type* of state
+#. state *data* is contained in compartments which contain all the data for a particular *instance* of a state
 
 Let's explore the details of the compartment data next. 
 
