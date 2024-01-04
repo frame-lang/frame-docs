@@ -9,8 +9,9 @@ we will explore the following topics:
 #. Operations
 #. Persistance
 #. The Frame Runtime
-#. Services
 #. CLI Programs
+#. Services
+
 
 
 

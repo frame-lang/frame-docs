@@ -66,9 +66,9 @@ will follow as the project gains support and adoption.
 
     advanced_frame/index
     advanced_frame/attributes
-    advanced_frame/compartments
     advanced_frame/operations
     advanced_frame/persistance
+    advanced_frame/runtime
     advanced_frame/cli_programs
     advanced_frame/services
 
