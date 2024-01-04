@@ -27,21 +27,7 @@ exists, in the following block order:
 
     ##
 
-
-.. code-block::
-    :caption: Operations Block Position
-
-    #OperationsBlock
-
-        -interface-
-        -machine-
-        -actions-
-        -operations- 
-        -domain-
-
-    ##
-
-Operations follow the same syntax as inteface calls and actions:
+Operations follow the same syntax as actions:
 
 .. code-block::
     :caption: Operations Block Position
@@ -50,7 +36,6 @@ Operations follow the same syntax as inteface calls and actions:
 
         -operations- 
 
-        basic
         deluxe [p1:T,p2:T] : T {
             ^(p1 + p2)
         }
@@ -59,7 +44,7 @@ Operations follow the same syntax as inteface calls and actions:
 
 
 One of the important use cases for operations is to support testing scenarios 
-by providing a means of inspecting the raw state without engaging the state machine.
+by providing a means of inspecting the raw state without interacting with the state machine.
 
 .. code-block::
     :caption: Inspecting Domain Data with Operations
@@ -87,9 +72,7 @@ by providing a means of inspecting the raw state without engaging the state mach
 Static Operations 
 --------
 
-Operations can be associated with the system type rather than an instance of a system.
-These kinds of operations are called **static** operations which are oranized as a library 
-of routines accessible by the system type. 
+Frame supports declaring operations to be static using the **#[static]** attribute. 
 
 .. code-block::
     :caption: Static Operations
@@ -111,12 +94,15 @@ of routines accessible by the system type.
         
     ##
 
-As seen above, 
 
-Static operations can not access data of any system instance. Additionally, Frame 
-does not currently support any concept of static data related to the type of a system
-so does not have special access to that kind of data either. 
+Static operations cannot access data of any system instance. Additionally, Frame 
+does not currently support any concept of static data as is common in many languages. 
+Therefore static operations are currently limited to serving as a library of functions
+related to the system type. While this is (currently) a very limited use case, 
+this does have utility implementing a *persistence* mechansim for Frame systems. 
+System persistance will be explored in a later article.
 
+Below we can see a simple use case for creating static operations for a calculator system: 
 
 .. code-block::
     :caption: Static Operations
