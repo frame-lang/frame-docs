@@ -266,7 +266,7 @@ Calling the **next** interface method triggers a series of calls resulting in th
 #. The router method
 #. The state $S0 method
 
-In **$S0** the **next** event handler actually executes the transition by creating and initializing
+In **$S0** the **next** event handler executes the transition by creating and initializing
 a new **$S1** compartment which is then passed to **self.__transition(compartment)**:
 
 .. code-block::
@@ -289,17 +289,22 @@ a new **$S1** compartment which is then passed to **self.__transition(compartmen
 
 Notice that rather than 
 immediately updating the  **self.__compartment** variable (which references the current state compartment), Frame 
-instead caches off the new compartment and returns. This approach *defers* the transition execution 
-for the kernel to handle. This approach, though complex, enbles Frame to support long running services
-that continually transition upon entry to a new state. If this approach was not taken (as was the case in 
-previous runtime implementations) then the stack would quickly blow up with repeated transitions that did not 
-fully pop the stack by returning to the caller.
+caches off the new compartment in a **self.__next_compartment** runtime managed variable and returns. 
+This code *defers* the actual transition execution 
+so the kernel can handle it rather than the event handler. 
 
-When **$S0** returns to the kernel from the **self.__router(e)** call, it then enters a loop testing 
-if there is a **self__next_compartment** to transition to:
+Although complex, this technique is needed to support long running services
+that continually transition upon entry to a new state. If this approach was not used the stack would 
+eventually blow up with transition calls that did not 
+fully pop the stack by returning to the caller. This functionality enables Frame support for long running 
+services that continually transition from state to state in their enter event handlers and never 
+return to the calling client. 
+
+When **$S0** returns to the kernel from the **self.__router(e)** call, the kernel enters a loop that tests 
+for a **self__next_compartment** to transition to:
 
 .. code-block::
-    :caption: todo 
+    :caption: Kernel Transition Loop  
 
     def __kernel(self, e):
         
@@ -315,7 +320,7 @@ If it does transition, then it gets a local reference to the cached compartment 
 The next step is to send an exit event to the current state and update the current state to the new one:
 
 .. code-block::
-    :caption: todo 
+    :caption: Kernel Exit Event and State Change Code
 
     # exit current state
     self.__router(FrameEvent( "<", self.__compartment.exit_args))
@@ -323,10 +328,10 @@ The next step is to send an exit event to the current state and update the curre
     self.__compartment = next_compartment
 
 Finally, the kernel takes care of handling a forwarded event. As we aren't forwarding 
-one, only this section applies to our demo: 
+one, only the following code applies to our demo: 
 
 .. code-block::
-    :caption: todo 
+    :caption: Kernel Enter Event Code 
 
     if next_compartment.forward_event is None:
         # send normal enter event
@@ -341,7 +346,7 @@ Here is the full runtime code listing for this system:
 
 
 .. code-block::
-    :caption: todo 
+    :caption: Runtime1 System Demo 
 
      class FrameEvent:
         def __init__(self, message, parameters):
@@ -492,7 +497,7 @@ The **next()** interface method recieves three arguments which are added to a Fr
 and passed to the kernel.
 
 .. code-block::
-    :caption: todo 
+    :caption: Next Interface Method Code 
 
     def next(self,a,b,c):
         parameters = {}
@@ -502,10 +507,18 @@ and passed to the kernel.
         e = FrameEvent("next",parameters)
         self.__kernel(e)
 
-The **next** event handler is then executed and the a,b,c parameters are distributed respectively to 
-the exit parameters to the current state compartment and the enter arguments and the state arguments 
-to the next state compartment. The deferred transition is then set and subsequently control is passed back to 
-the router and then the kernel methods.   
+The **next** event handler is then executed where the a,b,c parameters are distributed to 
+the exit parameters for the current state and the enter parameters and state parameters 
+for the next state. 
+
+.. code-block::
+    :caption: $S0 Transition Parameters 
+
+    |next| [a,b,c]
+        (a) -> (b) $S1(c) ^
+
+As we can see below, a,b,c are used to set the various transition parameters and
+the deferred transition is then set.   
 
 .. code-block::
     :caption: todo 
@@ -525,8 +538,18 @@ the router and then the kernel methods.
             self.__transition(compartment)
             return   
 
-As we can see, the event handlers contain the code initializing the compartment and transition that will actually execute in 
-the kernel. The event handlers also contain the exit event handler code triggered from the kernel:
+
+What we see above is the first stage of the Frame runtime code for executing a transition. This code 
+initializes the runtime 
+variables which will be used by the kernel to use to actually perform the transition. After the return statement is called 
+control passes back to the router which then returns to the kernel.
+
+When the router returns, the kernel then performs the following steps: 
+
+#. Start a loop testing for the existence of a **self.__next_compartment** that will continue until no transitions occur during the loop. 
+#. Cache the **self.__next_compartment** into a local variable and then unset it. This is to simplify other kernel code.
+#. Send exit event to current state
+#. Change state to the new state compartment
 
 .. code-block::
     :caption: Kernel Exit Event Handler Call 
@@ -536,12 +559,27 @@ the kernel. The event handlers also contain the exit event handler code triggere
     
     def __kernel(self, e):
 
-        ...
+        # send event to current state
+        self.__router(__e)
+        
+        # loop until no transitions occur
+        while self.__next_compartment != None:
+            next_compartment = self.__next_compartment
+            self.__next_compartment = None
 
-        # exit current state
-        self.__router(FrameEvent( "<", self.__compartment.exit_args))
-        # change state
-        self.__compartment = next_compartment
+            # exit current state
+            self.__router(FrameEvent( "<", self.__compartment.exit_args))
+            # change state
+            self.__compartment = next_compartment
+
+Now that the **self.__compartment** has been updated to the new compartment the kernel can send the enter event to it.
+
+.. code-block::
+    :caption: Kernel Enter Event Code (with no Event Forwarding)
+
+    if next_compartment.forward_event is None:
+        # send normal enter event
+        self.__router(FrameEvent(">", self.__compartment.enter_args))
 
                 
 .. code-block::
