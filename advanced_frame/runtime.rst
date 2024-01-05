@@ -37,7 +37,7 @@ Most of Frame's advanced capabilities stem from langauge support for **State Com
 is a data structure containing the following data:
 
 #. The name of the state method the compartment relates to
-#. The state argugments
+#. The state arguments
 #. The state local variables 
 #. The enter event arguments 
 #. The exit event arguments 
@@ -64,20 +64,21 @@ Frame maintains two core references to compartents to make the architecture work
 #. A reference to the current state (self.__compartment) 
 #. A reference to the next state to transition to (self.__next_compartment)
 
-The **__next_compartment** variable is only set while executing a transition and is otherwise unset. 
+The **__next_compartment** variable is only set while the system is in the process of executing a transition. 
 
 .. code-block::
-    :caption: Compartment References 
+    :caption: System Runtime Compartment References 
 
-        self.__compartment: 'Runtime2Compartment' = Runtime2Compartment(self.__state)
-        self.__next_compartment: 'Runtime2Compartment' = None
+    self.__compartment: 'Runtime0Compartment' = Runtime0Compartment('__runtime0_state_S0')
+    self.__next_compartment: 'Runtime0Compartment' = None
+
 
 Let's explore each of these aspects, starting with how state compartments are used during system initialization. 
 
 State Compartments and System Initialization
 -------------------------------
 
-To begin our exploration of the runtime we will begin with a trivial one state system that simply prints 
+To begin our exploration of the runtime we will examine a trivial one state system that simply prints 
 a message on startup.
 
 .. code-block::
@@ -112,7 +113,7 @@ is instantiated.
     if __name__ == '__main__':
         main()
 
-The **__init__()** method for the system does the following:
+The **__init__()** method for the **Runtime0** system does the following:
 
 #. Create and initialize the start state compartment 
 #. Initalize all system domain variables 
@@ -121,22 +122,24 @@ The **__init__()** method for the system does the following:
  .. code-block::
     :caption: todo 
 
-    # ==================== System Factory =================== #
-    
-    def __init__(self):
+    class Runtime0:
         
-         # Create and intialize start state compartment.
+        # ==================== System Factory =================== #
         
-        self.__compartment: 'Runtime0Compartment' = Runtime0Compartment('__runtime0_state_S0')
-        self.__next_compartment: 'Runtime0Compartment' = None
-        
-        # Initialize domain
-        
-        self.msg  = "Hello from the Runtime!"
-        
-        # Send system start event
-        frame_event = FrameEvent(">", None)
-        self.__kernel(frame_event)
+        def __init__(self):
+            
+            # Create and intialize start state compartment.
+            
+            self.__compartment: 'Runtime0Compartment' = Runtime0Compartment('__runtime0_state_S0')
+            self.__next_compartment: 'Runtime0Compartment' = None
+            
+            # Initialize domain
+            
+            self.msg  = "Hello from the Runtime!"
+            
+            # Send system start event
+            frame_event = FrameEvent(">", None)
+            self.__kernel(frame_event)
     
 
 The last step leads us into the heart of the system runtime - the **kernel**. 
@@ -144,14 +147,14 @@ The last step leads us into the heart of the system runtime - the **kernel**.
 The Kernel 
 ++++++++++
 
-Despite looking complex, at a high level the kernel performs only two main tasks:
+Despite it's apparent complexity, the kernel performs only two main high level tasks:
 
 #. Route events to the current state 
 #. Execute a transition if one was prepared while handling the event
 
 For step one, the kernel sends the event to the **__router()** method, which is simply a 
-block of tests to determine the current state and foward event to it. In this demo 
-there is only one state ($S0):
+block of tests to determine the current state and pass the event to it. In this demo 
+there is only one state ($S0) so this code is trivial:
          
 .. code-block::
     :caption: todo 
@@ -184,7 +187,7 @@ The state is trivial and simply prints the message:
 This Frame code results in the following code generated for the **$S0** state: 
 
 .. code-block::
-    :caption: Generated Python code for a State
+    :caption: Generated Python code for State $S0
 
     # ----------------------------------------
     # $S0
@@ -194,8 +197,8 @@ This Frame code results in the following code generated for the **$S0** state:
             print(self.msg)
             return
 
-Each state method contains zero or more event handlers. In this demo, only one event handler exists for the 
-enter message. 
+Each state method contains zero or more event handlers. In this demo, only one event handler exists to handle the 
+enter message. The event handler prints a message delared in the domain and returns.
 
 We have quickly explored the simplest path through the runtime architecture with one state and one event handler. 
 Next we will explore the complexity introduced by Frame's support of transitions. 
@@ -203,21 +206,22 @@ Next we will explore the complexity introduced by Frame's support of transitions
 Runtime Transition Support 
 --------------------------
         
-Full support of Frame transition semantics requires a complex runtime infrastructure. The full set of possible
-activity for a single transition is: 
+Frame transition semantics require a complex runtime infrastructure. The full set of possible
+activities during a single transition include: 
 
 #. Create a compartment for the next state 
-#. On the compartment, set any parameter values for the transition (transition exit and enter parameters)
-#. On the compartment, set any state parameters
-#. On the compartment, initialize any state variables
+#. On the next state compartment, set any parameter values for the transition (transition exit and enter parameters)
+#. On the next state  compartment, set any state parameters
+#. On the next state  compartment, initialize any state variables
 #. Call the **transition(next_compartment)** method, which simply saves a reference to the new compartment for later use
 #. Return from the event handler to the kernel routine
-#. The kernel detects if a compartment was set to transition to and loops until no more transitions happen
-#. Send an exit event to the current transition
-#. Change state by setting the new compartment as the current state 
-#. Send an enter event to the new state or forward any forwarded event
+#. The kernel detects if a next compartment exisits and loops until no more transitions happen
+#. Send an exit event to the current state
+#. Change state by setting the next state compartment to be the current state compartment 
+#. Send an enter event to the new state and forward any forwarded event
 
-That is a lot of steps for a transition! The complexity is required to support the following language requirements:
+That is a lot of steps for a transition! The complexity is required in order to support the following 
+language requirements:
 
 #. Sending enter and exit events 
 #. Initalizing exit and enter handler parameters 
@@ -233,7 +237,7 @@ Basic Transition Runtime Support
 Let's start with the simplest transition example possible:
 
 .. code-block::
-    :caption: todo 
+    :caption: Transition Runtime Support Demo 
 
     fn main {
         var runtime_demo:# = #Runtime1()
@@ -255,20 +259,15 @@ Let's start with the simplest transition example possible:
 
     ##
 
-In the demo above, there is one transition from **$S0** to **$S1**. Below we see the code for **$S0** 
-which instantiates a new state compartment, initializes it with the name of the target state and 
-then starts a transition. 
+Calling the **next** interface method triggers a series of calls resulting in the following call stack configuration:
 
-Calling the **next** interface method executes a transition with the folliwng call stack configuration:
-
-#. The next method 
+#. The next interface method 
 #. The kernel method
 #. The router method
 #. The state $S0 method
-#. Transition method
 
-Let's take a look at the state and transition for the details of how the transition is effected. Below we 
-see a new compartment is created and initialized for **$S1** and then passed to **self.__transition(compartment)**:
+In **$S0** the **next** event handler actually executes the transition by creating and initializing
+a new **$S1** compartment which is then passed to **self.__transition(compartment)**:
 
 .. code-block::
     :caption: todo 
