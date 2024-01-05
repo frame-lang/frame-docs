@@ -518,7 +518,7 @@ for the next state.
         (a) -> (b) $S1(c) ^
 
 As we can see below, a,b,c are used to set the various transition parameters and
-the deferred transition is then set.   
+the deferred transition is then created.   
 
 .. code-block::
     :caption: todo 
@@ -538,13 +538,17 @@ the deferred transition is then set.
             self.__transition(compartment)
             return   
 
+    ...
+
+    def __transition(self, compartment: 'Runtime2Compartment'):
+        self.__next_compartment = compartment
 
 What we see above is the first stage of the Frame runtime code for executing a transition. This code 
 initializes the runtime 
 variables which will be used by the kernel to use to actually perform the transition. After the return statement is called 
 control passes back to the router which then returns to the kernel.
 
-When the router returns, the kernel then performs the following steps: 
+The kernel then performs the following steps: 
 
 #. Start a loop testing for the existence of a **self.__next_compartment** that will continue until no transitions occur during the loop. 
 #. Cache the **self.__next_compartment** into a local variable and then unset it. This is to simplify other kernel code.
@@ -572,6 +576,22 @@ When the router returns, the kernel then performs the following steps:
             # change state
             self.__compartment = next_compartment
 
+The exit event handler prints out the first part of the output of the program: 
+
+.. code-block::
+    :caption: $S0 Exit Event Code
+
+    # ----------------------------------------
+    # $S0
+    
+    def __runtime2_state_S0(self, e):
+        if e._message == "<":
+            print("a=" + str(e._parameters["a"]),end = "")
+            return
+        elif e._message == "next":
+
+            ...
+
 Now that the **self.__compartment** has been updated to the new compartment the kernel can send the enter event to it.
 
 .. code-block::
@@ -597,15 +617,25 @@ Now that the **self.__compartment** has been updated to the new compartment the 
     
     def __runtime2_state_S1(self, e):
         if e._message == ">":
-            print("; b=" + str(e._parameters["b"]) + "; c=" + str((self.__compartment.state_args["c"])))
+            print("; b=" + str(e._parameters["b"]) 
+                         + "; c=" + str((self.__compartment.state_args["c"])))
             return
+
+The enter event print code completes the output of the a,b and c parameters. 
+
+.. code-block::
+    :caption: Runtime2 Complete Output 
+
+    a=1; b=2; c=3
+
+Next we will take a look at another key feature of the runtime kernel - event forwarding. 
 
 Event Forwarding Runtime Support
 -----------
 
 The Frame event forwarding mechanism provides the ability to recieve an event in one state and 
 then pass it to another state to handle. Below we see a simple example where state **$S0** recieves 
-the **next** event and simply forwards it to state **$S1** to handle and print.
+the **next** event and simply forwards it to state **$S1** to handle and print the parameters.
 
 .. code-block::
     :caption: Event Forwarding Demo
