@@ -3,8 +3,8 @@ Persistance
 
 An important capability of many types of software applications is supporting **workflows**. 
 A workflow is an asynchronously executed sequence of event driven 
-steps . Most commonly
-the asychronous aspect of a workflow means that the it must be able to be persisted 
+steps. Most commonly
+the asychronous aspect of a workflow means that the system needs to be persisted to a durable medium
 between each step in the process. 
 
 Frame for Python supports a pattern for persistence using the `jsonpickle library <https://jsonpickle.github.io/>`_ 
@@ -24,16 +24,16 @@ of the system:
         }
 
 Persisting the system is as simple as calling the **marshal** operation and then saving the data 
-to disk, in a database or other in some other durable manner. For simplicity we will simply keep
-the data in memory in these demos.
+to some durable medium (disk, database, etc.). For simplicity we will simply keep
+the data in memory for these demos.
 
 .. code-block::
     :caption: Use of marshal functionality
 
         var ds:# = #DurableSystem()
     
-        // get deep copy
-        var data = ds.marshal()
+        // get a deep copy of the system data
+        var system_data = ds.marshal()
 
         // remove reference to the system
         ds = nil
@@ -62,7 +62,7 @@ itself rather than an instance of the system (as there isn't one):
         ds = #DurableSystem.unmarshal(data)
 
 The ds variable now references the **#DurableSystem** instance in the state it 
-was previously in.
+was persisted.
 
 Persistance Demo 
 ----------------
@@ -70,7 +70,7 @@ Persistance Demo
 Let's create a persitable system that tracks how many times its been 
 saved and restored. Our **#PersistDemo** system 
 has a single state **$Started** which has a state variable **revived_count** which will be used to 
-track how many times the state (and by proxy the system) has been revived. 
+track how many times the state (and by proxy, the system) has been revived. 
 
 .. code-block::
     :caption: State with Counter for Revival Count
@@ -88,8 +88,8 @@ track how many times the state (and by proxy the system) has been revived.
                 print("Revived = " + str(revived_count) + " times") 
                 ^
 
-The first time the **$Start** is entered is during instantiation, which only happens when 
-the system is initially created. It does not happen with each reinstantiation. To keep 
+The first time the **$Start** is entered is during instantiation, which happens only once when 
+the system is initially created. It does *not happen* again with each reinstantiation. To keep 
 count of the number of revivals, we have a state variable **revived_count** which will 
 be incremented and printed when the **revived** event is received. To do so, we will call the
 **revived** interface method before returning the system to the caller: 
@@ -232,7 +232,7 @@ demo implements a cycle of persisted state transitions.
 .. image:: images/traffic_light.png
     :height: 300
 
-The main loop will first instantiate and then persist the TrafficLight system. After sleeping 
+The main loop will first instantiate and then persist the TrafficLight system. After sleeping, 
 the program will enter a loop that reloads the system, sends a tick to it,  
 persists the system again and then sleeps. 
 
@@ -321,8 +321,8 @@ Workflows
 Our final demo is a true workflow which builds upon the core functionality of the Traffic 
 Light demo and ties together many of the capabilities 
 shown in the previous demos. The flow progresses from an initial **$Ready** state through a couple 
-of "work" steps and completes in an end state of **$Done**. Any additional events 
-to progress the flow after reaching **Done** results in an increasingly urgent
+of "work" steps and terminates in the **$Done** end state. Any additional events 
+to progress the flow after reaching **$Done** results in an increasingly urgent
 response to the caller that the workflow is complete.
 
 .. code-block::
@@ -419,7 +419,7 @@ response to the caller that the workflow is complete.
 
 .. code-block::
     :caption: Workflow Demo Output
-    
+
     Ready
     Doing Step1
     Doing Step2

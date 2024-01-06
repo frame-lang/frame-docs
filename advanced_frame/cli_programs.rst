@@ -2,7 +2,8 @@
 Command Line Interactive Programs 
 =================================
 
-Another use case for machines that loop are command line applications that repeatedly poll
+Command Line Interactive Programs make up a broad category of software applications.
+Here we will explore some simple programs that repeatedly poll
 users for input. In the example below, the locus of control is in the infinite loop 
 inside the enter event handler of the **$GetInput** state: 
 

@@ -30,13 +30,13 @@ exists, in the following block order:
 Operations follow the same syntax as actions:
 
 .. code-block::
-    :caption: Operations Block Position
+    :caption: Operations Syntax
 
     #Operations
 
         -operations- 
 
-        deluxe [p1:T,p2:T] : T {
+        add [p1:T,p2:T] : T {
             ^(p1 + p2)
         }
 
@@ -96,7 +96,7 @@ Frame supports declaring operations to be static using the **#[static]** attribu
 
 
 Static operations cannot access data of any system instance. Additionally, Frame 
-does not currently support any concept of static data as is common in many languages. 
+does not currently support any concept of static data as is common in some languages. 
 Therefore static operations are currently limited to serving as a library of functions
 related to the system type. While this is (currently) a very limited use case, 
 this does have utility implementing a *persistence* mechansim for Frame systems. 
