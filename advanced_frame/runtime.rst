@@ -968,11 +968,12 @@ And here we can see how Frame code is translated into Python to pop a state and 
 Conclusion
 ----------
 
-Frame's mission to be a natural and powerful language for system design introduces an emphasis on 
-states and events as first class language concepts. As such, Frame's runtime must recast 
-object-oriented language features to meet this need. 
-This overview of Frame's runtime architecture explored the intricate reorganization of object-oriented
-language features required to support this mission. 
+Frame is a Domain Specific Language for digital system design. As such it promotes systems, states and events as
+first class entities in the language. Frame's runtime provides the mechansisms to recast 
+object-oriented language features to meet this need. In the future, non-object oriented languages will also be 
+supported by the Frame transpiler with appropriate adjustments to the runtime code. 
+
+
 
         
     
