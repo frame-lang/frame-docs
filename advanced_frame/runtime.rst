@@ -726,7 +726,7 @@ and how system parameters are intialized.
 System Initalization
 -----------
 
-There are three aspects of system startup that are parameterized and can be externally initalizaed:
+There are three aspects of system startup that are parameterized and can be initialized upon system instantiation:
 
 #. Start state parameters
 #. Start state enter event parameters 
@@ -752,7 +752,8 @@ There are three aspects of system startup that are parameterized and can be exte
         var c = nil
     ##
 
-Above we see that each aspect of the system is intialized with one argument. The system factory (__init__([...])) handles all of 
+Above we see that each aspect of the system is intialized with one argument. The system factory (__init__([...])) 
+method handles all of 
 the logic for setting the start state parameters and domain variables:
 
 
@@ -796,10 +797,41 @@ the logic for setting the start state parameters and domain variables:
     
     ...
 
-We can see above how the start state can access all of the initialized parameters on the compartment as well as the domain.
+We can see above how the start state can access all of the initialized parameters on the compartment (**a** and **b**) as 
+well as the domain variable **c**.
 
 History State Stack
 -----------
+
+Frame's history mechanism is an array used as a stack. For systems that use this feature, Frame 
+generates code for the stack and its management operations. The first code generated
+is the stack initialization in the System Factory. 
+            
+.. code-block::
+    :caption: State Stack Initialization 
+
+        # ==================== System Factory =================== #
+        
+        def __init__(self):
+            
+            # Create state stack.
+            
+            self.__state_stack = []
+
+Frame also generates methods in the runtime for managing the stack. 
+
+.. code-block::
+    :caption: State Stack Runtime Mechanisms 
+
+        # ==================== System Runtime =================== #
+        
+        ...
+
+        def __state_stack_push(self, compartment: 'StateStackCompartment'):
+            self.__state_stack.append(compartment)
+        
+        def __state_stack_pop(self):
+            return self.__state_stack.pop()
 
 .. code-block::
     :caption: State Stack Demo
@@ -823,16 +855,16 @@ History State Stack
 
             $A
                 |>| print("$A") ^
-                |next| $$[+] -> "$$[+]" $B ^
+                |next| $$[+] -> $B ^
 
             $B
                 |>| print("$B") ^
-                |next| $$[+] -> "$$[+]" $C ^
-                |ret| -> "$$[-]" $$[-] ^
+                |next| $$[+] -> $C ^
+                |ret| -> $$[-] ^
 
             $C
                 |>| print("$C") ^
-                |ret| -> "$$[-]" $$[-] ^
+                |ret| -> $$[-] ^
 
     ##
 
@@ -850,21 +882,37 @@ The system mechanisms for accomplishing this capability are first to create a **
 system initialization. Then, when transitioning from a state that will be returned to later, push the 
 current compartment on the state stack before the transition: 
 
-.. code-block::
-    :caption: State Stack Push and Transition
-
-    self.__state_stack_push(self.__compartment)
-    next_compartment = StateStackCompartment('__statestack_state_C')
-    self.__transition(next_compartment)
-
+Here we can see how Frame code is translated into Python to push a state: 
 
 .. code-block::
-    :caption: State Stack Pop and Return
+    :caption: Frame Code for State Push and Transition  
 
-    next_compartment = self.__state_stack_pop()
-    self.__transition(next_compartment)
+    |next| $$[+] -> $C ^
 
-Focusing on state **$B** here is what these mechanics looks like in context: 
+.. code-block::
+    :caption: Python Code for State Push and Transition
+
+    elif __e._message == "next":
+        self.__state_stack_push(self.__compartment)
+        next_compartment = StateStackCompartment('__statestack_state_C')
+        self.__transition(next_compartment)
+
+
+And here we can see how Frame code is translated into Python to pop a state and transition to it: 
+
+.. code-block::
+    :caption: Frame Code for State Pop and Transition  
+
+    |ret| -> $$[-] ^
+
+.. code-block::
+    :caption: Python Code for State Pop and Transition
+
+    elif __e._message == "ret":
+        next_compartment = self.__state_stack_pop()
+        self.__transition(next_compartment)
+        return
+
 
 .. code-block::
     :caption: State Stack Demo Listing
@@ -897,12 +945,10 @@ Focusing on state **$B** here is what these mechanics looks like in context:
                 return
             elif __e._message == "next":
                 self.__state_stack_push(self.__compartment)
-                # $$[+]
                 next_compartment = StateStackCompartment('__statestack_state_C')
                 self.__transition(next_compartment)
                 return
             elif __e._message == "ret":
-                # $$[-]
                 next_compartment = self.__state_stack_pop()
                 self.__transition(next_compartment)
                 return
@@ -919,7 +965,14 @@ Focusing on state **$B** here is what these mechanics looks like in context:
         def __state_stack_pop(self):
             return self.__state_stack.pop()
         
+Conclusion
+----------
 
+Frame's mission to be a natural and powerful language for system design introduces an emphasis on 
+states and events as first class language concepts. As such, Frame's runtime must recast 
+object-oriented language features to meet this need. 
+This overview of Frame's runtime architecture explored the intricate reorganization of object-oriented
+language features required to support this mission. 
 
         
     
