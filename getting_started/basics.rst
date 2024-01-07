@@ -105,18 +105,15 @@ and referenced from variables, but states cannot. Events, on the other hand, can
 are created by the Frame runtime. Additionally the **@** symbol is only valid in the context of an event handler (or passed to an action) and refers to the
 currently selected event instance.  
 
-.. code-block::
-
-    [p1, p2:int, p3:`[4][2]int`]
-
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Parameter lists are one or
+Parameters are declared in lists containing one or
 more parameter declarations separated by commas and enclosed in square brackets:
 
 .. code-block::
 
+    // p1 is untyped, p2 is typed and p3 has a superstring type
     [p1, p2:int, p3:`[4][2]int`]
 
 
