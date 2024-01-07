@@ -150,7 +150,7 @@ Frame has four flavors of callable routine types:
 #. Functions 
 #. System Interface Methods
 #. System Actions
-#. System Operations
+#. System Operations (see the advanced section)
 
 Frame functions are normal, globally scoped callable subroutines. 
 
@@ -219,8 +219,8 @@ permutations for method declarations:
 Lists
 -----
 
-Frame does not (yet) have any genernal list or array syntax. Instead, Frame only supports
- *parameter lists* for subroutine and event handlers.
+Frame does not (yet) have any general list or array syntax. Instead, Frame only supports
+ *parameter lists* for subroutines and event handlers.
 
 Frame uses square brackets to denote parameter lists:
 
@@ -230,8 +230,8 @@ Frame uses square brackets to denote parameter lists:
     |msg| [x,y] ^           // Event Handler Parameter List
     foo [x:int,y:string]    // Sub-routine Parameter List
 
-Next
+Next Steps
 ----
 
-With mastery of basic Frame syntax, we can now explore the central aspect of the Frame language - 
-the system. 
+With awareness of core Frame syntax, we can now explore the unique focus of the Frame language - 
+the System. 
