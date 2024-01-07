@@ -5,7 +5,7 @@ Command Line Interactive Programs
 Command Line Interactive Programs make up a broad category of software applications.
 Here we will explore some simple programs that repeatedly poll
 users for input. In the example below, the locus of control is in the infinite loop 
-inside the enter event handler of the **$GetInput** state: 
+inside the enter event handler of the **$GetInput** state (as opposed to the loop in an external function). 
 
 .. code-block::
     :caption: todo
@@ -31,7 +31,7 @@ been visited, print it out and then return to **$GetInput** to get the next comm
 way control stays inside the system and does not return to the **main** function. 
 
 .. code-block::
-    :caption: todo
+    :caption: $A and $B Aggregator States
 
     -machine-
 
@@ -60,14 +60,14 @@ another state or block waiting for user input. This results in control passing b
 to **main** and terminating the program. Here is the full program: 
 
 .. code-block::
-    :caption: todo
+    :caption: $Done State
 
     $Done 
         |>| 
             print("Done") ^
 
 .. code-block::
-    :caption: todo
+    :caption: #CliProgram Listing
 
     `import signal`
     `import sys`

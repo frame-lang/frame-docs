@@ -82,7 +82,7 @@ To begin our exploration of the runtime we will examine a trivial one state syst
 a message on startup.
 
 .. code-block::
-    :caption: todo 
+    :caption: Runtime0 Listing 
 
     fn main {
         var runtime_demo:# = #Runtime0()
@@ -102,7 +102,7 @@ First, the program generates a **main()** function and calls it where our **Runt
 is instantiated. 
          
 .. code-block::
-    :caption: todo 
+    :caption: Runtime0 Demo Main Code 
 
 
     def main():
@@ -120,7 +120,7 @@ The **__init__()** method for the **Runtime0** system does the following:
 #. Create an enter event and send to the system start state
 
  .. code-block::
-    :caption: todo 
+    :caption: Runtime0 Demo System Factory Code 
 
     class Runtime0:
         
@@ -157,7 +157,7 @@ block of tests to determine the current state and pass the event to it. In this 
 there is only one state ($S0) so this code is trivial:
          
 .. code-block::
-    :caption: todo 
+    :caption: Kernel Router 
 
     # ==================== System Runtime =================== #
     
@@ -270,7 +270,7 @@ In **$S0** the **next** event handler executes the transition by creating and in
 a new **$S1** compartment which is then passed to **self.__transition(compartment)**:
 
 .. code-block::
-    :caption: todo 
+    :caption: Runtime1 Demo $S0 Transition Code 
 
     # ----------------------------------------
     # $S0
@@ -470,7 +470,7 @@ The demo below shows how enter, exit and state parameters are implemented using 
 as before. A **Runtime2** system is instantiated and then its next interface method is called. 
 
 .. code-block::
-    :caption: todo 
+    :caption: Runtime2 Listing
 
     fn main {
         var runtime_demo:# = #Runtime2()
@@ -526,7 +526,7 @@ As we can see below, a,b,c are used to set the various transition parameters and
 the deferred transition is then created.   
 
 .. code-block::
-    :caption: todo 
+    :caption: Runtime2 Demo Transition Parameters Code 
 
     # ----------------------------------------
     # $S0

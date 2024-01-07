@@ -131,7 +131,7 @@ event handler:
 Next we will loop 3 times, reviving and persisting the system with each loop: 
 
 .. code-block::
-    :caption: todo
+    :caption: Main Loop
 
     loop var i = 0; i < 3; i = i + 1 {
 

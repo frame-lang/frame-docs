@@ -2,10 +2,10 @@
 A Quick Introduction to Frame Programming
 ===========================
 
-The Frame language is primarily a system design language. As such, it has very different syntax 
-than other languages. In this article we will explore a simple model of a Lamp to see how Frame 
-enables system designers to easily represent the logical problem they are trying to solve 
-and generate a working Python program to run the solution. 
+Frame is a Domain Specific Language (DSL) for the design of digital systems. As such, it has very different syntax 
+than other languages. In this article we will explore a simple model of a Lamp (the system) to see how Frame 
+enables architects and programmers to organize software in natural alignment with the contours of the 
+logical problem they are trying to solve. 
 
 System Design with Frame
 ------------------------
@@ -15,7 +15,6 @@ Frame notation promotes three concepts as first class aspects of the language th
 #. Systems 
 #. States
 #. Events
-
 
 Systems
 ^^^^^^^
@@ -27,7 +26,7 @@ A system is indicated by an identifier preceeded by the '#' token and terminated
     :caption: Empty System
 
     #Lamp
-        // Frame comment follows C syntax
+        // Frame single line comment uses C language comment syntax
     ##
 
 Above we see a Frame *specification* for a lamp "system". Currently this system does absolutely nothing. 
@@ -50,10 +49,10 @@ To improve our lamp, lets start by adding two states - **$Off** and **$On** - to
 
     ##
 
-As with "#" for systems, Frame uses a special token "$"  to indicate that an identifier is a state. Frame systems
-have  "blocks" that provide the structure for a system spec. States must live inside the "-machine-" block. 
+As with "#" for systems, Frame uses a special prefix token "$" to indicate that an identifier is a state. Frame systems
+have  "blocks" that provide the structure for a system spec. States must be declared inside the system "-machine-" block. 
 
-However these states don't do anything. Let's fix that.
+Currently these states don't do anything. Let's fix that.
 
 Events
 ^^^^^^^
@@ -95,7 +94,7 @@ which, in this case, is a return token **^** which terminates the event handler.
     
 
 Event handlers contain the behavior of the system. The only behavior for our lamp so far is
-to **transiton** between the **$On** and **$Off** states. Frame transitions use the transition operator '->' which references the
+to **transiton** between the **$Off** and **$On** states. Frame transitions use the transition operator '->' which references the
 target state the machine will transition to.
 
 .. code-block::
@@ -139,20 +138,20 @@ which will generate the events we need to drive the machine activity:
 Identifiers in the `-interface-` block generate public methods for the system. So now an external client of the 
 system can interact with it and make it do something. 
 
-When `turnOn` and `turnOff` methods are called, Frame generates an event with the same name as the method and sends 
+When `turnOn` and `turnOff` interface methods are called, Frame generates an event with the same name as the method and sends 
 it into the machine which, in turn, will respond if it is in a state that handles that event type. If the 
 current state does not handle the event it will simply be ignored. 
 
 Enter and Exit Events
 ^^^^^^^
 
-Even though our system now switches between states, those states don't *really* do anything. For this simple demo we 
-will simply log that we have entered and exited our **$Off** and **$On** states. 
+Lets add more capability to our lamp. For this simple demo we 
+will just log that we have entered and exited the **$Off** and **$On** states. 
 
 To do so we will utilize special events that Frame generates when a system transitions from one state to another. 
 
 .. code-block::
-    :caption: State Enter and Exit events
+    :caption: State Enter and Exit Events
 
     $Off   
         ...
@@ -169,8 +168,8 @@ To do so we will utilize special events that Frame generates when a system trans
 
         ...
 
-When a transition occurs Frame sends two special events - **Exit** and **Enter**. In the example above, if the system is in the `$Off` state 
-and receives the `|turnOn|` event it will transition to `$On`. In doing so, the system will first send an exit event ``<``
+When a transition occurs Frame generates two special events - **Exit** and **Enter**. In the example above, if the system is in the `$Off` state 
+and receives the `|turnOn|` event it will transition to `$On`. In doing so, the Frame runtime will first send an exit event ``<``
 to `$Off` which will print "Exiting $Off". Next the system will update the state to  ``$On`` and subsequently send 
 an enter event ``>`` to `$On` which will print "Entering $On".
 
@@ -205,7 +204,7 @@ better coding practices and often makes reasoning about complex system behavior 
 
     ##
 
-So now we have specified a model for a lamp system, but how do we actually run it? Let's explore how to create
+So now we have created a specification for out lamp system, but how do we actually run it? Let's explore how to create
 a complete Python program to run our Lamp. 
 
 Frame Programs
@@ -239,39 +238,12 @@ Frame  uses the `var` keyword to declare variables and `:#` is a special Frame t
 After instantiation the lamp controller is told to turn itself on and then back off:
 
 .. code-block::
-    :caption: Lamp Operations
+    :caption: Lamp Interface Calls
 
     lamp.turnOn()
     lamp.turnOff()
 
-However, although this program will successfully transpile, it still won't run. That is because `print()` is not actually 
-included in the runtime of the program. It will successfully transpile because Frame, as a metaprogamming language,
- assumes that undeclared
-variables and function calls will be somehow be available at compile time or runtime depending on the nature of the 
-target language. However, that is not yet true for our Lamp program as `print()` isn't yet included.
-
-Let's see how to fix that. 
-
-Metaprogramming
-^^^^^^^^^^^^^^
-To solve a wide range of compatibility issues with target languages, Frame supports **superstrings**. 
-Superstrings are arbitrary text enclosed in backticks, the contents
-of which are passed through directly into the generated target language code. 
-
-Here we can see how to add a Python import using a superstring: 
-
-.. code-block::
-    :caption: Including Python Modules with Frame Superstring
-
-    `import sys` // Frame superstring to inject Python import code
-
-    fn main {
-        ...
-    }
-
-This import will provide the needed Python library containing `print()`. With that final addition, we have a complete 
-and working Frame program for a Lamp system in Python. 
-
+We are now have all the basics needed to run our first Frame program. 
 
 Executing Frame Programs
 ^^^^^^^^^^^^^^
@@ -280,9 +252,6 @@ Frame makes designing, developing and testing state machines easy and intuitive.
 
 .. code-block::
     :caption: Complete Lamp Program
-
-
-    `import sys`
 
     fn main {
         var lamp:# = #Lamp()

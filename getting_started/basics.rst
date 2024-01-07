@@ -1,9 +1,8 @@
 ==========
-The Basics
+Frame Basics
 ==========
 
-This article will discuss aspects to the language that are common throughout
-a system specification.
+This article will discuss core Frame syntax and concepts.
 
 Comments
 --------
@@ -18,7 +17,7 @@ Frame supports single line C style comments:
 Variable and Parameter Declarations
 -----------------------------------
 
-Variables and parameter declarations share a common core syntax for identifier typing. For both, there 
+Variables and parameter declarations share a common syntax for identifier typing. For both, there 
 are three type options:
 
 #. Untyped identifiers
@@ -32,51 +31,30 @@ We will explore these options for variable declarations first.
 Variable Declarations
 ---------------------
 
-Before examining each variable declaration variation, it is important to note that a common requirement 
-for all of them is that the variable must be initialized. As Frame is intended to transpile to multiple
-target languages it makes no assumptions about a default values.
-
-With regard to types, Frame has a very limited set of native types including systems, states and events. 
-Other than these, Frame does not "understand" types and does no checking or validation of them. Instead,
-for both flavors of types, Frame simply passes them through to the generated code as is.  
-
-Frame variables do not require a type but the target language may. If a type is declared and 
-is required or optional in the target language, Frame will generate it. 
-Conversely, if a variable declaration does not have a type but one is required in the target langauge,
-Frame will generate `:<?>`. This type token is intended to generate an error when the target language program is compiled. 
-
-
-Untyped Variables
-~~~~~~~~~~~~~~~~~
-
-Untyped variables are valid only for target languages that don't require types. 
+Frame variables are declared using the **var** keyword, can be typed or untyped and must be initialized. 
+Frame variables do not require a type but the target language may. 
 
 .. code-block::
-    :caption: Untyped Variable Declaration
+    :caption: Basic Variable Declarations
 
-    // var <name> = <intializer_expr>
     var x = 0  
-    var name = "Spock"
-    var value = nil
+    var name:String = "Spock"
 
-Typed Variables
-~~~~~~~~~~~~~~~~~ 
+Frame does not currently have any support for constants. 
 
-Typed variables are indicated by the use of ':' <type> syntax. 
+If a variable has a type the Framepiler will generate it if the target language is a typed language.  
+Conversely, if a variable declaration does not have a type and the target language is typed,
+Frame will generate `:<?>`. This invalid type token is intended to generate an error when the program is compiled. 
 
-.. code-block::
-    :caption: Typed Variable Declaration
-
-    var <name>:<type> = <intializer_expr>
-    var x:int = 1  // p
-    var <name> = <intializer_expr>
 
 Superstring Typed Variables
 ~~~~~~~~~~~~~~~~~ 
 
 The Framepiler makes relatively conservative assumptions about what syntax is permitted in a type 
-declaration. Do circumvent Frame errors for type syntax, simply enclose the type string in backticks to 
-make it a superstring and thus passed directly through to the code generators as-is.
+declaration. To circumvent errors for type syntax the Frame language doesn't support but the target 
+language does, simply enclose the type string in backticks to 
+make it a superstring. Doing so will pass the type identifier and any other associated syntax directly 
+through to the target language code generator as-is.
 
 This frequently requires that the expression that is assigned is also a superstring: 
 
@@ -89,6 +67,43 @@ This frequently requires that the expression that is assigned is also a superstr
     var array:`[4][2]int` =  `[4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}`
 
 In future releases, Frame's syntax may support more native syntax for declarations and expressions. 
+
+
+Frame Native Types
+^^^^^^^^^^^^^^^^^^^^^^
+
+Frame has a very limited set of native types including systems, states and events. 
+Frame utilizes special tokens to type delarations of these special entities. 
+
+.. list-table:: Frame Type Tokens
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Token
+      - Type
+      - Example
+    * - #
+      - $
+      - @
+    * - System
+      - State
+      - Event
+    * - #Andromeda
+      - $Florida
+      - @
+
+Note that the semantics of these entities is not yet completely uniform but will likely be 
+brought closer into alignment in future versions of the Frame language. For example, system instances can be instantiated 
+and referenced from variables, but states cannot. Events, on the other hand, can not be instantiated programatically but 
+are created by the Frame runtime. Additionally the **@** symbol is only valid in the context of an event handler (or passed to an action) and refers to the
+currently selected event instance. 
+
+Besides these, 
+Frame does not (yet) perform checking or validation of other types. Instead Frame assumes 
+provided types will be valid and simply passes them 
+through to the generated code as is.  The target language will ultimately be responsible for determining syntactic and semantic 
+correctness. 
+
 
 Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
