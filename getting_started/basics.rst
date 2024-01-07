@@ -14,6 +14,14 @@ Frame supports single line C style comments:
     // this is a single line comment
 
 
+Whitespace, Formatting, Expressions and Statements
+--------
+
+Frame synatax does not require nor restrict any particular use of whitespace for formatting. As Frame's 
+grammar does not require it, Frame does not have any need for a token to indicate the end of a statement (like ';'). 
+
+Frame expressions are typical syntax constructs that return values. No control structure syntax serves 
+as an expression. 
 
 Superstrings 
 ------------
@@ -123,7 +131,7 @@ As we can see, parameters are typed with the same kinds of options as variables:
 #. Typed parameters
 #. Superstring typed parameters
 
-Frame parameters can not be assigned default values for missing arguments.
+Frame parameters cannot be assigned default values for missing arguments.
 
 .. code-block::
 
@@ -137,26 +145,26 @@ Frame parameters can not be assigned default values for missing arguments.
 Functions, Interface Methods and Actions
 -------
 
-Frame has three flavors of subroutine types:
+Frame has four flavors of callable routine types:
 
 #. Functions 
 #. System Interface Methods
 #. System Actions
+#. System Operations
 
 Frame functions are normal, globally scoped callable subroutines. 
 
 .. NOTE::
-    In v0.11 Frame only supports an optional single `main()` function. This will be expanded 
+    In v0.11 Frame only supports an single (and optional) `main()` function. This will be expanded 
     to support multiple functions in v0.12.
 
 The main() Function 
 ~~~~~~~~~~~~~~~~~~
 
 Frame currently supports having a single function for a program - `main()`. The reason for this limitation 
-is Frame development was focused, until recently, on adding features to the system aspect of the language.
-With the addition of a number of key language features to systems, developing a way to 
-test a system became a priority. Frame's support for a `main()` function is the first step in that 
-direction and - in time - becoming a more complete programming language. 
+is that until recently Frame's development was focused on adding features to the system aspect of the language.
+With most essential language features for Frame systems at least represented in the language now, 
+Frame's feature development is broadening to becoming a more complete programming language. 
 
 Frame's syntax for functions is simple and has four variations: 
 
@@ -181,13 +189,6 @@ Frame's syntax for functions is simple and has four variations:
         print(sys_arg1 + "," + sys_arg2)
         ^(0)
     }
-
-Functions are declared using the `fn` keyword and currently only `main` is a valid name. Functions 
-also accept parameters like actions and interface methods. However the current `main` function 
-does something special with parameters and assumes that these are command line arguments being passed 
-to the function. In the future this will be generalized but at the moment facilitates testing scenarios.
-
-Main, like other subroutine types, allows returning a value. 
 
 Interface Methods 
 ~~~~~~~~~~~~~~~~~~
