@@ -19,8 +19,8 @@ Superstrings
 ------------
 
 One way Frame can be loosely characterized is as a templated Domain Specific Langauge (DSL) for system design
-in other languages. As Frame does not (currently) generate executable programs but, instead, transpiles Frame programs into 
-other programming languages, one of the biggest challenges is to deal with target language types and 
+in other languages. As Frame does not (currently) generate executable programs but instead transpiles Frame programs into 
+other programming languages, one of the biggest challenges is to properly handle target language types and 
 syntax that Frame does not directly support. 
 
 One way in which Frame generically accomodates other language sytnax is in the use of **superstrings**. Frame 
@@ -28,7 +28,7 @@ superstrings are enclosed in either a pair of single backticks for inline needs 
 backticks for a block of content: 
 
 .. code-block::
-    :caption: Superstring syntax 
+    :caption: Frame superstring syntax 
 
     var foo:`&[**]!` = `%#@!$%`    
 
@@ -65,14 +65,15 @@ Conversely, if a variable declaration does not have a type and the target langua
 Frame will generate `:<?>`. This invalid type token is intended to generate an error when the program is compiled. 
 
 As discussed in the superstring section above, Frame genericially supports any type declaration for any language 
-using superstrings. 
+using superstrings. Here is an example from Golang that would parse using superstrings but not as a native 
+Frame type syntax:
 
 ``golang``
 
 .. code-block::
     :caption: Superstring Typed Variable Declaration
 
-    var <name>:<`type`> = <intializer_expr>
+    // var <name>:<`type`> = <intializer_expr>
     var array:`[4][2]int` =  `[4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}`
 
 Frame Native Types
@@ -89,13 +90,13 @@ Frame utilizes special tokens to type delarations of these special entities.
       - Type
       - Example
     * - #
-      - $
-      - @
-    * - System
+      - System
+      - #Andromeda
+    * - $
       - State
-      - Event
-    * - #Andromeda
       - $Florida
+    * - @
+      - Event
       - @
 
 Note that the semantics of these entities are not yet completely uniform but will likely be 
