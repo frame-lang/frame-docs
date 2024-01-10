@@ -4,18 +4,18 @@ System Behavior Design with Frame
 
 Systems Engineering methodology broadly divides system aspects into two categories -
 **structural** and **behavioral**. Frame
-is a **Domain Specific Language (DSL)** focused on defining system behavior in particular
+is a **Domain Specific Language (DSL)** focused on defining system behavior 
 and is based on ideas from `UML Statecharts
 <https://www.sciencedirect.com/science/article/pii/0167642387900359/>`_. 
 
 Unlike the visual design 
-paradigm of Statecharts which anticipated developers would create complex software sysems using visual modeling tools, 
-Frame is a pragmatically textual language with no need for a visual editor.
+paradigm of Statecharts, which anticipated developers would create complex software sysems using visual modeling tools, 
+Frame is a pragmatically textual language.
 
-However, Frame still provides all the benefits of visual design as it is intrinsically self documenting. 
+However, Frame still provides all the benefits of visual software design as it is intrinsically self documenting. 
 Using the Framepiler, visual documentation can be generated directly from a Frame system specification (spec).
 This is useful as both an aide during 
-development as well as providing intrinsic documentation of the completed system design. 
+development as well as providing final documentation of the completed system design. 
 
 Although Frame is starting to take the first steps towards being a general purpose programming language, its 
 differentiator from other languages is its introduction of notation specifically related to
@@ -53,19 +53,23 @@ and terminated with the `##` token:
     #HelloWorldSystem
     ##
 
-At this point `#HelloWorldSystem` is an empty system spec and has no behavior. Next we will add the 
+`#HelloWorldSystem` is an empty system spec and has no behavior. Next we will add the 
 structure needed to start to add functionality to our system. 
 
 Blocks
 ======
 
-Frame specs are organized internally into four optional *blocks*:
+Frame specs are organized internally as five optional *blocks*:
 
-#. Interface - the public methods of the system 
-#. Machine   - the system state machine 
-#. Actions   - private routines implementing behavior 
-#. Domain    - private system data 
+#. Operations - privileged special routines
+#. Interface  - the public methods of the system 
+#. Machine    - the system state machine 
+#. Actions    - private routines implementing behavior 
+#. Domain     - private system data 
 
+.. note::
+
+    We will discuss Operations in the Advanced section.
 
 Although each (or all) blocks are optional, if present they must be defined in a specified order.
 
