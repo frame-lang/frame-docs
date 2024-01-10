@@ -10,14 +10,14 @@ and is based on ideas from `UML Statecharts
 
 Unlike the visual design 
 paradigm of Statecharts which anticipated developers would create complex software sysems using visual modeling tools, 
-Frame is a pragmatically textual language. You can create a Frame system using Notepad.
+Frame is a pragmatically textual language. You can create a Frame program using Notepad.
 
 However, Frame still provides all the benefits of visual design as 
 statecharts can be generted from a Frame system specification (spec) and used as both an aide during 
 development as well as being intrincially documented after completion. 
 
 Although Frame is starting to take steps to being a general purpose programming language, its 
-differentiator from other languages is its introduction of notation specifically realated to
+differentiator from other languages is its introduction of notation specifically related to
 Frame's concepts related to **systems** design. 
 
 System Controllers

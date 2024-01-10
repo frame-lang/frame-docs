@@ -233,5 +233,5 @@ Frame uses square brackets to denote parameter lists:
 Next Steps
 ----
 
-With awareness of core Frame syntax, we can now explore the unique focus of the Frame language - 
+With understanding of the core Frame syntax, we can now explore the unique focus of the Frame language - 
 the System. 

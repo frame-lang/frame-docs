@@ -117,7 +117,7 @@ to **main** and terminating the program. Here is the full program:
 
 
 .. code-block::
-    :caption: todo
+    :caption: CliProgram Listing Output
 
     Next state? (a|b|quit)
     a
