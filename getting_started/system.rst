@@ -70,16 +70,16 @@ Although each (or all) blocks are optional, if present they must be defined in a
 
     #HelloWorldSystem
 
-    -operations-
-    -interface-
-    -machine-
-    -actions-
-    -domain-
+        -operations-
+        -interface-
+        -machine-
+        -actions-
+        -domain-
 
     ##
 
 .. note::
     The operations block will be discussed much later in the Advanced section of the documentation. 
-    
+
 In the following articles we will investigate role each of these blocks plays 
 in defining a Frame system. 

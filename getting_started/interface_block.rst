@@ -5,7 +5,7 @@ Interface Block
 As implied by its name, the **Interface Block** contains the means by which the outside world
 interacts with the system. 
 
-The detailed syntax for interface methods and other callable routines is covered in the methods_ section.
+The detailed syntax for interface methods and other callable routines is covered in the `methods_` section.
 The most basic interface method has no parameters and no return values:
 
 .. code-block::
