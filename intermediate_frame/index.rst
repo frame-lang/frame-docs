@@ -10,13 +10,13 @@ In this section we will cover the following topics:
 #. Functions
 #. Control flow syntax
 #. Loops
-#. Enums
+#. Enumerated Types
 #. Systems
-#. System Interfaces
-#. States
-#. Transitions
+#. System Interface
+#. States and Transitions
+#. Transitions and States
 #. Hierarchical State Machines
-#. History
+#. State History
 
 
 

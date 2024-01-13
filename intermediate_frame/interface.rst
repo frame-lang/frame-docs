@@ -1,5 +1,5 @@
 ==================
-Interface Block
+System Interface
 ==================
 
 The system interface block contains the set of publicly accessible methods. The block is 
