@@ -135,6 +135,6 @@ In turn the **$World** state transitions to the **$Done** state upon recieving t
     ##
 
 So now our machine will transition to all the required states but won't actually print anything. 
-Although we *could* just print directly using Python's **print()** function, 
+As has been shown previously, we *could* just print directly using Python's **print()** function, 
 we will take the opportunity to introduce Frame **actions** which we will introduce in the next article.
 

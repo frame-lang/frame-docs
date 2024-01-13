@@ -13,7 +13,7 @@ Declaring Actions
 Actions are declared in the `-actions-` block and observe all of the method
 declaration syntax discussed in the :ref:`methods` section. 
 
-We will start by creating a utility action `actionWrite()` that will be reused by other actions to do 
+We will start by creating a utility action called `actionWrite()` that will be reused by other actions to do 
 the actual printing. This action will accept two parameters, **msg** and **separator**. The first parameter will be the string to 
 write and the second will add any separator strings.
 
@@ -38,11 +38,12 @@ write and the second will add any separator strings.
 
 Unlike Interface Methods, Actions can contain code - both Frame code as well as code from target languages. 
 As this program is being transpiled into Python, we can use the built-in Python **print()** function
-to do the actual printing.
+to do the actual printing. Although this action simply is a passthrough to the *print()* call, it does show 
+how easy it is to directly integrate much of Python's functionality seamlessly into Frame programs. 
 
 .. note:: This is possible because the Python `print()` function conforms to the  
           syntax Frame expects. Much of the syntax of other languages does **not** conform to 
-          Frame's lexing and parsing rules and must be enclosed in a superstring to properly parse. 
+          Frame's lexing and parsing rules and must be enclosed in a superstring to parse. 
 
 
 Next we add the two specialized actions **actionWriteHello()** and **actionWriteWorld()**. As these 
@@ -78,48 +79,48 @@ Finally we update our event handlers to call these actions:
 .. code-block::
     :caption: Hello World! in Frame
 
-  fn main {
-      var hws:# = #HelloWorldSystem()
-      hws.sayHello()
-      hws.sayWorld()
-  }
+    fn main {
+        var hws:# = #HelloWorldSystem()
+        hws.sayHello()
+        hws.sayWorld()
+    }
 
-  #HelloWorldSystem
+    #HelloWorldSystem
 
-      -interface-
-      
-      sayHello 
-      sayWorld
+        -interface-
+        
+        sayHello 
+        sayWorld
 
-      -machine-
+        -machine-
 
-      $Hello
-          |sayHello|  
-              actionWriteHello() // call action
-              -> $World 
-              ^       
-      $World    
-          |sayWorld|  
-              actionWriteWorld() // call action
-              -> $Done 
-              ^     
+        $Hello
+            |sayHello|  
+                actionWriteHello() // call action
+                -> $World 
+                ^       
+        $World    
+            |sayWorld|  
+                actionWriteWorld() // call action
+                -> $Done 
+                ^     
 
-      $Done 
+        $Done 
 
-      -actions- 
+        -actions- 
 
-      actionWriteHello {
-          actionWrite("Hello", " ")
-      }
+        actionWriteHello {
+            actionWrite("Hello", " ")
+        }
 
-      actionWriteWorld {
-          actionWrite("World!", "")
-      }    
+        actionWriteWorld {
+            actionWrite("World!", "")
+        }    
 
-      actionWrite [msg,separator] {
-          print(msg, end=separator)
-      }
-  ##
+        actionWrite [msg,separator] {
+            print(msg, end=separator)
+        }
+    ##
 
 We will explore the final block in Frame systems in the next article - the system domain. 
 
