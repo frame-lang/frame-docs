@@ -45,9 +45,9 @@ By definition, state machines always have a single designated
 Not surprsingly, Frame defines the 
 start state as first state in a system spec. For our system that is **$Hello**. 
 
-So our system has a whole state dedicated to "Hello", which seems excessive at least the intent very
-well defined. But how in the world will we ever get to "World"? Let's learn next about event handlers to 
-find out. 
+So our system has a start state dedicated to "Hello", which, despite possibly seeming excessive, at least 
+has the virtue of making the intent very well defined. But how in the world will we ever get to "World"? 
+Let's learn next about event handlers to find out. 
 
 Event Handlers
 --------------
