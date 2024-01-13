@@ -8,12 +8,12 @@ of frameworks or operating systems, it is uncommon to use events internally to a
 Frame "systems" are (for now) implemented as object-oriented classes known as "system controllers". 
 Two of the key structural aspects of system controllers are the public interface and a state machine comprised of 
 one or more states. To enable communication between the interface and the state machine, Frame 
-uses FrameEvents.
+uses **FrameEvents**.
 
-FrameEvents provide three necessary functions:
+FrameEvents perform three necessary functions:
 
 #. Encode what message was sent to the system. By default this is the name of the interface method called.
-#. Store the parameters sent in the call.
+#. Store any parameters passed in the call.
 #. Return a value to the caller, if required.
 
 To support these requirements, Frame defines three fields for a Frame Event:

@@ -9,7 +9,7 @@ and the behavior each state has in response to events.
 States
 ------
 
-States can only be defined inside the Machine Block and are indicated by a `$` prefix in front of an
+States can only be defined inside the Machine Block and are indicated by a **$** prefix in front of an
 identifier. Let's add three states to our machine to give structure to our "Hello World!" program. 
 
 .. code-block::
@@ -33,20 +33,19 @@ identifier. Let's add three states to our machine to give structure to our "Hell
     ##
 
 
-We now have three states, but how do we get to them? We need to learn a few 
-key concepts before we can do that. 
+We now have three states - **$Hello**, **$World** and **$Done**, but how are they used? Let's start 
+at the beginning - the **start state**. 
 
 Start State
 ^^^^^^^^^^^
 
-We now have three states, but which state is the machine in when it is instantiated? Not surprisingly 
- there is always a designated
-**start state** for a machine. Frame defines the very first state in the spec as the **start state**, 
+By definition, state machines always have a single designated
+**start state**. Frame defines the very first state in the spec as the **start state**, 
 which in
-this case is `$Hello`. 
+this case is **$Hello**. 
 
-So now we know the machine has a whole state dedicated to the job of saying "Hello". But how in the world 
-will we ever say "World"? 
+So now we know the machine has a whole state dedicated to "Hello". But how in the world 
+will we ever get to "World"? 
 
 Event Handlers
 --------------
