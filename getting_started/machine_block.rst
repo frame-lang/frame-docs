@@ -60,6 +60,7 @@ System behavior is contained in Frame **event handlers**. Event handlers have th
 
 .. code-block::
     :caption: An Event Handler
+
     ...
 
     -machine-
@@ -90,6 +91,7 @@ In order to go to a different state we will use a transition to get to `$World`.
 
 .. code-block::
     :caption: A Transition
+    
     ...
 
     -machine-
