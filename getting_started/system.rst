@@ -62,9 +62,6 @@ Frame specs are organized internally as five optional *blocks*:
 #. Actions    - private routines implementing behavior 
 #. Domain     - private system data 
 
-.. note::
-
-    We will discuss Operations in the Advanced section.
 
 Although each (or all) blocks are optional, if present they must be defined in a specified order.
 
@@ -73,6 +70,7 @@ Although each (or all) blocks are optional, if present they must be defined in a
 
     #HelloWorldSystem
 
+    -operations-
     -interface-
     -machine-
     -actions-
