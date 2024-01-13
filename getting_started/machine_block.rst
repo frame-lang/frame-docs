@@ -33,18 +33,21 @@ identifier. Let's add three states to our machine to give structure to our "Hell
     ##
 
 
-We now have three states - **$Hello**, **$World** and **$Done**, but how are they used? Let's start 
+We now have three states - **$Hello**, **$World** and **$Done**, but how are they used to actually 
+generate the classic "Hello World" message announcing a new programming language? Let's start 
 at the beginning - the **start state**. 
 
 Start State
 ^^^^^^^^^^^
 
 By definition, state machines always have a single designated
-**start state** which Frame defines the very first state in the spec. In
-this case that state is **$Hello**. 
+**start state** the system is in upon creation (and before initalization).
+Not surprsingly, Frame defines the 
+start state as first state in a system spec. For our system that is **$Hello**. 
 
-So now we know the machine has a whole state dedicated to "Hello". But how in the world 
-will we ever get to "World"? 
+So our system has a whole state dedicated to "Hello", which seems excessive at least the intent very
+well defined. But how in the world will we ever get to "World"? Let's learn next about event handlers to 
+find out. 
 
 Event Handlers
 --------------
@@ -53,7 +56,7 @@ System behavior is contained in Frame **event handlers**. Event handlers have th
 
 #. a message selector 
 #. an optional body of statements 
-#. a return 
+#. a return token
 
 .. code-block::
     :caption: An Event Handler
