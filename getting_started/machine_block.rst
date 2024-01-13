@@ -74,7 +74,8 @@ System behavior is contained in Frame **event handlers**. Event handlers have th
     ##
 
 As we can see above, a message selector is a message name enclosed in pipe characters - **|sayHello|**. 
-In this event handler there are no statements - it simply returns using the return token **^**. 
+In this event handler there are no statements - it simply returns using the return token **^**. We will
+address printing in the next article. 
 
 Event handlers contain the 
 code for the behavior that should be executed in response to an event. The simplest event handlers 
@@ -104,7 +105,7 @@ In order to go to a different state we will use a transition to get to `$World`.
 
     ...
 
-The **->** token is used to transition from the current state to the target state, in this case **$World**. 
+The **->** operator is used to transition from the current state to the target state, in this case **$World**. 
 In turn the **$World** state transitions to the **$Done** state upon recieving the **|sayWorld|** event. 
 
 
@@ -134,5 +135,6 @@ In turn the **$World** state transitions to the **$Done** state upon recieving t
     ##
 
 So now our machine will transition to all the required states but won't actually print anything. 
-To accomplish that we need actions which we will introduce in the next article.
+Although we *could* just print directly using Python's **print()** function, 
+we will take the opportunity to introduce Frame **actions** which we will introduce in the next article.
 
