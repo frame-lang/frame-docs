@@ -122,5 +122,15 @@ Finally we update our event handlers to call these actions:
         }
     ##
 
+Run the `program <https://onlinegdb.com/QUajYGWCK>`_. 
+
+.. code-block::
+    :caption: Hello World! Output
+
+    Hello World!
+
+...Program finished with exit code 0
+Press ENTER to exit console.
+
 We will explore the final block in Frame systems in the next article - the system domain. 
 
