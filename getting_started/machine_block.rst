@@ -40,9 +40,8 @@ Start State
 ^^^^^^^^^^^
 
 By definition, state machines always have a single designated
-**start state**. Frame defines the very first state in the spec as the **start state**, 
-which in
-this case is **$Hello**. 
+**start state** which Frame defines the very first state in the spec. In
+this case that state is **$Hello**. 
 
 So now we know the machine has a whole state dedicated to "Hello". But how in the world 
 will we ever get to "World"? 
@@ -50,15 +49,11 @@ will we ever get to "World"?
 Event Handlers
 --------------
 
-To make a state do something, it needs to be sent an event. States do not usually handle every event 
-that the interface sends so they need a way to be selective. 
+System behavior is contained in Frame **event handlers**. Event handlers have three parts: 
 
-In the **$Hello** state, we are only interested in the event **sayHello**. The Frame syntax for 
-selecting messages is to match the string inside of the pipe tokens like `|msg|`.
-
-The message selector is the first part of an **event handler**. Event handlers contain the 
-code for the behavior that should be executed in response to an event. The simplest event handlers 
-simply select the event and then return:
+#. a message selector 
+#. an optional body of statements 
+#. a return 
 
 .. code-block::
     :caption: An Event Handler
@@ -74,6 +69,12 @@ simply select the event and then return:
 
     ##
 
+As we can see above, a message selector is a message name enclosed in pipe characters - **|sayHello|**. 
+In this event handler there are no statements - it simply returns using the return token **^**. 
+
+Event handlers contain the 
+code for the behavior that should be executed in response to an event. The simplest event handlers 
+simply select the event and then return:
 This is useful in some advanced situations, but not in this case. The first problem 
 is that we will never handled the "sayWorld" message. To deal with that we need 
 a mechanism to **transition** between states. Let's look at how to do that next.
