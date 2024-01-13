@@ -91,7 +91,7 @@ In order to go to a different state we will use a transition to get to `$World`.
 
 .. code-block::
     :caption: A Transition
-    
+
     ...
 
     -machine-
@@ -104,8 +104,8 @@ In order to go to a different state we will use a transition to get to `$World`.
 
     ...
 
-The `->` token is used to transition from the current state to the target state, in this case `$World`. 
-`$World` still doesn't do anything but we will fix that next. 
+The **->** token is used to transition from the current state to the target state, in this case **$World**. 
+In turn the **$World** state transitions to the **$Done** state upon recieving the **|sayWorld|** event. 
 
 
 .. code-block::
