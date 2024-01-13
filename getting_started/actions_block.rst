@@ -129,8 +129,8 @@ Run the `program <https://onlinegdb.com/QUajYGWCK>`_.
 
     Hello World!
 
-...Program finished with exit code 0
-Press ENTER to exit console.
+    ...Program finished with exit code 0
+    Press ENTER to exit console.
 
 We will explore the final block in Frame systems in the next article - the system domain. 
 
