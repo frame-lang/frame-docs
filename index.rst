@@ -36,7 +36,6 @@ will follow as the project gains support and adoption.
     getting_started/machine_block
     getting_started/actions_block
     getting_started/domain_block
-    getting_started/controller
 
 .. toctree::
     :hidden:
@@ -55,7 +54,6 @@ will follow as the project gains support and adoption.
     intermediate_frame/transitions
     intermediate_frame/hsm
     intermediate_frame/history
-    intermediate_frame/scopes
 
 
 .. toctree::
