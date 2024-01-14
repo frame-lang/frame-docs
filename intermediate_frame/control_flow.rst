@@ -3,7 +3,7 @@ Control Flow
 ==================
 
 
-Frame control flow has a compact syntax for various forms of control flow branching.  
+Frame control flow has a compact syntax for various forms of branching.  
 It is inspired by the 'C' langauge ternary expression:
 
 .. code-block::
@@ -14,7 +14,7 @@ It is inspired by the 'C' langauge ternary expression:
 The following example sets the variable **x** to 10:
 
 .. code-block::
-    :caption: Tenary Expression Example
+    :caption: Tenary Expression Example in C
 
     int a = 10, b = 20, x;
 
@@ -24,7 +24,7 @@ The following example sets the variable **x** to 10:
 In 'C' the ternary operator is an expression that returns a value. Above we see 
 that **x** is assigned the value of **a** which is 10. 
 
-Frame takes a different approach and uses simlar syntax as a statement, not an expression. 
+In contrast, Frame uses simlar syntax as a statement and not an expression. 
 This means that no values are returned for assignment. Let's see how this works in 
 a simple boolean test first.
 
@@ -131,7 +131,7 @@ value of y in the loop.
     3| y >= 3  && y < 4
 
 Frame also supports an if-then-else syntax as well. 
-In contrast, use of the "Else Continue" operator with the same tests from above
+Using the tests from above but with the "Else Continue" operator instead of the test terminator 
 will result in only one clause selected for each increment of y in the loop. 
 Additionally, this demo provides an else clause if none of the conditioned branches 
 match the test criteria. 
@@ -176,9 +176,9 @@ Each match type has a different match test format
 
     * - Match Test Type
       - Test Operator
-      - Single Match Example 
-      - Multiple Match Example 
-      - Special Match Tokens
+      - Single Match  
+      - Multiple Match  
+      - Special Tokens
     * - Boolean 
       - ? | ?!
       - N/A
