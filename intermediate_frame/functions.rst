@@ -3,7 +3,7 @@ Functions
 ==================
 
 In the v0.11 version of the Framepiler, Frame only supports a single function which must 
-be the main function. 
+be the *main* function. 
 
 .. note:: In the next release (v0.12) Frame will provide general support for any number of functions as well 
           and any number of system specifications.  
@@ -24,7 +24,9 @@ Frame allows system arguments to be passed to main in a simplistic way. By speci
 parameters in main, Frame will map the number of system arguments to them. Frame 
 does not check if the arguments exist. 
 
-.. note:: In future releases, Frame will provide more full featured support for system arguments.  
+.. note:: 
+    
+    In future releases, Frame will provide more standardized support for system arguments.  
 
 .. code-block::
     :caption: Main with System Arguments
@@ -47,23 +49,22 @@ In addition to accepting parameters, Frame also supports returning a value from 
         ^(0)
     }
 
-
 The following program is a trivial Frame program with a **main()** that accepts system arguments. 
 For this demo the argments are "Hello" and "5".
 
 .. code-block::
     :caption: Main with System Arguments
 
-`import sys`
+    `import sys`
 
-fn main [msg, count] : int {
-    loop var x = 1; x <= int(count); x = x + 1 {
-        x == 3 ? print("Its the 3rd message") :
-                 print(str(x) + ") " + msg)   :|       
+    fn main [msg, count] : int {
+        loop var x = 1; x <= int(count); x = x + 1 {
+            x == 3 ? print("Its the 3rd message") :
+                    print(str(x) + ") " + msg)   :|       
+        }
+
+        ^(0)
     }
-
-    ^(0)
-}
 
 Run the `program <https://onlinegdb.com/zFJ9uoGYB>`_. 
 
@@ -73,6 +74,6 @@ Run the `program <https://onlinegdb.com/zFJ9uoGYB>`_.
     1) Hello
     2) Hello
     Its the 3rd message
-    4) Hello
-    5) Hello
+    1) Hello
+    2) Hello
 
