@@ -106,7 +106,7 @@ Start State Parameters
 
 Start state parameters are declared using the special state parameter declaration list syntax 
 **$[<state params>]**. Likewise, state initialization arguments are passed in the system initialization 
-expression list using the special state argument expression list syntax **$(<state args>). 
+expression list using the special state argument expression list syntax **$(<state args>)**. 
 
 .. code-block::
     :caption: Start State Parameters Demo
@@ -116,11 +116,13 @@ expression list using the special state argument expression list syntax **$(<sta
         #StartStateParameters($("#StartStateParameters started"))
     }
 
-    #StartStateParameters [$[msg]] // Start State Parameters Declared
+    // Start State Parameters Declared
+    #StartStateParameters [$[msg]] 
 
         -machine-
 
-        $Start [msg] // Start State Parameters
+        // Start State Parameters
+        $Start [msg] 
             |>| print(msg) ^
     ##
 
