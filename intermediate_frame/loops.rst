@@ -60,7 +60,7 @@ For-Like Loops
 -----------
 
 .. code-block::
-    :caption: For-like loop example
+    :caption: For-Like Loop Example
 
     fn main {
 

@@ -121,10 +121,13 @@ match one of three values and print the name. If not found, the else clause prin
 
 
     `from enum import Enum`
+    `import random`
 
     fn main {
         var grocery:# = #Grocery()
         print("We are selling " + grocery.getFruitOfTheDay() + " today.")
+        print("We sold " + grocery.getFruitOfTheDay() + " yesterday.")
+        print("We are selling " + grocery.getFruitOfTheDay() + " tomorrow.")
     }
 
     #Grocery
@@ -140,22 +143,30 @@ match one of three values and print the name. If not found, the else clause prin
 
                 var f:Fruit = getFruitOfTheDay()
 
-                f == Fruit.Peach   ? print("Found a Peach.")   :>
-                Fruit.Pear == f    ? print("Found a Pear.")    :> 
-                f == Fruit.Bannana ? print("Found a Bannana.") :|
+                // Demonstrate boolean tests for enums
+                
+                f == Fruit.Peach  ? print("Found a Peach.")  :>
+                Fruit.Pear == f   ? print("Found a Pear.")   :> 
+                f == Fruit.Banana ? print("Found a Banana.") :|
+
+                // Demonstrate enum matching
 
                 f ?:(Fruit) 
-                    :/Peach/   ^("Peaches")  :> 
-                    :/Pear/    ^("Pears")    :> 
-                    :/Bannana/ ^("Bannanas") :| 
+                    :/Peach/   ^("Peaches") :> 
+                    :/Pear/    ^("Pears")   :> 
+                    :/Banana/  ^("Bananas") :| 
 
                 ^("None")
 
         -actions-
 
         getFruitOfTheDay : Fruit {
-            var fruit_of_the_day:Fruit = Fruit.Pear
-            ^(fruit_of_the_day)
+            var val = random.randint(1, 3)
+
+            val ?#
+                #/1/ ^(Fruit.Peach)  :>
+                #/2/ ^(Fruit.Pear)   :>
+                #/3/ ^(Fruit.Banana) :|
         }
 
         -domain-
@@ -163,18 +174,21 @@ match one of three values and print the name. If not found, the else clause prin
         enum Fruit {
             Peach
             Pear
-            Bannana
+            Banana
         }
     ##
 
-
-Run the `program <https://onlinegdb.com/P2roE6rnV>`_. 
+Run the `program <https://onlinegdb.com/YtpIPg0eY>`_. 
 
 .. code-block::
     :caption: Grocery Demo Output
 
     Found a Pear.
     We are selling Pears today.
+    Found a Banana.
+    We sold Bananas yesterday.
+    Found a Peach.
+    We are selling Peaches tomorrow.
 
 
 
