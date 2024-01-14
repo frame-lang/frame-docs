@@ -104,9 +104,9 @@ a **>** message which is handled in the start state and prints "NoParameters sta
 Start State Parameters 
 +++++++++++
 
-Start state parameters are declared using the special state parameter declaration list syntax 
-**$[<state params>]**. Likewise, state initialization arguments are passed in the system initialization 
-expression list using the special state argument expression list syntax **$(<state args>)**. 
+Start state parameters are declared using the special start state parameter declaration list syntax 
+**$[<start state params>]**. Likewise, start state initialization arguments are passed in the system initialization 
+expression list using the special start state argument expression list syntax **$(<start state args>)**. 
 
 .. code-block::
     :caption: Start State Parameters Demo
@@ -136,6 +136,10 @@ Run the `program <https://onlinegdb.com/u4XJm3uxC>`_.
 Start State Enter Parameters 
 +++++++++++
 
+Start state parameters are declared using the special start state enter parameter declaration list syntax 
+**>[<start state enter params>]**. Likewise, start state enter initialization arguments are passed in the system initialization 
+expression list using the special start state enter argument expression list syntax **>(<start state enter args>)**. 
+
 .. code-block::
     :caption: Start State Enter Parameters Demo
 
@@ -164,6 +168,14 @@ Run the `program <https://onlinegdb.com/SIaUcreM2o>`_.
 System Domain Parameters 
 +++++++++++
 
+Lastly, the system domain can be initialized during instantiation as well. System domain parameters are 
+declared using the special system domain parameter declaration list syntax 
+**#[<domain initalization params>]**. Likewise, domain initialization arguments are passed in the system initialization 
+expression list using the special domain initialization argument expression list syntax **#(<domain initalization args>)**. 
+
+The domain initialization parameters are mapped by name to matching domain variables and overrides the default 
+variable initalization values. 
+
 .. code-block::
     :caption: System Domain Parameters Demo 
 
@@ -172,7 +184,8 @@ System Domain Parameters
         #SystemDomainParameters(#("SystemDomainParameters started"))
     }
 
-    #SystemDomainParameters [#[msg]] // System Domain Parameters
+    // System Domain Parameters
+    #SystemDomainParameters [#[msg]] 
 
         -machine-
 
