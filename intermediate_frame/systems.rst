@@ -142,7 +142,8 @@ Start State Enter Parameters
         #StartStateEnterParameters(>("#StartStateEnterParameters started"))
     }
 
-    #StartStateEnterParameters [>[msg]] // // System Start State Enter Parameters 
+    // System Start State Enter Parameters
+    #StartStateEnterParameters [>[msg]]  
 
         -machine-
 
