@@ -188,7 +188,7 @@ Each match type has a different match test format
       - ?~
       - ~/Roy/
       - ~/Alice|Bob/
-      - ~// (empty string) !// (null)
+      - ~// (empty string)\n!// (null)
     * - Number
       - ?#
       - #/42/
