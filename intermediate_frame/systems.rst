@@ -2,9 +2,9 @@
 Systems
 ==================
 
-Frame's focus is on helping softwre architects and developers design and deploy systems.
+Frame's focus is on helping softwre architects and developers design and deploy *systems*.
 Behind the scenes, Frame is utilizing "object-oriented" classes (or equivalent) to 
-implement a system design pattern and injecting a supporing runtime kernel. This 
+implement a system design pattern by injecting a supporing runtime kernel. This 
 pattern will be explored in more depth in advanced articles on Frame's implementation.
 
 System Syntax 
@@ -88,7 +88,7 @@ Systems taking no parameters have an empty system list and take no arguments whe
         -machine-
 
         $Start
-            |>| print ("#NoParameters started") ^
+            |>| print("#NoParameters started") ^
     ##
 
 Run the `program <https://onlinegdb.com/Q6sB6hmvQ>`_. 
@@ -104,6 +104,10 @@ a **>** message which is handled in the start state and prints "NoParameters sta
 Start State Parameters 
 +++++++++++
 
+Start state parameters are declared using the special state parameter declaration list syntax 
+**$[<state params>]**. Likewise, state initialization arguments are passed in the system initialization 
+expression list using the special state argument expression list syntax **$(<state args>). 
+
 .. code-block::
     :caption: Start State Parameters Demo
 
@@ -112,7 +116,7 @@ Start State Parameters
         #StartStateParameters($("#StartStateParameters started"))
     }
 
-    #StartStateParameters [$[msg]] // Start Start State Parameters Declared
+    #StartStateParameters [$[msg]] // Start State Parameters Declared
 
         -machine-
 
