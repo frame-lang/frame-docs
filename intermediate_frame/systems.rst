@@ -113,7 +113,7 @@ expression list using the special start state argument expression list syntax **
 
     fn main {
         // System Start State Arguments 
-        #StartStateParameters($("#StartStateParameters started"))
+        #StartStateParameters($("$StartStateParameters started"))
     }
 
     // Start State Parameters Declared
@@ -126,7 +126,7 @@ expression list using the special start state argument expression list syntax **
             |>| print(msg) ^
     ##
 
-Run the `program <https://onlinegdb.com/u4XJm3uxC>`_. 
+Run the `program <https://onlinegdb.com/jFnS879e_>`_. 
 
 .. code-block::
     :caption: Start State Parameters Demo Output 
@@ -145,7 +145,7 @@ expression list using the special start state enter argument expression list syn
 
     fn main {
         // System Start State Enter Arguments 
-        #StartStateEnterParameters(>("#StartStateEnterParameters started"))
+        #StartStateEnterParameters(>(">StartStateEnterParameters started"))
     }
 
     // System Start State Enter Parameters
@@ -158,12 +158,12 @@ expression list using the special start state enter argument expression list syn
             |>| [msg] print(msg) ^
     ##
 
-Run the `program <https://onlinegdb.com/SIaUcreM2o>`_. 
+Run the `program <https://onlinegdb.com/wmjdnXNEx>`_. 
 
 .. code-block::
     :caption: Start State Enter Parameters Demo Output 
 
-    #StartStateEnterParameters started
+    >StartStateEnterParameters started
 
 System Domain Parameters 
 +++++++++++
@@ -173,7 +173,7 @@ declared using the special system domain parameter declaration list syntax
 **#[<domain initalization params>]**. Likewise, domain initialization arguments are passed in the system initialization 
 expression list using the special domain initialization argument expression list syntax **#(<domain initalization args>)**. 
 
-The domain initialization parameters are mapped by name to matching domain variables and overrides the default 
+The domain initialization parameters are mapped by name to matching domain variables and override the default 
 variable initalization values. 
 
 .. code-block::
@@ -181,7 +181,7 @@ variable initalization values.
 
     fn main {
         // System Domain Arguments
-        #SystemDomainParameters(#("SystemDomainParameters started"))
+        #SystemDomainParameters(#("#SystemDomainParameters started"))
     }
 
     // System Domain Parameters
@@ -199,12 +199,12 @@ variable initalization values.
 
     ##
 
-Run the `program <https://onlinegdb.com/6W0B4Mgap>`_. 
+Run the `program <https://onlinegdb.com/QKigQog6F>`_. 
 
 .. code-block::
     :caption: System Domain Parameters Demo Output 
 
-    SystemDomainParameters started
+    #SystemDomainParameters started
 
 
 System Factory 
