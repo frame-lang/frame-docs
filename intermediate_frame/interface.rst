@@ -2,12 +2,15 @@
 System Interface
 ==================
 
-The system interface block contains the set of publicly accessible methods. The block is 
-indicated by the **-interface-** keyword and must be the first block if it is present. 
+The system interface block contains the set of publicly accessible methods that send messages to the state machine. 
+The interface block is 
+indicated by the **-interface-** keyword and must be after the **-operations-** block if it is present and 
+before the **-machine-** block if it is present. 
 
-Interface methods have two responsibilities:
+Interface methods have three responsibilities:
 
-#. Build a FrameEvent from the data provided by the caller 
+#. Create and initialize a FrameEvent with the data provided by the caller 
+#. Send the event to the runtime kernel
 #. Return the event return value to the caller if it exists on the event.
 
 The three parts of the signature for interface methods are:
