@@ -30,10 +30,10 @@ The interface method name must be a string of alphanumeric characters plus the u
 the name must not start with a number.  Ultimately this name must also be valid in the target language as 
 a method identifier.
 
-Interface Parameter List 
+Interface Parameter List    
 ---------------------
 
-The parameter list for interface methods follows the same rules as :ref:`<functions and actions>`. 
+The parameter list for interface methods follows the same rules as :ref:`functions and actions<functions-and-actions>`. 
 Although any combination of typed or untyped parameters is permitted, the target language must support 
 the generated syntax. It is a syntax error to have an empty parameter list. 
 

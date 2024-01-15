@@ -140,7 +140,7 @@ Frame parameters cannot be assigned default values for missing arguments.
 
 .. _methods:
 .. _functions:
-.. _functions and actions:
+.. _functions-and-actions:
 
 Functions, Interface Methods and Actions
 -------
