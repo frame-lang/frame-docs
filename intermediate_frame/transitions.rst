@@ -122,7 +122,7 @@ The program generates the following output:
 Enter Event Parameters
 ++++++++++++++++
 
-In the  `States and Transitions`_
+In the  :ref:`States and Transitions`
 article we saw one way to send data directly from 
 one state to another by using **state parameters**. 
 Another way to accomplish state-to-state direct data transfer is using **enter event parameters**. 
