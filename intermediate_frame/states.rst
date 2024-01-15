@@ -1,5 +1,3 @@
-.. states_and_transitions:
-
 States and Transitions
 ==================
 
