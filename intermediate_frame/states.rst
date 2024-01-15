@@ -1,4 +1,3 @@
-==================
 States and Transitions
 ==================
 
@@ -44,7 +43,7 @@ called the **start state**.
 Event Handlers
 --------------
 
-States by themselves do nothing. State behavior exists in **event handlers**. Event handlers have three 
+States, by themselves, do nothing. State behavior exists in **event handlers**. Event handlers have three 
 clauses:
 
 #. Message selector
@@ -195,7 +194,7 @@ Event Handler Continue Terminator
 As previously mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
 articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
 from other states and are created using the Frame *Dispatch Operator* **=>**. 
-While unhandled events are automatically passed to parent states, the continue operator enables 
+While unhandled events are automatically passed to parent states, the continue operator enables the 
 handled event to be passed to a parent state as well:   
 
 .. code-block::
@@ -216,7 +215,7 @@ handled event to be passed to a parent state as well:
 
         -machine-
 
-        // Dispatch operator (=>) defines state hierarchy
+        // Dispatch operator (=>) defines the state hierarchy
 
         $Child => $Parent 
 
@@ -247,7 +246,7 @@ Enter and Exit Events
 
 One of the most important features of the Frame language is the support of two special 
 messages - enter (**>**) and exit (**<**). Not surprisingly, these messages are generated 
-by the Frame runtime in cirucmstances when the the state is being entered or exited. 
+by the Frame runtime in circumstances when the the state is being entered or exited. 
 
 .. code-block::
     :caption: Enter and Exit Messages
@@ -653,7 +652,7 @@ A final example will tie together all of these concepts neatly together and demo
 application of these capabilities.
 
 .. code-block::
-    :caption: Fibonacci Demo using System Parameters
+    :caption: Fibonacci Demo Using System Parameters
 
     fn main {
         var fib:# = #FibonacciSystemParamsDemo($(0),>(1)) 

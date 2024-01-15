@@ -16,7 +16,7 @@ useful for both their speed of operation as well as some special case system des
 Transitions
 ------------
 
-Transitions are affected by using the **->** operator to go to another state. 
+Transitions are performed by using the **->** operator to go to another state. 
 
 
 .. code-block::
@@ -46,12 +46,12 @@ We will take a look at that behavior next.
 Enter and Exit Events
 ++++++++++++++++
 
-As discussed elsewhere, one of Frame's most powerful features is the ability to intialize 
+As discussed elsewhere, one of Frame's most powerful features is the ability to initialize 
 and cleanup states upon entry and exit respectively. 
 This powerful capability unlocks many improvements to code structure and readability of 
 Frame generated software. 
 
-Upon transitioning Frame first sends a system reserved "exit" message **<** to the current state.  
+Upon transitioning, Frame first sends a system reserved "exit" message **<** to the current state.  
 Below we see an exit handler added to the **$Start** state that prints a message upon exit.
 
 .. code-block::

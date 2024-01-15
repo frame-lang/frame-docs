@@ -52,7 +52,7 @@ Examples
 The following examples show the permitted variations in method signatures:
 
 .. code-block::
-    :caption: Interface Examples
+    :caption: Interface Method Examples
 
     -interface-
 

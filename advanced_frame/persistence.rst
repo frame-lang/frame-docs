@@ -1,4 +1,4 @@
-Persistance
+Persistence
 ==========
 
 An important capability of many types of software applications is supporting **workflows**. 
@@ -64,7 +64,7 @@ itself rather than an instance of the system (as there isn't one):
 The ds variable now references the **#DurableSystem** instance in the state it 
 was persisted.
 
-Persistance Demo 
+Persistence Demo 
 ----------------
 
 Let's create a persitable system that tracks how many times its been 
