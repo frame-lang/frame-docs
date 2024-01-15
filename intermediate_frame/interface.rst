@@ -33,7 +33,7 @@ a method identifier.
 Interface Parameter List 
 ---------------------
 
-The parameter list for interface methods follows the same rules as `<functions and actions>`_. 
+The parameter list for interface methods follows the same rules as `<functions and actions_>`_. 
 Although any combination of typed or untyped parameters is permitted, the target language must support 
 the generated syntax. It is a syntax error to have an empty parameter list. 
 
