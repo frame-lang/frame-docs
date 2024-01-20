@@ -294,21 +294,6 @@ versus returning to it using the history mechanisms.
 
     ##
 
-When transitioning from $D -> $B we can see that the state variable **b** is reset to 0.
-When using the history mechanism to go from $D -> $C we can see that **c** still has its previous 
-value of 1. 
-
-This behavior is possible due to how Frame implements states as first-class objects called
-**State Compartments** or simply **Compartments**. When pushing a state to the state stack
-using the **$$[+]** operator, the 
-Frame runtime is actually pushing the current state compartment onto a stack that the 
-runtime maintains. Likewise, when popping the state with **$$[-]**, the runtime removes
-the compartment from the stack. If the popped state is also the target of a transition, 
-the runtime will then set that state as the current state and transition to it as well. 
-
-**Compartments** will 
-be covered in depth in the advanced section later. 
-
 .. image:: images/history104.png
 
 Run the `program <https://onlinegdb.com/GWZya9TRJ>`_. 
@@ -347,14 +332,29 @@ Notice these lines in particular:
     Returning to $C
     Entering $C. c = 1
 
+When transitioning from **$D** -> **$B** we can see that the state variable **b** is reset to 0.
+When using the history mechanism to go from **$D** -> **$C** we can see that **c** still has its previous 
+value of 1. 
 
+This behavior is possible due to how Frame implements states as first-class objects called
+**State Compartments** or simply **Compartments**. When pushing a state to the state stack
+using the **$$[+]** operator, the 
+Frame runtime is actually pushing the current state compartment onto a stack that the 
+runtime maintains. Likewise, when popping the state with **$$[-]**, the runtime removes
+the compartment from the stack. If the popped state is also the target of a transition, 
+the runtime will then set that state as the current state and transition to it as well. 
 
-State Stack History
+Compartments will be covered in depth in the advanced section later.
+
+History using the State Stack 
 ------------
 
 Finally we will examine a demo that fully utilizes the state stack for the use case that was initially 
 discussed - generically returning to the previous state without recording
 explicitly in some way what it was. 
+
+The demo below demonstrates this capability by showing that states **$A** and **B** can 
+transition to state **$C** and return to those states anonymously using a state stack transition. 
 
 .. code-block::
     :caption: History 105 Demo 
@@ -378,57 +378,97 @@ explicitly in some way what it was.
 
         -interface-
 
-        gotoA
         gotoB
         gotoC
         ret
 
         -machine-
 
-        $A => $Parent
-            |>| print("In $A") ^
- 
-        $B => $Parent
-            |>| print("In $B") ^
+        $A 
+            var a = 0
 
-        $C => $Parent
+            |>| print("In $A. a = " + str(a)) ^
+
+            |gotoB| 
+                print("Transitioning to $B")
+                -> $B ^
+
+            |gotoC| 
+                // When we return, a == 1
+                a = a + 1
+                print("Incrementing a to " + str(a))
+                $$[+] -> $C ^
+
+        $B 
+            var b = 0
+
+            |>| print("In $B. b = " + str(b)) ^
+
+            |gotoC| 
+                // When we return, b == 1
+                b = b + 1
+                print("Incrementing b to " + str(b))
+                $$[+] -> $C ^
+
+        $C 
             |>| print("In $C") ^
 
-        $Parent
-            |gotoA| $$[+] -> $A ^
-            |gotoB| $$[+] -> $B ^
-            |gotoC| $$[+] -> $C ^
-            |ret| -> $$[-] ^
-
+            |ret| 
+                print("Return to previous state")
+                -> $$[-] ^
     ##
 
-
-
-Above we start in **$A** and transition to **$C** after pushing **$A** onto the state stack. 
-This transition is actually executed in parent state **C**, but **$A** is the current state 
-and what is pushed onto the state stack. 
-
-Once in **$C**, the system recieves a **ret** event and transitions to the state at the top 
-of the state stack:
+In the **History105** demo above the system starts in **$A** and transition to **$C** after 
+incrementing a state local varible **a** and pushing **$A** onto the state stack. 
 
 .. code-block::
 
-        $Parent
+    |gotoC| 
+        // When we return, a == 1
+        a = a + 1
+        $$[+] -> $C ^
 
-            ...
+When the system returns to **$A** using a state stack transition, the enter event handler 
+will print the updated varible value:
 
-            |ret| -> $$[-] ^
+ .. code-block::
 
-This returns the system to **$A**. After 
+    In $A. a = 0
+    Incrementing a to 1
+    In $C
+    Return to previous state
+    In $A. a = 1
+
+We then transition the system to state **$B** and do the same operations, demonstrating functional 
+equivalency between the two state stack transitions.
+
+.. code-block::
+
+    Transitioning to $B
+    In $B. b = 0
+    Incrementing b to 1
+    In $C
+    Return to previous state
+    In $B. b = 1
+
+The full output log for the demo:
 
 .. image:: images/history105.png
 
 .. code-block::
     :caption: History 105 Demo Output 
 
-    In $A
-    In $D
-    In $A
-    In $B
-    In $D
-    In $B
+    In $A. a = 0
+    Incrementing a to 1
+    In $C
+    Return to previous state
+    In $A. a = 1
+    Transitioning to $B
+    In $B. b = 0
+    Incrementing b to 1
+    In $C
+    Return to previous state
+    In $B. b = 1
+
+Run the `program <https://onlinegdb.com/9wVD5_h4f>`_. 
+
