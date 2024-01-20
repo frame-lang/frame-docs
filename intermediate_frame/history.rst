@@ -451,6 +451,8 @@ equivalency between the two state stack transitions.
     Return to previous state
     In $B. b = 1
 
+Run the `program <https://onlinegdb.com/9wVD5_h4f>`_. 
+
 The full output log for the demo:
 
 .. image:: images/history105.png
@@ -470,5 +472,5 @@ The full output log for the demo:
     Return to previous state
     In $B. b = 1
 
-Run the `program <https://onlinegdb.com/9wVD5_h4f>`_. 
+
 
