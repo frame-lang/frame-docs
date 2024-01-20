@@ -72,11 +72,11 @@ in **$D** to determine which state to return to.
 .. image:: images/history2.png
 
 This approach enables us to return to our previous state, but not in a generic way. 
-Every time we add another state that transtions to **$D** we will need to add 
-another contitional test to make a test to determine if the machine should return 
+Every time we add another state that transitions to **$D** we will need to add 
+another conditional test to make a test to determine if the machine should return 
 to that new state. Functional, but not elegant or scalable. 
 
-In addtion, this approach does not allow us to return to the previous state *in the same 
+In addition, this approach does not allow us to return to the previous state *in the same 
 condition we left it*. Consider this update: 
 
 .. code-block::
@@ -222,7 +222,7 @@ to states directly vs when using the state stack.
 The State Stack and Compartments
 ------------
 
-The following example explores the differences between returning to a state using a transition 
+The following example explores the differences between returning to a state using a standard transition 
 versus returning to it using the history mechanisms. 
 
 .. code-block::
@@ -294,6 +294,21 @@ versus returning to it using the history mechanisms.
 
     ##
 
+When transitioning from $D -> $B we can see that the state variable **b** is reset to 0.
+When using the history mechanism to go from $D -> $C we can see that **c** still has its previous 
+value of 1. 
+
+This behavior is possible due to how Frame implements states as first-class objects called
+**State Compartments** or simply **Compartments**. When pushing a state to the state stack
+using the **$$[+]** operator, the 
+Frame runtime is actually pushing the current state compartment onto a stack that the 
+runtime maintains. Likewise, when popping the state with **$$[-]**, the runtime removes
+the compartment from the stack. If the popped state is also the target of a transition, 
+the runtime will then set that state as the current state and transition to it as well. 
+
+**Compartments** will 
+be covered in depth in the advanced section later. 
+
 .. image:: images/history104.png
 
 Run the `program <https://onlinegdb.com/GWZya9TRJ>`_. 
@@ -332,20 +347,6 @@ Notice these lines in particular:
     Returning to $C
     Entering $C. c = 1
 
-When transitioning from $D -> $B we can see that the state variable **b** is reset to 0.
-When using the history mechanism to go from $D -> $C we can see that c still has its previous 
-value of 1. 
-
-This behavior is possible due to how Frame implements states as first-class objects called
-**State Compartments** or simply **Compartments**. When pushing a state to the state stack
-using the **$$[+]** operator, the 
-Frame runtime is actually pushing the current state compartment onto a stack that the 
-runtime maintains. Likewise, when popping the state with **$$[-]**, the runtime removes
-the compartment from the stack. If the popped state is also the target of a transition, 
-the runtime will then set that state as the current state and transition to it as well. 
-
-**Compartments** will 
-be covered in depth in the advanced section later. 
 
 
 State Stack History
@@ -411,7 +412,7 @@ Once in **$C**, the system recieves a **ret** event and transitions to the state
 of the state stack:
 
 .. code-block::
-    
+
         $Parent
 
             ...
