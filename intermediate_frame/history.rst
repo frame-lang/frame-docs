@@ -420,21 +420,24 @@ transition to state **$C** and return to those states anonymously using a state 
 
 
 .. image:: images/history105.png
-    
+
 In the **History105** demo above the system starts in **$A** and transition to **$C** after 
 incrementing a state local varible **a** and pushing **$A** onto the state stack. 
 
 .. code-block::
+    :caption: $A's transition to $C 
 
     |gotoC| 
         // When we return, a == 1
         a = a + 1
+        print("Incrementing a to " + str(a))
         $$[+] -> $C ^
 
 When the system returns to **$A** using a state stack transition, the enter event handler 
 will print the updated varible value:
 
  .. code-block::
+    :caption: $A -> $C -> $A output
 
     In $A. a = 0
     Incrementing a to 1
@@ -445,7 +448,18 @@ will print the updated varible value:
 We then transition the system to state **$B** and do the same operations, demonstrating functional 
 equivalency between the two state stack transitions.
 
+
 .. code-block::
+    :caption: $B's transition to $C 
+
+    |gotoC| 
+        // When we return, b == 1
+        b = b + 1
+        print("Incrementing b to " + str(b))
+        $$[+] -> $C ^
+
+.. code-block::
+    :caption: $B -> $C -> $B output
 
     Transitioning to $B
     In $B. b = 0
