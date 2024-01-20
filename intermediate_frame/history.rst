@@ -418,6 +418,9 @@ transition to state **$C** and return to those states anonymously using a state 
                 -> $$[-] ^
     ##
 
+
+.. image:: images/history105.png
+    
 In the **History105** demo above the system starts in **$A** and transition to **$C** after 
 incrementing a state local varible **a** and pushing **$A** onto the state stack. 
 
@@ -454,8 +457,6 @@ equivalency between the two state stack transitions.
 Run the `program <https://onlinegdb.com/9wVD5_h4f>`_. 
 
 The full output log for the demo:
-
-.. image:: images/history105.png
 
 .. code-block::
     :caption: History 105 Demo Output 
