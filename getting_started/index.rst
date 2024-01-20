@@ -290,7 +290,14 @@ Here you can try running the program_.
 
 You should see this output:
 
-.. image:: ../images/introduction/lamp_demo_output.png
+.. code-block::
+    :caption: Complete Lamp Program Output
+
+    Entering $Off
+    Exiting $Off
+    Entering $On
+    Exiting $On
+    Entering $Off
 
 As a bonus, Frame also can generate system documentation as well: 
 
