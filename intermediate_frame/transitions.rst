@@ -437,7 +437,7 @@ This transition will actually cause a transpiler error:
 The reason is simple - there is no exit handler for state **$Start** to send the value that **foo()** returns to. 
 Although it is unlikely that an expression would need to be grouped like this, the syntax supports it so 
 it is ideal for Frame syntax to provide a way to be unambiguous that the **(foo())** expression is not 
-intended to be a clause of the transition. To make this situation transpile, Frame allows for a transition 
+intended to be a clause of the transition. To make this code parse, Frame allows for a transition 
 to be enclosed in a group:
 
 .. code-block::

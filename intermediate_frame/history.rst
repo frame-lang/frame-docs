@@ -40,7 +40,7 @@ to history. Below we see states **$B** and **$C** both transition into state **$
 .. image:: images/history1.png
 
 To return to the previous state there needs to be a way to save that information and 
-use it to decide between the two return transition paths. There are a few 
+use it to decide between the two possible return paths. There are a few 
 ways we could do this but for this example we will simply choose to pass a state argument containing 
 the name of the state that we transitioned from. This value will be used 
 in **$D** to determine which state to return to.
@@ -73,10 +73,10 @@ in **$D** to determine which state to return to.
 
 This approach enables us to return to our previous state, but not in a generic way. 
 Every time we add another state that transtions to **$D** we will need to add 
-another contitional to make a test to determine if the machine should return 
+another contitional test to make a test to determine if the machine should return 
 to that new state. Functional, but not elegant or scalable. 
 
-In addtion this approach does not allow us to return to the previous state *in the same 
+In addtion, this approach does not allow us to return to the previous state *in the same 
 condition we left it*. Consider this update: 
 
 .. code-block::
@@ -161,7 +161,7 @@ the condition it was prior to the transition* this approach does not work.
 In order to support returning to the *same* state we left, Frame provides a **history** feature which 
 enables preservation of the previous state's data (low level state).
 
-Let's explore the 
+Let's explore how the Frame **state stack** can address this requirement. 
 
 State Stack Operators
 ------------
@@ -216,10 +216,11 @@ while the state stack pop operator produces the state to be transitioned into:
 
     -> $$[-]
 
-In the next exmple we can see the state stack enable a way to generically return 
-to either state **$B** or **$C** from **$D**.  
+With this understanding of the state stack operators we can now contrast the differing behavior of transitioning 
+to states directly vs when using the state stack.
 
-.. image:: images/history201.png
+The State Stack and Compartments
+------------
 
 The following example explores the differences between returning to a state using a transition 
 versus returning to it using the history mechanisms. 
@@ -346,3 +347,87 @@ the runtime will then set that state as the current state and transition to it a
 **Compartments** will 
 be covered in depth in the advanced section later. 
 
+
+State Stack History
+------------
+
+Finally we will examine a demo that fully utilizes the state stack for the use case that was initially 
+discussed - generically returning to the previous state without recording
+explicitly in some way what it was. 
+
+.. code-block::
+    :caption: History 105 Demo 
+
+    fn main {
+        var sys:# = #History105()
+        // Currently in $A
+        sys.gotoC()
+        // Now in $C
+        sys.ret()
+        // Now back in $A
+        sys.gotoB()
+        // Now in $B
+        sys.gotoC()
+        // Now in $C
+        sys.ret()
+        // Now back in $B
+    }
+
+    #History105
+
+        -interface-
+
+        gotoA
+        gotoB
+        gotoC
+        ret
+
+        -machine-
+
+        $A => $Parent
+            |>| print("In $A") ^
+ 
+        $B => $Parent
+            |>| print("In $B") ^
+
+        $C => $Parent
+            |>| print("In $C") ^
+
+        $Parent
+            |gotoA| $$[+] -> $A ^
+            |gotoB| $$[+] -> $B ^
+            |gotoC| $$[+] -> $C ^
+            |ret| -> $$[-] ^
+
+    ##
+
+
+
+Above we start in **$A** and transition to **$C** after pushing **$A** onto the state stack. 
+This transition is actually executed in parent state **C**, but **$A** is the current state 
+and what is pushed onto the state stack. 
+
+Once in **$C**, the system recieves a **ret** event and transitions to the state at the top 
+of the state stack:
+
+.. code-block::
+    
+        $Parent
+
+            ...
+
+            |ret| -> $$[-] ^
+
+This returns the system to **$A**. After 
+
+.. image:: images/history105.png
+
+.. code-block::
+    :caption: History 105 Demo Output 
+
+    In $A
+    In $D
+    In $A
+    In $B
+    In $D
+    In $B

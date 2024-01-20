@@ -96,8 +96,8 @@ create a new parent state and refactor the common behavior into it.
     :height: 500
 
 
-Supporting the HSM architecture is one of the primary reasons the Frame runtime is event based which  
-makes supporting this feature using event passing straightforward to implement. 
+Supporting the HSM architecture is one of the primary reasons the Frame runtime is event based which 
+makes the capability straightforward to implement. 
 
 Event Handler Continue Terminator
 +++++++++++
@@ -106,7 +106,7 @@ By default and by design, unhandled events such as **b** in states **$S1** and *
 through to the parent state **$S0**. In some circumstances, however, it is desirable to execute 
 behavior in both the child and the parent. To facilitate this capability, event handlers are also able 
 to be terminated with a continue operator **:>**. After executing all statements in the child event handler,
-the continue operator will not return but allow the event to pass to the parent. 
+the continue operator does not return but instead passes the event to the parent for processing. 
 
 .. code-block::
     :caption: Event Handler Continue Terminator
