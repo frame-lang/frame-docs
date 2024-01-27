@@ -4,7 +4,7 @@ Control Flow
 
 
 Frame control flow has a compact syntax for various forms of branching.  
-It is inspired by the 'C' langauge ternary expression:
+It is inspired by the 'C' language ternary expression:
 
 .. code-block::
     :caption: 'C' langauge ternary syntax
@@ -24,7 +24,7 @@ The following example sets the variable **x** to 10:
 In 'C' the ternary operator is an expression that returns a value. Above we see 
 that **x** is assigned the value of **a** which is 10. 
 
-In contrast, Frame uses simlar syntax as a statement and not an expression. 
+In contrast, Frame uses similar syntax as a statement and not an expression. 
 This means that no values are returned for assignment. Let's see how this works in 
 a simple boolean test first.
 

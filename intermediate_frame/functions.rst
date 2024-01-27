@@ -50,7 +50,7 @@ In addition to accepting parameters, Frame also supports returning a value from 
     }
 
 The following program is a trivial Frame program with a **main()** that accepts system arguments. 
-For this demo the argments are "Hello" and "5".
+For this demo the arguments are "Hello" and "5".
 
 .. code-block::
     :caption: Main with System Arguments

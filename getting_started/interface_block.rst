@@ -20,8 +20,8 @@ The most basic interface method has no parameters and no return values:
     ##
 
 Above we see our system now can be called to **sayHello** and **sayWorld**. However,  
-unlike other languages, Frame decisvely separates interface from behavior. Therefore these 
-inteface methods can't be programmed to actually execute those instructions. 
+unlike other languages, Frame decisively separates interface from behavior. Therefore these 
+interface methods can't be programmed to actually execute those instructions. 
 
 Instead, interface methods are designed to interact with the rest of the system by 
 creating messages and sending them to the internal state machine. It is the job of the 

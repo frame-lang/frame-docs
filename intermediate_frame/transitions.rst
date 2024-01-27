@@ -10,7 +10,7 @@ of a state machine. Frame supports two mechanisms for doing so:
 
 Transitions are powerful and potentially expensive operations that drive much of the 
 Frame runtime machinery. 
-State Changes are an optimization of Transtions which are 
+State Changes are an optimization of transitions which are 
 useful for both their speed of operation as well as some special case system design scenarios. 
 
 Transitions
@@ -159,7 +159,7 @@ The Frame transition operator accepts an expression group as arguments to the ne
              |>| [msg] print(msg) ^
     ##
 
-Above we see that the transition passes a message to the **$End** state which is recieved
+Above we see that the transition passes a message to the **$End** state which is received
 as a parameter to the event handler which is then printed. 
 
 Run the `program <https://onlinegdb.com/EbQkoWXmq>`_. 
@@ -345,10 +345,10 @@ The system above generates the following UML diagram:
 .. image:: images/transition_label.png
     :height: 300
 
-The first transition in the example above has the default label which is the message selecor for 
+The first transition in the example above has the default label which is the message selector for 
 the state. 
 The second label shows 
-a default overridden label. Sometimes labels can be undesireably long. The third transition shows
+a default overridden label. Sometimes labels can be undesirably long. The third transition shows
 how to embed a '\n' escape character in the label to create a new line in the label. In addition, 
 the third transition shows the correct ordering of the enter arguments group and the label with the 
 arguments group before the label.
@@ -419,7 +419,7 @@ The program generates the following output:
 Grouping Syntax
 ++++++++++++++++
 
-Frame notation related to transitions is complex and leads to one ambigous situation.  Consider this 
+Frame notation related to transitions is complex and leads to one ambiguous situation.  Consider this 
 transition:
 
 .. code-block::
@@ -473,4 +473,4 @@ While the speed of the state change is a clear advantage,
 state changes are disallowed out of states with an exit handler or into states with an enter handler.
 The purpose of these restrictions are to make it clear that the enter and exit event handers will 
 not be triggered during a state change. So since they won't be used, Frame disallows their existence
-in order to elimenate confusion why they are not triggered.  
+in order to eliminate confusion why they are not triggered.  

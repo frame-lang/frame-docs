@@ -41,8 +41,8 @@ Start State
 ^^^^^^^^^^^
 
 By definition, state machines always have a single designated
-**start state** the system is in upon creation (and before initalization).
-Not surprsingly, Frame defines the 
+**start state** the system is in upon creation (and before initialization).
+Not surprisingly, Frame defines the 
 start state as first state in a system spec. For our system that is **$Hello**. 
 
 So our system has a start state dedicated to "Hello", which, despite possibly seeming excessive, at least 
@@ -106,7 +106,7 @@ In order to go to a different state we will use a transition to get to `$World`.
     ...
 
 The **->** operator is used to transition from the current state to the target state, in this case **$World**. 
-In turn the **$World** state transitions to the **$Done** state upon recieving the **|sayWorld|** event. 
+In turn the **$World** state transitions to the **$Done** state upon receiving the **|sayWorld|** event. 
 
 
 .. code-block::

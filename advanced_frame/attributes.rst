@@ -2,7 +2,7 @@ Attributes
 ===========
 
 Frame supports `Rust/C# style attribute syntax <https://doc.rust-lang.org/reference/attributes.html>`_ to 
-add metadata to various entity types. Currently only one attribute is implmented.
+add metadata to various entity types. Currently only one attribute is implemented.
 
 Static Operations
 -----------------

@@ -267,10 +267,10 @@ by the Frame runtime in circumstances when the the state is being entered or exi
 
 The enter message is sent to a state under two conditions: 
 
-#. to the **start state** when the system is initalized (1 time event)
+#. to the **start state** when the system is initialized (1 time event)
 #. when transitioning into the state 
 
-The exit message is sent only  when transtioning out of a state.
+The exit message is sent only  when transitioning out of a state.
 We will explore the means by which states are entered and exited next. 
 
 Transitions
@@ -548,17 +548,17 @@ The transition to state **$S1** is "called" with two arguments (0,1) which are m
 **zero** and **one** parameters in state **$S1**.
 
 Transitions are one way to enter a state. However, start states are also "entered" during system 
-initalization and need to be provided arguments from this avenue as well. 
+initialization and need to be provided arguments from this avenue as well. 
 
 To meet this requirement, Frame allows for a **system parameters list** which permits callers a 
 mechanism for passing in initialization data directly to the system. There are three scopes of system 
-data that can be initalized using the system parameter list:
+data that can be initialized using the system parameter list:
 
 #. Start state parameters
 #. Start state enter event handler parameters
 #. Domain variables
 
-The first two parameter types are specific to initalizing the start state and are the only ones 
+The first two parameter types are specific to initializing the start state and are the only ones 
 we will discuss in depth in this article. 
 
 System parameters have an unusual syntax, as the parameters need to be grouped based on 

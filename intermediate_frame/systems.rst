@@ -2,9 +2,9 @@
 Systems
 ==================
 
-Frame's focus is on helping softwre architects and developers design and deploy *systems*.
+Frame's focus is on helping software architects and developers design and deploy *systems*.
 Behind the scenes, Frame is utilizing "object-oriented" classes (or equivalent) to 
-implement a system design pattern by injecting a supporing runtime kernel. This 
+implement a system design pattern by injecting a supporting runtime kernel. This 
 pattern will be explored in more depth in advanced articles on Frame's implementation.
 
 System Syntax 
@@ -40,7 +40,7 @@ Frame system parameters are declared just after the name of the system.
     #SystemWithParameters [<system_params>]
 
 As mentioned there are three types of system parameters, each with a particular 
-aspect of the system to intialize. To differentiate these categories, Frame 
+aspect of the system to initialize. To differentiate these categories, Frame 
 groups the parameter types with special parameter lists.
 
 
@@ -174,7 +174,7 @@ declared using the special system domain parameter declaration list syntax
 expression list using the special domain initialization argument expression list syntax **#(<domain initalization args>)**. 
 
 The domain initialization parameters are mapped by name to matching domain variables and override the default 
-variable initalization values. 
+variable initialization values. 
 
 .. code-block::
     :caption: System Domain Parameters Demo 
@@ -210,7 +210,7 @@ Run the `program <https://onlinegdb.com/QKigQog6F>`_.
 System Factory 
 +++++++++++
 
-Systems are intatiated and initialized by a runtime **system factory**. The implementation 
+Systems are initiated and initialized by a runtime **system factory**. The implementation 
 of the system factory is explained in the advanced section. The system factory does the 
 following steps when launching a system: 
 

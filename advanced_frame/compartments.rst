@@ -5,7 +5,7 @@ Compartments
 
 In the sections on transition and state parameters, as well as state variables,
 no details were given as
-to how this data is passed to the state, intialized and/or preserved.
+to how this data is passed to the state, initialized and/or preserved.
 The answer to those questions is a new concept for state machines called
 the **compartment**.
 

@@ -37,7 +37,7 @@ The parameter list for interface methods follows the same rules as :ref:`functio
 Although any combination of typed or untyped parameters is permitted, the target language must support 
 the generated syntax. It is a syntax error to have an empty parameter list. 
 
-Paramter types can be superstrings.
+Parameter types can be superstrings.
 
 Return Type
 -----------

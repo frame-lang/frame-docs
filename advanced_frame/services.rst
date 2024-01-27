@@ -4,7 +4,7 @@ Services
 
 Services are programs that run autonomously in the background and typically do not exit 
 until terminated by the OS or framework. Services can be created using Frame 
-by never returning from intialization which requires designing the system to have 
+by never returning from initialization which requires designing the system to have 
 all functionality in enter events.  
 
 The first example we will examine, Looper, is not a true service, but visibly demonstrates important 
@@ -122,9 +122,9 @@ program:
 Services 
 --------
 
-True services, in general, do not have inate termination criteria. Instead some outside signal source "kills" the program. The next example shows 
+True services, in general, do not have innate termination criteria. Instead some outside signal source "kills" the program. The next example shows 
 a program similar to Looper but with no termination logic. Instead, the user must send 
-an interupt signal by pressing CTRL-C. 
+an interrupt signal by pressing CTRL-C. 
 
 .. code-block::
     :caption: Service Machine Loop Demo

@@ -64,7 +64,7 @@ Enums can be used anywhere a literal numeric value can be used.
         }
     ##
 
-Enum values can be assigned to varables and passed as aruments as well as returned by methods.
+Enum values can be assigned to variables and passed as arguments as well as returned by methods.
 
 .. code-block::
     :caption: Enum Usage

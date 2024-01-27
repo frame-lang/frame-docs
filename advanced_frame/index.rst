@@ -7,7 +7,7 @@ we will explore the following topics:
 
 #. Attributes
 #. Operations
-#. Persistance
+#. Persistence
 #. The Frame Runtime
 #. CLI Programs
 #. Services

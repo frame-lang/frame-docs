@@ -4,7 +4,7 @@ Persistence
 An important capability of many types of software applications is supporting **workflows**. 
 A workflow is an asynchronously executed sequence of event driven 
 steps. Most commonly
-the asychronous aspect of a workflow means that the system needs to be persisted to a durable medium
+the asynchronous aspect of a workflow means that the system needs to be persisted to a durable medium
 between each step in the process. 
 
 Frame for Python supports a pattern for persistence using the `jsonpickle library <https://jsonpickle.github.io/>`_ 
@@ -61,13 +61,13 @@ itself rather than an instance of the system (as there isn't one):
         // Restore system using static operation
         ds = #DurableSystem.unmarshal(data)
 
-The ds variable now references the **#DurableSystem** instance in the state it 
+The **ds** variable now references the **#DurableSystem** instance in the state it 
 was persisted.
 
 Persistence Demo 
 ----------------
 
-Let's create a persitable system that tracks how many times its been 
+Let's create a persistable system that tracks how many times its been 
 saved and restored. Our **#PersistDemo** system 
 has a single state **$Started** which has a state variable **revived_count** which will be used to 
 track how many times the state (and by proxy, the system) has been revived. 
@@ -106,7 +106,7 @@ be incremented and printed when the **revived** event is received. To do so, we 
             ^(demo) 
         } 
 
-We will start by creating the system and then immeditely persisting it:
+We will start by creating the system and then immediately persisting it:
 
 
 .. code-block::

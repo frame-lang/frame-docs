@@ -3,11 +3,11 @@ Operations
 
 Frame's mission is the design and implementation of systems 
 using state machines. To that end Frame's core syntax restricts access to the system through
-the system intialization mechanisms (system parameters) and the interface methods.
+the system initialization mechanisms (system parameters) and the interface methods.
 
 However it can be desirable to have direct access to the inner state of 
 the system. To facilitate this use case, Frame supports **Operations**. Operations 
-are publically accessible access calls that do not create FrameEvents or interact 
+are publicly accessible access calls that do not create FrameEvents or interact 
 with the system state machine. 
 
 Operations are declared in the **-operations-** block which must be declared, if it 
@@ -99,8 +99,8 @@ Static operations cannot access data of any system instance. Additionally, Frame
 does not currently support any concept of static data as is common in some languages. 
 Therefore static operations are currently limited to serving as a library of functions
 related to the system type. While this is (currently) a very limited use case, 
-this does have utility implementing a *persistence* mechansim for Frame systems. 
-System persistance will be explored in a later article.
+this does have utility implementing a *persistence* mechanism for Frame systems. 
+System persistence will be explored in a later article.
 
 Below we can see a simple use case for creating static operations for a calculator system: 
 

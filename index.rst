@@ -5,9 +5,9 @@ Welcome! Here you will find the official documentation for the **Frame Language*
 
 What is Frame?
 --------------
-Frame is a "metaprogramming" language for both designing and programming state machines (technically Turning Machines). 
-Frame is a "metaprogramming" language in the sense that Frame programs are intended to be transpiled to other languages
-as well as into documentation. Currently Frame supports Python as its only target language and Statechart visual notation 
+Frame is a Domain Specific Language (DSL) language for both designing and programming state machines (technically Turning Machines). 
+Using the open source **Framepiler** tool, Frame programs are transpiled to other languages
+as well as into UML documentation. Currently Frame supports Python as its only target language and Statechart visual notation 
 for documentation. 
 
 In the future Frame will expand its target language set beyond Python to include JavaScript, Java, C#, C++, Golang and Rust. Other languages 

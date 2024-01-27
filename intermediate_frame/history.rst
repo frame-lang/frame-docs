@@ -155,7 +155,7 @@ The first time the system entered **$B** it initialized **b** to 0.
 When transitioning from $B -> $D this variable was set to 1, but 
 when transitioning $D -> $B we can see it is reset to 0 again.
 
-This is behavior is fine, and in many cases desireable. 
+This is behavior is fine, and in many cases desirable. 
 However, if we want to return to a state *in 
 the condition it was prior to the transition* this approach does not work. 
 In order to support returning to the *same* state we left, Frame provides a **history** feature which 
@@ -422,7 +422,7 @@ transition to state **$C** and return to those states anonymously using a state 
 .. image:: images/history105.png
 
 In the **History105** demo above the system starts in **$A** and transition to **$C** after 
-incrementing a state local varible **a** and pushing **$A** onto the state stack. 
+incrementing a state local variable **a** and pushing **$A** onto the state stack. 
 
 .. code-block::
     :caption: $A's transition to $C 
@@ -434,7 +434,7 @@ incrementing a state local varible **a** and pushing **$A** onto the state stack
         $$[+] -> $C ^
 
 When the system returns to **$A** using a state stack transition, the enter event handler 
-will print the updated varible value:
+will print the updated variable value:
 
  .. code-block::
     :caption: $A -> $C -> $A output

@@ -17,7 +17,7 @@ Frame supports single line C style comments:
 Whitespace, Formatting, Expressions and Statements
 --------
 
-Frame synatax does not require nor restrict any particular use of whitespace for formatting. As Frame's 
+Frame syntax does not require nor restrict any particular use of whitespace for formatting. As Frame's 
 grammar does not require it, Frame does not have any need for a token to indicate the end of a statement (like ';'). 
 
 Frame expressions are typical syntax constructs that return values. No control structure syntax serves 
@@ -26,14 +26,14 @@ as an expression.
 Superstrings 
 ------------
 
-One way Frame can be loosely characterized is as a templated Domain Specific Langauge (DSL) for system design
+One way Frame can be loosely characterized is as a templated Domain Specific Language (DSL) for system design
 in other languages. As Frame does not (currently) generate executable programs but instead transpiles Frame programs into 
 other programming languages, one of the biggest challenges is to properly handle target language types and 
 syntax that Frame does not directly support. 
 
-One way in which Frame generically accomodates other language sytnax is in the use of **superstrings**. Frame 
-superstrings are enclosed in either a pair of single backticks for inline needs or three 
-backticks for a block of content: 
+One way in which Frame generically accommodates other language syntax is in the use of **superstrings**. Frame 
+superstrings are enclosed in either a pair of single back-ticks for inline needs or three 
+back-ticks for a block of content: 
 
 .. code-block::
     :caption: Frame superstring syntax 
@@ -72,7 +72,7 @@ If a variable has a type the Framepiler will generate it if the target language 
 Conversely, if a variable declaration does not have a type and the target language is typed,
 Frame will generate `:<?>`. This invalid type token is intended to generate an error when the program is compiled. 
 
-As discussed in the superstring section above, Frame genericially supports any type declaration for any language 
+As discussed in the superstring section above, Frame generically supports any type declaration for any language 
 using superstrings. Here is an example from Golang that would parse using superstrings but not as a native 
 Frame type syntax:
 
@@ -88,7 +88,7 @@ Frame Native Types
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Frame has a very limited set of native types: systems, states and events. 
-Frame utilizes special tokens to type delarations of these special entities. 
+Frame utilizes special tokens to type declarations of these special entities. 
 
 .. list-table:: Frame Type Tokens
     :widths: 25 25 50
@@ -109,7 +109,7 @@ Frame utilizes special tokens to type delarations of these special entities.
 
 Note that the semantics of these entities are not yet completely uniform but will likely be 
 brought closer into alignment in future versions of the Frame language. For example, system instances can be instantiated 
-and referenced from variables, but states cannot. Events, on the other hand, can not be instantiated programatically but 
+and referenced from variables, but states cannot. Events, on the other hand, can not be instantiated programmatically but 
 are created by the Frame runtime. Additionally the **@** symbol is only valid in the context of an event handler (or passed to an action) and refers to the
 currently selected event instance.  
 

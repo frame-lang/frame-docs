@@ -7,7 +7,7 @@ a system develops a hierarchy of parent-child relationships between states. A st
 that supports hierarchy is known as a **Hierarchical State Machine (HSM)**.
 
 Hierarchy is useful for factoring common behavior between states into a parent, thus normalizing
-the implemenation of behavior and eliminating redundancy in the system. In an HSM, when  
+the implementation of behavior and eliminating redundancy in the system. In an HSM, when  
 changes are made to the shared behavior there is a single place to make the modification. 
 
 Parent-child relationships are established between states using the **dispatch operator =>**. We 

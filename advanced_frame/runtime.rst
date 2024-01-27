@@ -1,11 +1,11 @@
 The Frame Runtime
 ============
 
-Frame is a highly opinionated language focused on the semantics of its first class entitites - 
+Frame is a highly opinionated language focused on the semantics of its first class entities - 
 systems, states and events. These entities have special runtime code related to the following 
 capabilities they support: 
 
-#. System intitialization
+#. System initialization
 #. Event creation
 #. Event routing
 #. Event forwarding
@@ -13,7 +13,7 @@ capabilities they support:
 #. State history
 #. Services
 
-This article will discuss these capabilbities in depth and explore their implementation in Python. 
+This article will discuss these capabilities in depth and explore their implementation in Python. 
 
 Frame Runtime Architecture 
 --------------------------
@@ -33,7 +33,7 @@ Let's explore the details of the compartment data next.
 State Compartments 
 ------------
 
-Most of Frame's advanced capabilities stem from langauge support for **State Compartments**. A compartment 
+Most of Frame's advanced capabilities stem from language support for **State Compartments**. A compartment 
 is a data structure containing the following data:
 
 #. The name of the state method the compartment relates to
@@ -59,7 +59,7 @@ is a data structure containing the following data:
             self.forward_event = None
 
 
-Frame maintains two core references to compartents to make the architecture work:
+Frame maintains two core references to compartments to make the architecture work:
 
 #. A reference to the current state (self.__compartment) 
 #. A reference to the next state to transition to (self.__next_compartment)
@@ -116,7 +116,7 @@ is instantiated.
 The **__init__()** method for the **Runtime0** system does the following:
 
 #. Create and initialize the start state compartment 
-#. Initalize all system domain variables 
+#. Initialize all system domain variables 
 #. Create an enter event and send to the system start state
 
  .. code-block::
@@ -128,7 +128,7 @@ The **__init__()** method for the **Runtime0** system does the following:
         
         def __init__(self):
             
-            # Create and intialize start state compartment.
+            # Create and initialize start state compartment.
             
             self.__compartment: 'Runtime0Compartment' = Runtime0Compartment('__runtime0_state_S0')
             self.__next_compartment: 'Runtime0Compartment' = None
@@ -198,7 +198,7 @@ This Frame code results in the following code generated for the **$S0** state:
             return
 
 Each state method contains zero or more event handlers. In this demo, only one event handler exists to handle the 
-enter message. The event handler prints a message delared in the domain and returns.
+enter message. The event handler prints a message declared in the domain and returns.
 
 We have quickly explored the simplest path through the runtime architecture with one state and one event handler. 
 Next we will explore the complexity introduced by Frame's support of transitions. 
@@ -215,7 +215,7 @@ activities during a single transition include:
 #. On the next state  compartment, initialize any state variables
 #. Call the **transition(next_compartment)** method, which simply saves a reference to the new compartment for later use
 #. Return from the event handler to the kernel routine
-#. The kernel detects if a next compartment exisits and loops until no more transitions happen
+#. The kernel detects if a next compartment exists and loops until no more transitions happen
 #. Send an exit event to the current state
 #. Change state by setting the next state compartment to be the current state compartment 
 #. Send an enter event to the new state and forward any forwarded event
@@ -224,8 +224,8 @@ That is a lot of steps for a transition! The complexity is required in order to 
 language requirements:
 
 #. Sending enter and exit events 
-#. Initalizing exit and enter handler parameters 
-#. Intializing state parameters 
+#. Initializing exit and enter handler parameters 
+#. Initializing state parameters 
 #. Event forwarding  
 #. Enabling services (long running autonomous programs)
 
@@ -368,7 +368,7 @@ class Runtime1:
     
     def __init__(self):
         
-         # Create and intialize start state compartment.
+         # Create and initialize start state compartment.
         
         self.__compartment: 'Runtime1Compartment' = Runtime1Compartment('__runtime1_state_S0')
         self.__next_compartment: 'Runtime1Compartment' = None
@@ -432,7 +432,7 @@ class Runtime1:
                     # forwarded event is not enter event
                     # send normal enter event
                     self.__router(FrameEvent(">", self.__compartment.enter_args))
-                    # and now forward event to new, intialized state
+                    # and now forward event to new, initialized state
                     self.__router(next_compartment.forward_event)
                 next_compartment.forward_event = None
                 
@@ -498,7 +498,7 @@ as before. A **Runtime2** system is instantiated and then its next interface met
 
     ##  
 
-The **next()** interface method recieves three arguments which are added to a FrameEvent as parameters
+The **next()** interface method receives three arguments which are added to a FrameEvent as parameters
 and passed to the kernel.
 
 .. code-block::
@@ -638,8 +638,8 @@ Next we will take a look at another key feature of the runtime kernel - event fo
 Event Forwarding Runtime Support
 -----------
 
-The Frame event forwarding mechanism provides the ability to recieve an event in one state and 
-then pass it to another state to handle. Below we see a simple example where state **$S0** recieves 
+The Frame event forwarding mechanism provides the ability to receive an event in one state and 
+then pass it to another state to handle. Below we see a simple example where state **$S0** receives 
 the **next** event and simply forwards it to state **$S1** to handle and print the parameters.
 
 .. code-block::
@@ -720,10 +720,10 @@ makes sure the new state receives an enter event, whether forwarded or newly cre
                 next_compartment.forward_event = None
 
 This completes our exploration of the kernel aspect to the runtime. Next we will take a look at system instantiation 
-and how system parameters are intialized.  
+and how system parameters are initialized.  
 
 
-System Initalization
+System Initialization
 -----------
 
 There are three aspects of system startup that are parameterized and can be initialized upon system instantiation:
@@ -752,7 +752,7 @@ There are three aspects of system startup that are parameterized and can be init
         var c = nil
     ##
 
-Above we see that each aspect of the system is intialized with one argument. The system factory (__init__([...])) 
+Above we see that each aspect of the system is initialized with one argument. The system factory (__init__([...])) 
 method handles all of 
 the logic for setting the start state parameters and domain variables:
 
@@ -969,7 +969,7 @@ Conclusion
 ----------
 
 Frame is a Domain Specific Language for digital system design. As such it promotes systems, states and events as
-first class entities in the language. Frame's runtime provides the mechansisms to recast 
+first class entities in the language. Frame's runtime provides the mechanisms to recast 
 object-oriented language features to meet this need. In the future, non-object oriented languages will also be 
 supported by the Frame transpiler with appropriate adjustments to the runtime code. 
 

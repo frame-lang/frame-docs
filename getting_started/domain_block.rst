@@ -12,7 +12,7 @@ System data is declared in the `-domain-` block.
 
     -domain-
 
-    var item_id = newId()           // untyped varible with expression intitializer
+    var item_id = newId()           // untyped variable with expression intitializer
     var name:string = "Boris"       // typed variable
     var s:`[]int` = `[6]int{2, 3, 5, 7, 11, 13}[1:4]` // custom type and initalization expr
 
@@ -20,8 +20,8 @@ Domain variables follow the
 general declaration syntax discussed in the
 :ref:`variable_declarations` section.
 
-All actions and event handlers can access the domain data by referencing the varible identifier.
-Below we cn see references from both contexts to the domain variable *name*: 
+All actions and event handlers can access the domain data by referencing the variable identifier.
+Below we can see references from both contexts to the domain variable *name*: 
 
 .. code-block::
     :caption: Sample Domain Syntax
@@ -45,7 +45,7 @@ Below we cn see references from both contexts to the domain variable *name*:
     var name:string = "Boris"       // typed variable
 
 With this in mind, we can conclude our Hello World saga by utilizing domain variables  
-to provide the requrired data for the famous greeting.
+to provide the required data for the famous greeting.
 
 .. code-block::
     :caption: Hello World! Again!

@@ -19,7 +19,7 @@ Frame notation promotes three concepts as first class aspects of the language th
 Systems
 ^^^^^^^
 
-A system is indicated by an identifier preceeded by the '#' token and terminated by the '##' token:
+A system is indicated by an identifier preceded by the '#' token and terminated by the '##' token:
 
 
 .. code-block::
@@ -94,7 +94,7 @@ which, in this case, is a return token **^** which terminates the event handler.
     
 
 Event handlers contain the behavior of the system. The only behavior for our lamp so far is
-to **transiton** between the **$Off** and **$On** states. Frame transitions use the transition operator '->' which references the
+to **transition** between the **$Off** and **$On** states. Frame transitions use the transition operator '->' which references the
 target state the machine will transition to.
 
 .. code-block::

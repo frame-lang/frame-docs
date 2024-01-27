@@ -9,7 +9,7 @@ and is based on ideas from `UML Statecharts
 <https://www.sciencedirect.com/science/article/pii/0167642387900359/>`_. 
 
 Unlike the visual design 
-paradigm of Statecharts, which anticipated developers would create complex software sysems using visual modeling tools, 
+paradigm of Statecharts, which anticipated developers would create complex software systems using visual modeling tools, 
 Frame is a pragmatically textual language.
 
 However, Frame still provides all the benefits of visual software design as it is intrinsically self documenting. 
