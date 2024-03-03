@@ -2,8 +2,29 @@
 Frame Grammar v0.11.0
 ============
 
-frame_spec: code_block? '#' IDENTIFIER body '##' code_block?
-body: iface_block? machine_block? actions_block? domain_block?
+frame_spec: header? main_fn? system?
+header: ( inline_code_block | code_block )*
+main_fn: 'fn' 'main' parameter_list '{' stmt* '}' 
+system: system_decl system_body? '##'
+system_decl: '#' IDENTIFIER system_params_list?
+system_params_list: '[' system_params ']'
+system_params: ( start_state_params ',' start_state_enter_params ',' domain_params )
+             | ( start_state_params ',' start_state_enter_params )
+             | ( start_state_params ',' domain_params )
+             | ( start_state_params )
+             | ( start_state_enter_params ',' domain_params ) 
+             | ( start_state_enter_params )
+             | ( domain_params )
+
+start_state_params: '$[' parameter_list ']' 
+start_state_enter_params: '>[' parameter_list ']'
+domain_params: '#[' parameter_list ']'
+
+system_body: operations_block? iface_block? machine_block? actions_block? domain_block?
+
+operations_block: '-operations-' operation*
+operation: '#[static]'?  IDENTIFIER parameter_list? type operation_body?
+operation_body: '{' stmt* '}'
 
 iface_block: '-interface-' iface_method*
 iface_method: IDENTIFIER parameter_list? type? message_alias?
@@ -29,8 +50,12 @@ stmt: transition_stmt
     | 'break'
     | expr_stmt
 
+block: '{' stmt* '}'
 
-transition_stmt: exit_args? '->' enter_args? transition_label? state_ref state_args?
+transition_stmt: exit_args? ( transition_group_body | transition_body ) 
+transition_group_body: '(' transition_body ')'
+transition_body: '->' enter_args? transition_label? state_ref state_args?
+
 exit_args: expr_list
 enter_args: expr_list
 transition_label: STRING
@@ -54,9 +79,10 @@ enum_match_branch: ':/' enum_patterns '/' stmt* ( return_stmt | ':>')
 state_stack_stmt: state_stack_oper_expr
 
 loop_stmt: 'loop' (loop_for | loop_while)
-loop_for: def? ';' expression? ';' expression? '{' loop_stmt* '}'
+loop_for: def? ';' expr? ';' expr? '{' stmt* '}'
 loop_while: '{' stmt* '}'
 
+expr_stmt: expr
 expr: assignment
 assignment: equality ( '=' equality )?
 equality: comparison ( ( '!=' | '==' ) comparison )*
@@ -73,40 +99,43 @@ unary_expr:   ( '!' | '-' ) unary_expr
             | '$' '.' IDENTIFIER
             | '||[' IDENTIFIER ']'
             | '||.' IDENTIFIER ']'
-            | '&'? variable_or_call_expr 
             | literal_expr
             | state_stack_oper_expr
             | frame_event_part_expr
             | expr_list 	
-            | call_chain_expr@
-            | system_instance_expr@
-            | system_type_expr@
+            | call_chain_expr
+            | system_instance_instantiation
+            | system_instance_expr
+            | system_type_expr
             | expr_list_expr@     
-            | transition_expr@ // ???
-            | call_expr@
-            | var_expr@
-            | stack_state_operator_expr@ 
-            | enumerator_expr@
+            | transition_expr
+            | enumerator_expr
+
+system_type_expr: '#' IDENTIFIER '.' call_expr 
+system_instance_instantiation: '#' call_expr
+call_exp: IDENTIFIER '(' (expr (',' expr)? ')'
+system_instance_expr: '#' 
 		
-		
-call_chain_expr: 	variable_or_call_expr ( '.' variable_or_call_expr )*
-variable_or_call_expr: IDENTIFIER expr_list? 
+call_chain_expr: '&'? identifier_or_call_expr ( '.' identifier_or_call_expr )*
+identifier_or_call_expr: IDENTIFIER expr_list? 
 expr_list: '(' expr* ')'
 literal_expr: NUMBER | STRING | 'true' | 'false' | 'null' | 'nil' | inline_code_block
 state_stack_oper_expr: '$$[+]' | '$$[-]'
 frame_event_part_expr: '@' ( '[' IDENTIFIER ']' | '^' )?
 
 actions_block: '-actions-' action*
-action: IDENTIFIER parameter_list? type? 
+action: IDENTIFIER parameter_list? type action_body? 
+action_body: '{' stmt* '}'
 
 domain_block: '-domain-' (enum | def)*
 enum: 'enum' enum_type  '{' enum_decl '}'
+enum_type: IDENTIFIER 
 enum_decl: enum_id ( '=' NUMBER)* 
 enum_id: NUMBER
 parameter_list: '[' parameter ( ',' parameter )* ']'
 parameter: IDENTIFIER type?
 type: ':' ( IDENTIFIER | inline_code_block )
-code_block: '```' STRING '```'
 inline_code_block: '`' STRING '`'
+code_block: '```' STRING '```'
 
-block: '{' stmt* '}'
+enumerator_expr: enum_type '.' enum_id
