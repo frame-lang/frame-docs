@@ -95,7 +95,7 @@ a state in the state's local scope rather than the system scope. This approach
 to data isolation at the state level makes it easier to reason about state behavior 
 and not accidentially modify another state's data incorrectly.
 
- State Instances (Compartments)
+State Instances (Compartments)
 ===========
 
 The mechanism enabling enter/exit event parameters, state parameters and state variables
@@ -145,7 +145,8 @@ Long Running Services
 Lastly, Frame's runtime kernel embedded in each Frame system provides mechanisms to run 
 Frame systems as long running services. This differs from other approaches to implementing 
 automata which are typically modeled as event driven and return control to the caller after 
-each call to the system. 
+each call to the system. While Frame is typically used in an event driven manner, 
+both modes of operation are possible in Frame. 
 
 
 
