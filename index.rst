@@ -6,7 +6,7 @@ Welcome! Here you will find the official documentation for the **Frame Language*
 What is Frame?
 --------------
 Frame is a Domain Specific Language (DSL) language for both designing and programming Frame **systems**. 
-Embedded in each Frame system is an automaton, also known as a state machine or Turing machine. 
+Embedded in each Frame system is an **automaton**, also known as a state machine or Turing machine. 
 For simplicity, Frame simply refers to this part of a system as the **machine**. 
 
 Using the open source **Framepiler** tool, Frame programs are transpiled to other languages
@@ -19,7 +19,7 @@ C#, C++, Golang, Rust. Other languages will follow as the project gains support 
 Frame Innovations in Automata Design 
 --------------
 
-Frame was born of a deep interest in making automata easy to use in day-to-day software system design and programming.
+Frame was born from a deep interest in making automata easy to use in day-to-day software system design and programming.
 Automata (state machines, pushdown automata and Turing machines) are bedrock computer science, yet are
 considered esoteric and reserved for heavy use in only a few specialized fields. 
 
