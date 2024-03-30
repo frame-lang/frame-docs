@@ -95,7 +95,7 @@ Frame supports states having their own local variables.
 This feature keeps data related to
 a state in the state's local scope rather than the system scope. This approach 
 to data isolation at the state level makes it easier to reason about state behavior 
-and not accidentially modify another state's data incorrectly.
+and not accidentally modify another state's data incorrectly.
 
 State Instances (Compartments)
 ===========
@@ -108,6 +108,9 @@ corresponding to the current state.
 
 Frame, however, manages a data structure for each state instance called a 
 **compartment**. Every time a state is entered, a new state compartment is instantiated. 
+Additionally, if the current state inherits behavior from parent states, a chained set 
+of compartments is instantiated for the full hierarchy. 
+
 Compartments are where enter/exit event arguments, state arguments and state variables are kept. 
 This implementation approach also makes it possible to
 return to a state in the exact condition it 
