@@ -2,6 +2,13 @@
 Returning Values
 ==================
 
+Frame systems have a powerful syntax to simplify returning values through the interface. 
+Although this seems like a trivial system design aspect, the compartmentalization of 
+the machine introduces complexities into how and when this value should be set.  
+
+Default Interface Return Value Syntax
+-------------
+
 As we have seen elsewhere, interface methods that return a value can declare a return type or elide it
 depending on the requirements of the target language. Declaring a return type for a target language 
 that does not require one will be ignored in the generated code.
@@ -49,8 +56,13 @@ Run the `program <https://onlinegdb.com/S5sG-PXIc>`_.
 
     yes
 
-This syntax provides a nice way to easily ensure the base case return value for an interface call. 
-This same syntax is used in event handlers as well to modify the default return value.
+
+Overriding Interface Return Values
+-------------
+
+The syntax for setting the default interface return value  provides a nice way to easily 
+ensure the base case return value for an interface call. This same syntax is used in 
+event handlers as well to modify the interface return value.
 
 .. code-block::
     :caption: Override Return Value for Interface Method
@@ -70,7 +82,7 @@ This same syntax is used in event handlers as well to modify the default return 
 
         $No 
             |getDecision| 
-                // Modify the default "yes" value to "no".
+                // Modify the default from "yes" value to "no".
                 ^("no") 
 
     ##
@@ -128,9 +140,13 @@ Run the `program <https://onlinegdb.com/dq0JN5HbB>`_.
 Above we can see how the return value is set multiple times throughout the handling of an 
 interface call. However, this particular approach of setting the return can only be done using 
 the return expression syntax **^(ret_value)** which can only be used at the end of an 
-event handler's execution. This is not always when we want to update the return value.
+event handler's execution. However, this is not always when we want to update the return value.
 
-To facilitate setting the return value at any point in the processing, Frame supports the 
+
+The Return Assign Operator
+-------------
+
+To facilitate setting the return value during any point in the execution, Frame supports the 
 "return assign" operator **^=**. This token allows setting the interface return value 
 anywhere in event handlers or actions. 
 
