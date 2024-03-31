@@ -148,7 +148,7 @@ to easily be persisted and restored from disk.
 Long Running Services
 =========== 
 
-Lastly, the Frame runtime kernel embedded in each Frame system provides mechanisms to run 
+Lastly, the Frame runtime kernel embedded in each Frame system provides mechanisms to execute 
 as long running services. This differs from other approaches to implementing 
 automata which are typically modeled as event driven and return control to the caller after 
 each call to the system. While Frame systems are typically event driven, 

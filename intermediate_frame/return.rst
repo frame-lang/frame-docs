@@ -1,5 +1,5 @@
 ==================
-Returning Interface Values
+Interface Return Values
 ==================
 
 Frame has a powerful syntax to simplify returning values through the interface. 
@@ -139,9 +139,9 @@ Run the `program <https://onlinegdb.com/dq0JN5HbB>`_.
     maybe
 
 Above we can see how the return value is set multiple times throughout the handling of an 
-interface call. However, this particular approach of setting the return can only be done using 
-the return expression syntax **^(ret_value)** which can only be used at the end of an 
-event handler's execution. However, this is not always when we want to update the return value.
+interface call. However,  
+the return expression syntax **^(ret_value)** can *only* be used at the *end of an 
+event handler's execution*. This is not always when we want to update the return value.
 
 
 The Return Assign Operator
@@ -297,9 +297,11 @@ is making the call. Therefore the return value is simply ignored.
                 ^
     ##    
 
-Above we see that steps 1 and 2 execute in the context of system initialization. 
-This means that the return values set in each of those steps are discarded. In 
-step 3, therefore, the interface simply returns the default "yes - surprised?" value.
+As a reminder, the Frame system runtime provides a system factory that does all system initialization 
+and then sends the **>** message to the start state, which in this case is **$No**. Therefore 
+no value will be returned, despite being set in steps 1 and 2, in this phase of system operation. 
+
+In step 3, therefore, the interface simply returns the default "yes - surprised?" value.
 
 Run the `program <https://onlinegdb.com/tGAmJI8U0L>`_. 
 
