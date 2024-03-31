@@ -1,15 +1,15 @@
 ==================
-Returning Values
+Returning Interface Values
 ==================
 
-Frame systems have a powerful syntax to simplify returning values through the interface. 
+Frame has a powerful syntax to simplify returning values through the interface. 
 Although this seems like a trivial system design aspect, the compartmentalization of 
 the machine introduces complexities into how and when this value should be set.  
 
 Default Interface Return Value Syntax
 -------------
 
-As we have seen elsewhere, interface methods that return a value can declare a return type or elide it
+As we have seen, interface methods that return a value can declare a return type or elide it
 depending on the requirements of the target language. Declaring a return type for a target language 
 that does not require one will be ignored in the generated code.
 
@@ -25,8 +25,9 @@ that does not require one will be ignored in the generated code.
 
     ##
     
-By default, unhandled calls to just the interface method will return the default value for the 
-type depending on the language. However Frame also provides a means to initialize a 
+By default, unhandled calls to the interface method will return the default value for the 
+type depending on the language (null, None, 0 etc). However Frame also provides a means to 
+override the default language value and initialize a 
 default return value: 
 
 .. code-block::
@@ -87,7 +88,7 @@ event handlers as well to modify the interface return value.
 
     ##
 
-Run the `program <https://onlinegdb.com/hIsyGz2Mh`_. 
+Run the `program <https://onlinegdb.com/g5HmA2IIy`_. 
 
 .. code-block::
     :caption: Output
