@@ -193,6 +193,7 @@ Frame easily supports both modes of operation.
     intermediate_frame/enums
     intermediate_frame/systems
     intermediate_frame/interface
+    intermediate_frame/return
     intermediate_frame/states
     intermediate_frame/transitions
     intermediate_frame/hsm
