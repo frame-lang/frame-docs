@@ -9,10 +9,12 @@ In this section we will cover the following topics:
 
 #. Functions
 #. Control flow syntax
+#. Lists
 #. Loops
 #. Enumerated Types
 #. Systems
 #. System Interface
+#. Interface Return Values
 #. States and Transitions
 #. Transitions and States
 #. Hierarchical State Machines
