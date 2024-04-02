@@ -18,7 +18,7 @@ the actual printing. This action will accept two parameters, **msg** and **separ
 write and the second will add any separator strings.
 
 .. code-block::
-    :caption: Actions in Python
+    :caption: Actions in a Frame System
  
     #HelloWorldSystem
 
@@ -51,7 +51,7 @@ actions take no parameters they do not have a parameter list (it would actually 
 an empty list). They in turn call **actionWrite()** and pass the appropriate message and separator values.
 
 .. code-block::
-    :caption: Actions in Python
+    :caption: Actions Calling a Python Print Function
  
     #HelloWorldSystem
         ...
