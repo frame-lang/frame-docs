@@ -454,23 +454,3 @@ With this final bit of syntax we have covered all clauses that comprise the two 
     transition: ('(' exit_args ')')? '->' ('(' enter_args ')')? label? '$' state_identifier ('(' state_params ')')?
     transition: '(' '->' ('(' enter_args ')')? label? '$' state_identifier ('(' state_params ')')? ')'
 
-
-State Change
-------------
-
-Frame **state change** use the **->>** operator to do a "lightweight" transition to a new state.
-
-.. code-block::
-
-    $Start  
-        |>|
-            ->> $End ^  
-
-State changes are lightweight operations as they do not cause the system runtime to send exit and enter 
-events. Instead they simply update the current state to the target. 
-
-While the speed of the state change is a clear advantage,  
-state changes are disallowed out of states with an exit handler or into states with an enter handler.
-The purpose of these restrictions are to make it clear that the enter and exit event handers will 
-not be triggered during a state change. So since they won't be used, Frame disallows their existence
-in order to eliminate confusion why they are not triggered.  
