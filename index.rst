@@ -16,7 +16,7 @@ and UML Statechart visual notation for documentation.
 In the future Frame will expand its target language set beyond Python to include JavaScript, Java, 
 C#, C++, Golang, Rust. Other languages will follow as the project gains support and adoption. 
 
-State as a First Class 
+State as a First Class Citizen
 --------------
 
 Frame enables the solution of a problem to look like the problem it is solving. What does this mean and
