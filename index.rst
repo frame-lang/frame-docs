@@ -29,18 +29,18 @@ Instead, logical state is derived by conditional tests on low level data. As a s
 size, so does the web of complex conditional logic thats sole purpose is to figure out 
 what state the system is in. Thus is born - spaghetti code. 
 
-Logical state is inherent to automata - it's what they are all about. Therefore logical state 
-is a first class citizen of the automata. Its what you think about first when creating them. 
+In contrast, logical state is inherent to automata - it's what they are all about. Therefore logical state 
+is a first class citizen of the automata and is what you think about first when creating them. 
 
-However, using non-automata-oriented languages to build automata 
+However, using non-automata-oriented languages (meaning all popular modern programming languages) to build automata 
 is fraught with challenges. Strange new classes of problems 
 emerge when systems are "compartmentalized" into states. Some things that were easy are now harder, 
 though arguably still better. Frame is designed to address this new class of problems 
 and to make state-oriented programming a natural way to create software. 
 
-Because Frame is a language for implementing automata, Frame's syntax, therefore, 
+Because Frame is a language for implementing automata, Frame's syntax
 aligns with the logical problems being solved by system designers and programmers. When creating 
-systems using Frame, developers don't (typically) start with defining data - they 
+systems using Frame, developers don't start with defining data - they 
 start by defining the logical solution to a problem. 
 
 Frame Innovations in Automata Design 
