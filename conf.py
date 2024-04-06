@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Frame Transpiler'
+project = 'The Frame Progarmming Language'
 copyright = '2021, Mark Truluck'
 author = 'Mark Truluck'
 
