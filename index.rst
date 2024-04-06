@@ -30,7 +30,7 @@ size, so does the web of complex conditional logic thats sole purpose is to figu
 what state the system is in. Thus is born - spaghetti code. 
 
 In contrast, logical state is inherent to automata - it's what they are all about. Therefore logical state 
-is a first class citizen of the automata and is what you think about first when creating them. 
+is a first class citizen of automata and is what you think about first when creating one. 
 
 However, using non-automata-oriented languages (meaning all popular modern programming languages) to build automata 
 is fraught with challenges. Strange new classes of problems 
