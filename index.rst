@@ -29,7 +29,7 @@ Instead, logical state is derived by conditional tests on low level data. As a s
 size, so does the web of complex conditional logic thats sole purpose is to figure out 
 what state the system is in. Thus is born - spaghetti code. 
 
-In contrast, logical state is inherent to automata - it's what they are all about. Therefore logical state 
+In contrast, logical state is inherent to automata - state is what they are all about. Therefore logical state 
 is a first class citizen of automata and is what you think about first when creating one. 
 
 However, using non-automata-oriented languages (meaning all popular modern programming languages) to build automata 
@@ -66,7 +66,7 @@ must layout the flow of the program. Despite seeming to be a more sophisticated
 approach to modeling software, this aspect is, in fact, ergonomically inefficient. 
 Small changes to the system can take significant time to adjust the drawing properly. 
 
-Additionally visual approaches prevent utilization of text based diff validation of changes, 
+Additionally, visual approaches prevent utilization of text based diff validation of changes, 
 thus making visual based system development more challenging to support with regards to 
 change management. 
 

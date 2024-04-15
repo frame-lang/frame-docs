@@ -189,6 +189,19 @@ Here is the full program:
 
     #PersistDemo
 
+        -operations-
+
+        #[static]
+        unmarshal [data] : #PersistDemo  {
+            var demo:# = jsonpickle.decode(data)
+            demo.revived()
+            ^(demo) 
+        } 
+
+        marshal : JSON {
+            ^(jsonpickle.encode(self))
+        }
+
         -interface-
 
         revived 
@@ -205,19 +218,6 @@ Here is the full program:
                 revived_count = revived_count + 1
                 print("Revived = " + str(revived_count) + " times") 
                 ^
-
-        -operations-
-
-        #[static]
-        unmarshal [data] : #PersistDemo  {
-            var demo:# = jsonpickle.decode(data)
-            demo.revived()
-            ^(demo) 
-        } 
-
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
         
     ##
 
@@ -261,6 +261,17 @@ persists the system again and then sleeps.
 
     #TrafficLight
 
+        -operations-
+
+        #[static]
+        unmarshal [data] : #TrafficLight  {
+            ^(jsonpickle.decode(data)) 
+        } 
+
+        marshal : JSON {
+            ^(jsonpickle.encode(self))
+        }
+        
         -interface-
 
         tick
@@ -288,17 +299,6 @@ persists the system again and then sleeps.
             |tick|
                 -> $Green ^
 
-        -operations-
-
-        #[static]
-        unmarshal [data] : #TrafficLight  {
-            ^(jsonpickle.decode(data)) 
-        } 
-
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
-        
     ##
 
 .. code-block::
@@ -362,6 +362,17 @@ response to the caller that the workflow is complete.
 
     #Workflow
 
+        -operations-
+
+        #[static]
+        unmarshal [data] : #Workflow  {
+            ^(jsonpickle.decode(data)) 
+        } 
+
+        marshal : JSON {
+            ^(jsonpickle.encode(self))
+        }
+        
         -interface-
 
         next
@@ -403,17 +414,6 @@ response to the caller that the workflow is complete.
                 exclaimation_count = exclaimation_count + 1
                 print("") ^
 
-        -operations-
-
-        #[static]
-        unmarshal [data] : #Workflow  {
-            ^(jsonpickle.decode(data)) 
-        } 
-
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
-        
     ##
 
 
