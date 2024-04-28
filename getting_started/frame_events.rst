@@ -14,14 +14,11 @@ FrameEvents perform three necessary functions:
 
 #. Encode what message was sent to the system. By default this is the name of the interface method called.
 #. Store any parameters passed in the call.
-#. Return a value to the caller, if required.
 
 To support these requirements, Frame defines three fields for a Frame Event:
 
 #. A message 
 #. A dictionary of zero or more parameters
-#. A return object
-
 
 Here is a basic implementation of the FrameEvent class for Python:
 
@@ -32,7 +29,6 @@ Here is a basic implementation of the FrameEvent class for Python:
       def __init__(self, message, parameters):
           self._message = message
           self._parameters = parameters
-          self._return = None
 
 To be precise about terminology, an "event" is an instance of a **FrameEvent** class type while the "message" is the 
 data field on the event. However events will often be referred to as a type, but what we really 
