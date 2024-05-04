@@ -120,7 +120,7 @@ value of y in the loop.
     }    
 
 .. code-block::
-    :caption: Individal Equality Tests Demo
+    :caption: Individal Equality Tests Demo Output
 
     y|
     --
@@ -151,7 +151,7 @@ match the test criteria.
     }    
 
 .. code-block::
-    :caption: Individal Equality Tests Demo
+    :caption: Test-Else-Continue Equality Tests Demo Output
 
     y|
     --
