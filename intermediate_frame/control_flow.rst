@@ -137,7 +137,7 @@ Additionally, this demo provides an else clause if none of the conditioned branc
 match the test criteria. 
 
 .. code-block::
-    :caption: Individual Equality Tests Demo
+    :caption: Test-Else-Continue Equality Tests Demo
 
     print("y|")
     print("--")
