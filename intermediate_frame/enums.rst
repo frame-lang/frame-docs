@@ -7,7 +7,7 @@ Enumerated types in Frame are declared in the domain block for a system.
 .. note:: Frame v0.12 will support global enumerated types as well. 
 
 Enums are C style simple enums declared in the Domain block of a spec. 
-Enum names have no restriction on case.
+Enum names have no restriction on case but are case sensitive.
 
 .. code-block::
     :caption: System Enums
