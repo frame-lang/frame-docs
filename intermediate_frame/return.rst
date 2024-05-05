@@ -291,7 +291,7 @@ is making the call. Therefore the return value is simply ignored.
                 -> $Maybe ^("no") 
         
         $Maybe
-            // 2. Still in the context of the system initalization
+            // 2. Still in the context of the system initialization
             |>| 
                 ^= "maybe another way" 
                 ^
