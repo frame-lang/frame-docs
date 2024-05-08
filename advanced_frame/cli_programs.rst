@@ -8,7 +8,7 @@ users for input. In the example below, the locus of control is in the infinite l
 inside the enter event handler of the **$GetInput** state (as opposed to the loop in an external function). 
 
 .. code-block::
-    :caption: todo
+    :caption: Get Input Loop
 
     $GetInput
         |>| 

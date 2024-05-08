@@ -665,7 +665,7 @@ the **next** event and simply forwards it to state **$S1** to handle and print t
         $S1
             |next| [a,b,c]
                 print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c)) ^
-
+##
 
 Frame enables this capability by utilizing a special **forward_event** attribute on compartments 
 to store a reference to the event that should be forwarded:

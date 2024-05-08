@@ -258,7 +258,7 @@ Run the `program <https://onlinegdb.com/95DSxesC->`_.
 The program generates the following output:
 
 .. code-block::
-    :caption: Enter Event Goodbye Demo 2 Output
+    :caption: Exit Event Goodbye Demo Output
 
     goodbye $Start!
 

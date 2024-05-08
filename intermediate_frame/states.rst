@@ -294,7 +294,7 @@ The main function instantiates the system and drives it to the **$End** state:
 .. code-block::
     :caption: Enter and Exit Messages Demo
 
-        fn main {
+    fn main {
         var eemd:# = #EnterExitMessagesDemo() 
         eemd.next()
         eemd.next()
@@ -674,7 +674,7 @@ application of these capabilities.
                 print(zero)  
                 print(one)    
 
-                // initalize $PrintNextFibonacciNumber state parameters
+                // initialize $PrintNextFibonacciNumber state parameters
                 
                 -> $PrintNextFibonacciNumber(zero,one) ^ 
             
