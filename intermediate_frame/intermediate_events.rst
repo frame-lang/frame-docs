@@ -52,7 +52,5 @@ FrameEvent attributes has its own accessor symbol as well:
       - frameEvent._parameters
     * - @[“foo”]
       - frameEvent._parameters[“foo”]
-    * - @^
-      - frameEvent._return
     * - ^(value)
       - frameEvent._return = value; return;
