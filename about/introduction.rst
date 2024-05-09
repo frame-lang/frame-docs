@@ -24,3 +24,16 @@ VSCode Extension
 
 Frame provides a VSCode extension. To install it, download VSCode and under the extensions menu item search for 
 `Frame System Designer <https://marketplace.visualstudio.com/items?itemName=frame-lang-org.frame-machine-maker>`_.
+
+
+Reporting Issues
+--------------
+
+Please send any bug reports or other issues to "bugs@frame-lang.org".
+
+
+Community 
+--------------
+
+Connect with the Frame community on `Discord <https://discord.com/invite/CfbU4QCbSD>`_.
+
