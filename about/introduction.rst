@@ -19,6 +19,20 @@ The Frame Playground
 For those wanting to dive right in, or just experiment online, Frame provides an online `playground <https://playground.frame-lang.org>`_.
 
 
+Solution Depot
+--------------
+
+The `Solution Depot <https://github.com/frame-lang/frame_solution_depot`_ is a GitHub repo for examples and demos of Frame syntax and application to various problem spaces.
+
+Articles
+--------------
+
+Some longer form articles that explore practical uses of Frame to solve problems as well as 
+in depth examination of Frame syntax.
+
+* `Modeling a Lamp Finite State Machine in Frame <https://mark-truluck.medium.com/modeling-a-lamp-finite-state-machine-in-frame-4ae605f9a040`_
+* `Mealy vs. Moore… You decide. <https://medium.com/@mark-truluck/mealy-vs-moore-you-decide-0377ab856077`_
+
 VSCode Extension
 --------------
 
@@ -29,7 +43,7 @@ Frame provides a VSCode extension. To install it, download VSCode and under the 
 Reporting Issues
 --------------
 
-Please send any bug reports or other issues to "bugs@frame-lang.org".
+Please send any bug reports or other issues to bugs@frame-lang.org.
 
 
 Community 
