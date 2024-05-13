@@ -27,11 +27,12 @@ The `Solution Depot <https://github.com/frame-lang/frame_solution_depot>`_ is a 
 Articles
 --------------
 
-Some longer form articles that explore practical uses of Frame to solve problems as well as 
+Some longer form articles that explore both motivations for Frame and practical uses of it to solve problems as well as 
 in depth examination of Frame syntax.
 
 * `Modeling a Lamp Finite State Machine in Frame <https://mark-truluck.medium.com/modeling-a-lamp-finite-state-machine-in-frame-4ae605f9a040>`_
 * `Mealy vs. Moore… You decide. <https://medium.com/@mark-truluck/mealy-vs-moore-you-decide-0377ab856077>`_
+* `Are you Coding in The Upside Down? <https://dev.to/framelang/are-you-coding-in-the-upside-down-2o44>`_
 
 VSCode Extension
 --------------
