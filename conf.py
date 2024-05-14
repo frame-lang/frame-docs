@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'The Frame Progarmming Language'
+project = 'The Frame Programming Language'
 copyright = '2021, Mark Truluck'
 author = 'Mark Truluck'
 
