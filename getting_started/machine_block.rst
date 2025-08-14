@@ -15,22 +15,25 @@ identifier. Let's add three states to our machine to give structure to our "Hell
 .. code-block::
     :caption: A Three State Hello World System 
 
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
-        -interface-
+        interface:
         
-        sayHello 
-        sayWorld
+            sayHello()
+            sayWorld()
 
-        -machine-
+        machine:
 
-        $Hello
+            $Hello {
+            }
 
-        $World
+            $World {
+            }
 
-        $Done
+            $Done {
+            }
 
-    ##
+    }
 
 
 We now have three states - **$Hello**, **$World** and **$Done**, but how are they used to actually 
@@ -56,25 +59,25 @@ System behavior is contained in Frame **event handlers**. Event handlers have th
 
 #. a message selector 
 #. an optional body of statements 
-#. a return token
+#. a return statement
 
 .. code-block::
     :caption: An Event Handler
 
     ...
 
-    -machine-
+    machine:
 
-    $Hello
-        |sayHello|  // select "sayHello" event
-            ^       // return
+        $Hello {
+            sayHello() {  // select "sayHello" event
+                return  // return from handler
+            }
+        }
 
     ...
 
-    ##
-
-As we can see above, a message selector is a message name enclosed in pipe characters - **|sayHello|**. 
-In this event handler there are no statements - it simply returns using the return token **^**. We will
+As we can see above, an event handler is defined as a method with the event name **sayHello()**. 
+In this event handler there are no statements - it simply returns using the **return** statement. We will
 address printing in the next article. 
 
 Event handlers contain the 
@@ -95,13 +98,17 @@ In order to go to a different state we will use a transition to get to `$World`.
 
     ...
 
-    -machine-
+    machine:
 
-    $Hello
-        |sayHello|  
-            -> $World // Transition to $World state
-            ^       
-    $World    
+        $Hello {
+            sayHello() {
+                -> $World // Transition to $World state
+                return       
+            }
+        }
+        
+        $World {
+        }   
 
     ...
 
@@ -112,27 +119,33 @@ In turn the **$World** state transitions to the **$Done** state upon receiving t
 .. code-block::
     :caption: Transitions
  
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
-        -interface-
+        interface:
         
-        sayHello 
-        sayWorld
+            sayHello()
+            sayWorld()
 
-        -machine-
+        machine:
 
-        $Hello
-            |sayHello|  
-                -> $World // Transition to $World state
-                ^       
-        $World    
-            |sayWorld|  
-                -> $Done // Transition to $Done state
-                ^     
+            $Hello {
+                sayHello() {
+                    -> $World // Transition to $World state
+                    return       
+                }
+            }
+            
+            $World {
+                sayWorld() {
+                    -> $Done // Transition to $Done state
+                    return     
+                }
+            }
 
-        $Done 
+            $Done {
+            }
 
-    ##
+    }
 
 So now our machine will transition to all the required states but won't actually print anything. 
 As has been shown previously, we *could* just print directly using Python's **print()** function, 

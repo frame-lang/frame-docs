@@ -10,14 +10,13 @@ The most basic interface method has no parameters and no return values:
 
 .. code-block::
 
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
-    -interface-
+        interface:
+            sayHello()
+            sayWorld()
 
-    sayHello
-    sayWorld
-
-    ##
+    }
 
 Above we see our system now can be called to **sayHello** and **sayWorld**. However,  
 unlike other languages, Frame decisively separates interface from behavior. Therefore these 

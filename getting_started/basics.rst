@@ -117,12 +117,12 @@ Parameter Declarations
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Parameters are declared in lists containing one or
-more parameter declarations separated by commas and enclosed in square brackets:
+more parameter declarations separated by commas and enclosed in parentheses:
 
 .. code-block::
 
     // p1 is untyped, p2 is typed and p3 has a superstring type
-    [p1, p2:int, p3:`[4][2]int`]
+    (p1, p2:int, p3:`[4][2]int`)
 
 
 As we can see, parameters are typed with the same kinds of options as variables:
@@ -172,22 +172,22 @@ Frame's syntax for functions is simple and has four variations:
     :caption: Frame Main Variations
 
     // no parameters; no return value
-    fn main {
+    fn main() {
     }
 
     // no parameters; return value
-    fn main : int {
-        ^(0)
+    fn main() : int {
+        return 0
     }
 
     // parameters; no return value
-    fn main [sys_arg1, sys_arg2] {
+    fn main(sys_arg1, sys_arg2) {
         print(sys_arg1 + "," + sys_arg2)
     }
 
-    fn main [sys_arg1, sys_arg2] : int {
+    fn main(sys_arg1, sys_arg2) : int {
         print(sys_arg1 + "," + sys_arg2)
-        ^(0)
+        return 0
     }
 
 Interface Methods 
@@ -208,13 +208,13 @@ permutations for method declarations:
 
 .. code-block::
 
-    subroutine-name
-    subroutine-name [param]
-    subroutine-name [param:type]
-    subroutine-name [param1, param2]
-    subroutine-name [param1:type, param2:type]
-    subroutine-name : return_value
-    subroutine-name [param1:type, param2:type] : return_value
+    subroutine-name()
+    subroutine-name(param)
+    subroutine-name(param:type)
+    subroutine-name(param1, param2)
+    subroutine-name(param1:type, param2:type)
+    subroutine-name() : return_value
+    subroutine-name(param1:type, param2:type) : return_value
 
 Lists
 -----
@@ -222,13 +222,15 @@ Lists
 Frame does not (yet) have any general list or array syntax. Instead, Frame only supports
  *parameter lists* for subroutines and event handlers.
 
-Frame uses square brackets to denote parameter lists:
+Frame uses parentheses to denote parameter lists:
 
 .. code-block::
     :caption: Frame Parameter Lists
 
-    |msg| [x,y] ^           // Event Handler Parameter List
-    foo [x:int,y:string]    // Sub-routine Parameter List
+    msg(x,y) {             // Event Handler Parameter List
+        return
+    }
+    foo(x:int,y:string)    // Sub-routine Parameter List
 
 Next Steps
 ----

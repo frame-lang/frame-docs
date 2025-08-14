@@ -2,7 +2,7 @@
 Actions Block
 ==================
 
-To enable our `#HelloWorldSystem` to actually print "Hello World!" we need to be able to call a 
+To enable our `HelloWorldSystem` to actually print "Hello World!" we need to be able to call a 
 function to do that. Actions are the private methods of systems and a good place to do that. 
 
 Let's see how to create one. 
@@ -10,7 +10,7 @@ Let's see how to create one.
 Declaring Actions
 -----------------
 
-Actions are declared in the `-actions-` block and observe all of the method
+Actions are declared in the `actions:` block and observe all of the method
 declaration syntax discussed in the :ref:`methods` section. 
 
 We will start by creating a utility action called `actionWrite()` that will be reused by other actions to do 
@@ -20,21 +20,21 @@ write and the second will add any separator strings.
 .. code-block::
     :caption: Actions in a Frame System
  
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
         ...
 
-        -actions- 
+        actions: 
 
-        ... 
+            ... 
 
-        actionWrite [msg,separator] {
-            // This is a call to the Python native 
-            // print function.
-            print(msg, end=separator) 
-        }
+            actionWrite(msg, separator) {
+                // This is a call to the Python native 
+                // print function.
+                print(msg, end=separator) 
+            }
 
-    ##
+    }
 
 Unlike Interface Methods, Actions can contain code - both Frame code as well as code from target languages. 
 As this program is being transpiled into Python, we can use the built-in Python **print()** function
@@ -53,74 +53,80 @@ an empty list). They in turn call **actionWrite()** and pass the appropriate mes
 .. code-block::
     :caption: Actions Calling a Python Print Function
  
-    #HelloWorldSystem
+    system HelloWorldSystem {
         ...
 
-        -actions- 
+        actions: 
 
-        actionWriteHello {
-            actionWrite("Hello", " ")
-        }
+            actionWriteHello() {
+                actionWrite("Hello", " ")
+            }
 
-        actionWriteWorld {
-            actionWrite("World!", "")
-        }  
-        
-        actionWrite [msg,separator] {
-            // This is a call to the Python native 
-            // print function.
-            print(msg, end=separator) 
-        }
+            actionWriteWorld() {
+                actionWrite("World!", "")
+            }  
+            
+            actionWrite(msg, separator) {
+                // This is a call to the Python native 
+                // print function.
+                print(msg, end=separator) 
+            }
 
-    ##
+    }
 
 Finally we update our event handlers to call these actions:  
 
 .. code-block::
     :caption: Hello World! in Frame
 
-    fn main {
-        var hws:# = #HelloWorldSystem()
+    fn main() {
+        var hws = HelloWorldSystem()
         hws.sayHello()
         hws.sayWorld()
     }
 
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
-        -interface-
+        interface:
         
-        sayHello 
-        sayWorld
+            sayHello()
+            sayWorld()
 
-        -machine-
+        machine:
 
-        $Hello
-            |sayHello|  
-                actionWriteHello() // call action
-                -> $World 
-                ^       
-        $World    
-            |sayWorld|  
-                actionWriteWorld() // call action
-                -> $Done 
-                ^     
+            $Hello {
+                sayHello() {
+                    actionWriteHello() // call action
+                    -> $World
+                    return
+                }
+            }
+            
+            $World {
+                sayWorld() {
+                    actionWriteWorld() // call action
+                    -> $Done
+                    return
+                }
+            }
 
-        $Done 
+            $Done {
+            }
 
-        -actions- 
+        actions: 
 
-        actionWriteHello {
-            actionWrite("Hello", " ")
-        }
+            actionWriteHello() {
+                actionWrite("Hello", " ")
+            }
 
-        actionWriteWorld {
-            actionWrite("World!", "")
-        }    
+            actionWriteWorld() {
+                actionWrite("World!", "")
+            }    
 
-        actionWrite [msg,separator] {
-            print(msg, end=separator)
-        }
-    ##
+            actionWrite(msg, separator) {
+                print(msg, end=separator)
+            }
+    }
 
 Run the `program <https://onlinegdb.com/QUajYGWCK>`_. 
 
