@@ -10,37 +10,37 @@ the system. To facilitate this use case, Frame supports **Operations**. Operatio
 are publicly accessible access calls that do not create FrameEvents or interact 
 with the system state machine. 
 
-Operations are declared in the **-operations-** block which must be declared, if it 
+Operations are declared in the **operations:** block which must be declared, if it 
 exists, in the following block order:
 
 
 .. code-block::
     :caption: Operations Block Position
 
-    #OperationsBlock
+    system OperationsBlock {
 
-        -operations- 
-        -interface-
-        -machine-
-        -actions-
-        -domain-
+        operations:
+        interface:
+        machine:
+        actions:
+        domain:
 
-    ##
+    }
 
 Operations follow the same syntax as actions:
 
 .. code-block::
     :caption: Operations Syntax
 
-    #Operations
+    system Operations {
 
-        -operations- 
+        operations:
 
-        add [p1:T,p2:T] : T {
-            ^(p1 + p2)
-        }
+            add(p1:T, p2:T): T {
+                return p1 + p2
+            }
 
-    ##
+    }
 
 
 One of the important use cases for operations is to support testing scenarios 
@@ -49,50 +49,49 @@ by providing a means of inspecting the raw state without interacting with the st
 .. code-block::
     :caption: Inspecting Domain Data with Operations
 
-    fn main {
+    fn main() {
 
-        var t:# = #Thermometer()
+        var t = Thermometer()
         print(t.getTemp())
     }
 
-    #Thermometer
+    system Thermometer {
 
-        -operations- 
+        operations:
 
-        getTemp  {
-            ^(temp)
-        }
+            getTemp() {
+                return temp
+            }
 
-        -domain-
+        domain:
 
-        var temp : float = 1234.5
+            var temp: float = 1234.5
         
-    ##
+    }
 
 Static Operations 
 --------
 
-Frame supports declaring operations to be static using the **#[static]** attribute. 
+Frame supports declaring operations to be static using the **@staticmethod** attribute. 
 
 .. code-block::
     :caption: Static Operations
 
-    fn main {
+    fn main() {
 
-        var lib:# = #Library()
-        print(lib.getGreeting("Bob"))
+        print(Library.getGreeting("Bob"))
     }
 
-    #Library
+    system Library {
 
-        -operations- 
+        operations:
 
-        #[static]
-        getGreeting [name] : string { 
-            ^("Hello " + name + "!")
-        }
+            @staticmethod
+            getGreeting(name): string { 
+                return "Hello " + name + "!"
+            }
         
-    ##
+    }
 
 
 Static operations cannot access data of any system instance. Additionally, Frame 
@@ -107,25 +106,25 @@ Below we can see a simple use case for creating static operations for a calculat
 .. code-block::
     :caption: Static Operations
 
-    fn main {
-        print(#Calc.add(1,1))
-        print(#Calc.sub(1,1))
+    fn main() {
+        print(Calc.add(1, 1))
+        print(Calc.sub(1, 1))
     }
 
-    #Calc
+    system Calc {
 
-        -operations- 
+        operations:
 
-        #[static]
-        add [a,b] { 
-            ^(a+b)
-        }
+            @staticmethod
+            add(a, b) { 
+                return a + b
+            }
                
-        #[static]
-        sub [a,b] { 
-            ^(a-b)
-        }
+            @staticmethod
+            sub(a, b) { 
+                return a - b
+            }
         
-    ##
+    }
 
 

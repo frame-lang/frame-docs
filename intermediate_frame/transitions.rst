@@ -22,20 +22,23 @@ Transitions are performed by using the **->** operator to go to another state.
 .. code-block::
     :caption: Basic Transition Demo
 
-    #BasicTransitionDemo
+    system BasicTransitionDemo {
 
-        -interface-
+        interface:
 
-        next 
+            next()
 
-        -machine-
+        machine:
 
-        $Start 
-        
-            |next| -> $End ^
+            $Start {
+                next() {
+                    -> $End
+                    return
+                }
+            }
 
-        $End
-    ##
+            $End
+    }
 
 Above we see a system initialized in the **$Start** start state that will transition to 
 to the **$End** state upon receiving the **next** event. 
@@ -57,11 +60,17 @@ Below we see an exit handler added to the **$Start** state that prints a message
 .. code-block::
     :caption: Exit State Transition Demo
 
-        $Start 
-            |<| print("exiting $Start state") ^
-            |next| 
+        $Start {
+            <$() {
+                print("exiting $Start state")
+                return
+            }
+            next() {
                 print("transitioning to $End state")
-                -> $End ^
+                -> $End
+                return
+            }
+        }
         
         $End
  
@@ -72,40 +81,60 @@ Below we see an exit handler added to the **$Start** state that prints a message
 .. code-block::
     :caption: Enter State Transition Demo
 
-        $Start 
-            |<| print("exiting $Start state") ^
-            |next| 
+        $Start {
+            <$() {
+                print("exiting $Start state")
+                return
+            }
+            next() {
                 print("transitioning to $End state")
-                -> $End ^
+                -> $End
+                return
+            }
+        }
         
-        $End
-             |>| print("entering $End state") ^
+        $End {
+            $>() {
+                print("entering $End state")
+                return
+            }
+        }
 
 .. code-block::
     :caption: Basic Transition Behavior Demo
 
-    fn main {
-        var btmd:# = #BasicTransitionBehaviorDemo() 
+    fn main() {
+        var btmd = BasicTransitionBehaviorDemo()
         btmd.next()
     }
 
-    #BasicTransitionBehaviorDemo
+    system BasicTransitionBehaviorDemo {
 
-        -interface-
+        interface:
 
-        next 
+            next()
 
-        -machine-
+        machine:
 
-        $Start 
-            |<| print("exiting $Start state") ^
-            |next| 
-                print("transitioning to $End state")
-                -> $End ^
+            $Start {
+                <$() {
+                    print("exiting $Start state")
+                    return
+                }
+                next() {
+                    print("transitioning to $End state")
+                    -> $End
+                    return
+                }
+            }
         
-        $End
-             |>| print("entering $End state") ^
-    ##
+            $End {
+                $>() {
+                    print("entering $End state")
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/pi4GXit3Y>`_. 
 
@@ -138,26 +167,33 @@ The Frame transition operator accepts an expression group as arguments to the ne
 .. code-block::
     :caption: Enter Event Parameters Demo 1
 
-    fn main {
-        var sys:# = #EnterEventParametersDemo1() 
+    fn main() {
+        var sys = EnterEventParametersDemo1()
         sys.next()
     }
 
-    #EnterEventParametersDemo1
+    system EnterEventParametersDemo1 {
 
-        -interface-
+        interface:
 
-        next 
+            next()
 
-        -machine-
+        machine:
 
-        $Start 
-            |next| 
-                -> ("Hello")  $End ^
+            $Start {
+                next() {
+                    -> ("Hello") $End
+                    return
+                }
+            }
         
-        $End
-             |>| [msg] print(msg) ^
-    ##
+            $End {
+                $>(msg) {
+                    print(msg)
+                    return
+                }
+            }
+    }
 
 Above we see that the transition passes a message to the **$End** state which is received
 as a parameter to the event handler which is then printed. 
@@ -176,32 +212,38 @@ The next examples demonstrates the use of both state-to-state direct data transf
 .. code-block::
     :caption: Enter Event Parameters Demo 2
 
-    fn main {
-        var sys:# = #EnterEventParametersDemo2() 
+    fn main() {
+        var sys = EnterEventParametersDemo2()
         sys.next()
     }
 
-    #EnterEventParametersDemo2
+    system EnterEventParametersDemo2 {
 
-        -interface-
+        interface:
 
-        next 
+            next()
 
-        -machine-
+        machine:
 
-        $Start 
-            |next| 
-                -> ("$Start", "Hello")  $End("$End") ^
+            $Start {
+                next() {
+                    -> ("$Start", "Hello") $End("$End")
+                    return
+                }
+            }
         
-        $End [to]
-             |>| [from, greeting] 
-                print(greeting + " " + to + ". Love, " + from) ^
-    ##
+            $End(to) {
+                $>(from, greeting) {
+                    print(greeting + " " + to + ". Love, " + from)
+                    return
+                }
+            }
+    }
 
 Above we see that the transition sends two strings **("$Start", "Hello")** as arguments that 
-match the enter event parameters **|>| [from, greeting] ** for **$End**. In addition, 
+match the enter event parameters **$>(from, greeting)** for **$End**. In addition, 
 the transition also passes an argument **$End("$End")** to the **End** state parameter 
-**$End [to]**.
+**$End(to)**.
 
 This fully demonstrates the mechanisms for passing data to the next state without needing to persist 
 it in some way before transitioning. 
@@ -225,30 +267,35 @@ to pass data to the exit handler of the current state during a transition.
 .. code-block::
     :caption: Exit Event Goodbye Demo
 
-    fn main {
-        var sys:# = #ExitEventGoodbyeDemo() 
+    fn main() {
+        var sys = ExitEventGoodbyeDemo()
         sys.next()
         
     }
 
-    #ExitEventGoodbyeDemo
+    system ExitEventGoodbyeDemo {
 
-        -interface-
+        interface:
 
-        next
+            next()
 
-        -machine-
+        machine:
 
-        $Start 
-            |<| [msg,state]
-                print(msg + " " + state + "!") ^
+            $Start {
+                <$(msg, state) {
+                    print(msg + " " + state + "!")
+                    return
+                }
 
-            |next| 
-                ("goodbye", "$Start") -> $End ^     
+                next() {
+                    ("goodbye", "$Start") -> $End
+                    return
+                }
+            }
 
-        $End
+            $End
 
-    ##
+    }
 
 Above we see that, similar to the enter args group specified for the next state, transitions also 
 accept an exit args group to be specified for the exit handler. 
@@ -263,36 +310,45 @@ The program generates the following output:
     goodbye $Start!
 
 Recalling that Frame enables access to the various parts of the event, another example will 
-show how to use the event message token (**@||**) to parameterize the exit behavior of the 
+show how to use the event message token (**$@||**) to parameterize the exit behavior of the 
 start state. 
 
 .. code-block::
     :caption: Exit Event Parameters Demo
 
-    fn main {
-        var sys:# = #ExitEventParametersDemo() 
+    fn main() {
+        var sys = ExitEventParametersDemo()
         sys.one()
         sys.two()
     }
 
-    #ExitEventParametersDemo
+    system ExitEventParametersDemo {
 
-        -interface-
+        interface:
 
-        one 
-        two
+            one()
+            two()
 
-        -machine-
+        machine:
 
-        $Start 
-            |<| [event_msg]
-                event_msg == "one" ? print(event_msg + " is a great number!") :>
-                event_msg == "two" ? print(event_msg + " is a greater number!") :| ^
+            $Start {
+                <$(event_msg) {
+                    event_msg == "one" ? print(event_msg + " is a great number!") :>
+                    event_msg == "two" ? print(event_msg + " is a greater number!") :|
+                    return
+                }
 
-            |one| (@||) -> $Start ^
-            |two| (@||) -> $Start ^       
+                one() {
+                    ($@||) -> $Start
+                    return
+                }
+                two() {
+                    ($@||) -> $Start
+                    return
+                }
+            }
 
-    ##
+    }
 
 This system simply loops back to the start state and passes the message that triggered 
 the transition to the exit handler to print a customized message. This capability enables 
@@ -318,27 +374,42 @@ In addition to code, the Framepiler can generate UML documentation for the syste
 .. code-block::
     :caption: Transition Labels 
 
-    #TransitionLabels
+    system TransitionLabels {
 
-        -interface-
+        interface:
 
-        click
+            click()
 
-        -machine-
+        machine:
 
-        $Start 
-            |click| -> $One ^
+            $Start {
+                click() {
+                    -> $One
+                    return
+                }
+            }
 
-        $One 
-            |click| -> "Second Click" $Two ^
+            $One {
+                click() {
+                    -> "Second Click" $Two
+                    return
+                }
+            }
 
-        $Two 
-            |click| -> ("three") "Third\nClick" $Done ^
+            $Two {
+                click() {
+                    -> ("three") "Third\nClick" $Done
+                    return
+                }
+            }
 
-        $Done
-            |>| [click_count] 
-                print("Done in " + click_count + " clicks.") ^
-    ##
+            $Done {
+                $>(click_count) {
+                    print("Done in " + click_count + " clicks.")
+                    return
+                }
+            }
+    }
 
 The system above generates the following UML diagram:
 
@@ -372,35 +443,41 @@ be useful.
 .. code-block::
     :caption: Forward Event Demo 
 
-    fn main {
-        var sys:# = #ForwardEventDemo() 
+    fn main() {
+        var sys = ForwardEventDemo()
         sys.payment("$100")
         sys.payment("$200")
         sys.payment("$300")
     }
 
-    #ForwardEventDemo
+    system ForwardEventDemo {
 
-        -interface-
+        interface:
 
-        payment [paymentData]
+            payment(paymentData)
 
-        -machine-
+        machine:
 
-        $Waiting 
-            |payment| [paymentData] 
-                // Forward event using the dispatch operator => 
-                -> => $ProcessPayment ^
+            $Waiting {
+                payment(paymentData) {
+                    // Forward event using the dispatch operator =>
+                    -> => $ProcessPayment
+                    return
+                }
+            }
 
-        $ProcessPayment 
-            |payment| [paymentData] 
-                 print("Payment received: " + paymentData)
-                 -> $Waiting ^
+            $ProcessPayment {
+                payment(paymentData) {
+                    print("Payment received: " + paymentData)
+                    -> $Waiting
+                    return
+                }
+            }
 
-    ##
+    }
 
-Above we can see the system waits in the **$Waiting** state until a **|payment|** event arrives.
-However the **$Waiting** state is not designed to process the payment so it forwards the **|payment|** event to 
+Above we can see the system waits in the **$Waiting** state until a **payment()** event arrives.
+However the **$Waiting** state is not designed to process the payment so it forwards the **payment()** event to 
 the **$ProcessPayment** state for processing. After processing the system cycles back to the 
 **$Waiting** state to take the next payment. 
 
@@ -424,9 +501,12 @@ transition:
 
 .. code-block::
 
-    $Start  
-        |>|
-            (foo()) -> $Bar ^   
+    $Start {
+        $>() {
+            (foo()) -> $Bar
+            return
+        }
+    }   
 
 This transition will actually cause a transpiler error:
 
@@ -443,9 +523,12 @@ to be enclosed in a group:
 .. code-block::
     :caption: Transition Clause Grouping 
 
-    $Start  
-        |>|
-            (foo()) (-> $Bar) ^  
+    $Start {
+        $>() {
+            (foo()) (-> $Bar)
+            return
+        }
+    }  
 
 With this final bit of syntax we have covered all clauses that comprise the two transition options: 
 

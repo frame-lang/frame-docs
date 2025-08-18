@@ -103,14 +103,14 @@ Frame utilizes special tokens to type declarations of these special entities.
     * - $
       - State
       - $Florida
-    * - @
-      - Event
-      - @
+    * - $@
+      - Current Event
+      - $@
 
 Note that the semantics of these entities are not yet completely uniform but will likely be 
 brought closer into alignment in future versions of the Frame language. For example, system instances can be instantiated 
 and referenced from variables, but states cannot. Events, on the other hand, can not be instantiated programmatically but 
-are created by the Frame runtime. Additionally the **@** symbol is only valid in the context of an event handler (or passed to an action) and refers to the
+are created by the Frame runtime. Additionally the **$@** symbol is only valid in the context of an event handler (or passed to an action) and refers to the
 currently selected event instance.  
 
 Parameter Declarations

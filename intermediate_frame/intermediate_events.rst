@@ -14,19 +14,59 @@ special reserved message tokens for enter and exit events:
 ============== ===========
 Message Symbol Meaning
 ============== ===========
->              Enter state event
-<              Exit state event 
+$>             Enter state event
+<$             Exit state event 
 ============== ===========
 
 Here is a state supporting handling enter and exit events:
 
 
-.. code-block:: Enter and Exit events 
+.. code-block:: 
+    :caption: Enter and Exit events 
 
-    $S0 
-        |>| print("Entered state $S0.") ^
-        |<| print("Exited state $S0") ^
+    $S0 {
+        $>() {
+            print("Entered state $S0.")
+            return
+        }
+        <$() {
+            print("Exited state $S0")
+            return
+        }
+    }
 
+Parameterized Enter and Exit Events
+------------------------------------
+
+v0.20 supports parameterized enter and exit events, allowing data to be passed during state transitions:
+
+.. code-block:: 
+    :caption: Parameterized Enter and Exit Events
+
+    $StateWithParams {
+        $>(message: string, count: int) {
+            print("Entering with: " + message + " count: " + count)
+            return
+        }
+        
+        <$(reason: string) {
+            print("Exiting because: " + reason)
+            return
+        }
+        
+        someEvent() {
+            // Transition with parameters
+            -> ("Transitioning to next", 42) $NextState
+            return
+        }
+    }
+    
+    $NextState {
+        $>(message: string, count: int) {
+            print("Next state received: " + message + " " + count)
+            return
+        }
+    }
 
 Frame Notation for Accessing a Frame Event and Its Members
 ---------------------
@@ -44,13 +84,13 @@ FrameEvent attributes has its own accessor symbol as well:
 
     * - Symbol
       - Meaning/Usage
-    * - @
+    * - $@
       - frameEvent
-    * - @||
+    * - $@||
       - frameEvent._message
-    * - @[]
+    * - $@[]
       - frameEvent._parameters
-    * - @[“foo”]
-      - frameEvent._parameters[“foo”]
-    * - ^(value)
-      - frameEvent._return = value; return;
+    * - $@["foo"]
+      - frameEvent._parameters["foo"]
+    * - return value
+      - return value from event handler
