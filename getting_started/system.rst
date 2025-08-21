@@ -29,7 +29,7 @@ transpiled into other languages using a CLI based tool called **the Framepiler**
 chosen to deliver the greatest impact and adoption by enabling developers to incorporate 
 Frame technology into any existing project.
 
-Although Frame supports true functions as of v0.11, the focus of the language is squarely on Frame as 
+Although Frame supports true functions as of v0.20, the focus of the language is squarely on Frame as 
 a systems development language. Frame transpiles system specs into target language objects 
 called "system controllers". In object-oriented languages, which are the only kind of target outputs 
 currently supported, system controllers are manifested as specially organized object-oriented classes.
@@ -37,18 +37,18 @@ currently supported, system controllers are manifested as specially organized ob
 Defining a System 
 ------------------
 
-In Frame notation a Frame system specification starts with the **#** token and the name of the system
-and terminated with the **##** token:
+In Frame notation a Frame system specification starts with the **system** keyword followed by the name of the system
+and enclosed in braces:
 
 ``Frame System``
 
 .. code-block::
     :caption: An Empty System 
 
-    #HelloWorldSystem
-    ##
+    system HelloWorldSystem {
+    }
 
-**#HelloWorldSystem** is an empty system spec that does nothing. Next we will add the 
+**HelloWorldSystem** is an empty system spec that does nothing. Next we will add the 
 code needed to add functionality to our system. 
 
 Blocks
@@ -68,15 +68,19 @@ Although each (or all) blocks are optional, if present they must be defined in a
 .. code-block::
     :caption: System Blocks 
 
-    #HelloWorldSystem
+    system HelloWorldSystem {
 
-        -operations-
-        -interface-
-        -machine-
-        -actions-
-        -domain-
+        operations:
+        
+        interface:
+        
+        machine:
+        
+        actions:
+        
+        domain:
 
-    ##
+    }
 
 .. note::
     The operations block will be discussed much later in the Advanced section of the documentation. 

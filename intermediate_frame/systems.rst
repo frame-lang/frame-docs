@@ -1,3 +1,5 @@
+ 
+
 ==================
 Systems
 ==================
@@ -10,20 +12,24 @@ pattern will be explored in more depth in advanced articles on Frame's implement
 System Syntax 
 ---------
 
-Frame uses the **#** token special type token to identify a system.  
+Frame uses the **system** keyword to identify a system.  
 
 .. code-block::
     :caption: System Declaration 
 
-    #MySystem // System declaration
+    system MySystem { // System declaration
+    
+    }                 // System terminator 
 
-    ##        // System terminator 
-
-The token **##** indicates the end of the system definition.
+The closing brace **}** indicates the end of the system definition.
 
 
 System Parameters 
 -----------
+
+.. note::
+    The system parameter syntax has been simplified in v0.20 to use conventional parentheses 
+    instead of special bracket notation. All examples below show the current v0.20 syntax.
 
 Frame provides a way to pass initialization arguments to systems. There are three 
 kinds of system data that can be initialized:
@@ -32,43 +38,49 @@ kinds of system data that can be initialized:
 #. Start state enter event parameters
 #. Domain variables 
 
-Frame system parameters are declared just after the name of the system.
+In v0.20, Frame system parameters are declared using conventional parentheses syntax:
 
-.. code-block::
-    :caption: System Parameters
+.. code-block:: frame
+    :caption: System Parameters (v0.20 syntax)
 
-    #SystemWithParameters [<system_params>]
+    system SystemWithParameters (<system_params>) {
+        // System body
+    }
 
 As mentioned there are three types of system parameters, each with a particular 
 aspect of the system to initialize. To differentiate these categories, Frame 
-groups the parameter types with special parameter lists.
+grouped the parameter types with special parameter lists.
 
 
-.. list-table:: System Parameter Types
-    :widths: 25 25 25
+.. list-table:: System Parameter Types - v0.11 vs v0.20 
+    :widths: 20 25 25 30
     :header-rows: 1
 
     * - Parameter Type
-      - Parameter List Syntax
-      - Argument List Syntax
+      - v0.11 Parameter Syntax
+      - v0.11 Argument Syntax  
+      - v0.20 Parameter/Argument Syntax
     * - Start state parameters
       - $[<params>]
       - $(<args>)
+      - $(<params>) / flattened args
     * - Start state enter event parameters
       - >[<params>]
-      - >(args)
+      - >(<args>)
+      - $>(<params>) / flattened args  
     * - Domain Variables
       - #[<params>]
-      - #(args)
+      - #(<args>)
+      - <params> / flattened args
 
 .. code-block::
-    :caption: System Parameter Groups
+    :caption: System Parameter Groups (v0.20 syntax)
 
-    #SystemWithParameters [$[<start_state_params>], >[<start_state_enter_params>], #[domain_params]]
-    ##
+    system SystemWithParameters ($(start_state_params), $>(start_state_enter_params), domain_params) {
+    }
 
-    #SystemWithParametersExample [$[prefix,loopCount], >[age,favoriteColor], #[startMessage,endMessage]]
-    ##
+    system SystemWithParametersExample ($(prefix,loopCount), $>(age,favoriteColor), startMessage,endMessage) {
+    }
 
 System With No Parameters
 ------------
@@ -78,133 +90,157 @@ Systems taking no parameters have an empty system list and take no arguments whe
 .. code-block::
     :caption: System Instantiation with no Parameters Demo
 
-    fn main {
+    fn main() {
 
-        #NoParameters() // no arguments passed 
+        var sys = NoParameters() // no arguments passed 
     }
 
-    #NoParameters // no system parameters declared 
+    system NoParameters { // no system parameters declared 
 
-        -machine-
+        machine:
 
-        $Start
-            |>| print("#NoParameters started") ^
-    ##
+            $Start {
+                $>() {
+                    print("NoParameters started")
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/Q6sB6hmvQ>`_. 
 
 .. code-block::
     :caption: System Instantiation with no Parameters Demo Output 
     
-    #NoParameters started
+    NoParameters started
 
-Above we can see **#NoParameters** is instantiated in **main**. Upon launch, the system is sent 
-a **>** message which is handled in the start state and prints "NoParameters started".
+Above we can see **NoParameters** is instantiated in **main**. Upon launch, the system is sent 
+a **$>** message which is handled in the start state and prints "NoParameters started".
 
 Start State Parameters 
 +++++++++++
 
-Start state parameters are declared using the special start state parameter declaration list syntax 
-**$[<start state params>]**. Likewise, start state initialization arguments are passed in the system initialization 
-expression list using the special start state argument expression list syntax **$(<start state args>)**. 
+.. note::
+    Start state parameter syntax has changed in v0.20. The example below shows the updated v0.20 syntax.
+
+In v0.20, start state parameters are declared using the syntax 
+**$(param1, param2, ...)**. System initialization uses a flattened argument list 
+without special wrapper syntax. 
 
 .. code-block::
-    :caption: Start State Parameters Demo
+    :caption: Start State Parameters Demo (v0.20 syntax)
 
-    fn main {
-        // System Start State Arguments 
-        #StartStateParameters($("$StartStateParameters started"))
+    fn main() {
+        // System Start State Arguments - flattened list
+        var sys = StartStateParameters("StartStateParameters started")
     }
 
-    // Start State Parameters Declared
-    #StartStateParameters [$[msg]] 
+    // Start State Parameters Declared with $() syntax
+    system StartStateParameters ($(msg)) {
 
-        -machine-
+        machine:
 
-        // Start State Parameters
-        $Start [msg] 
-            |>| print(msg) ^
-    ##
+            // Start State Parameters
+            $Start(msg) {
+                $>() {
+                    print(msg)
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/jFnS879e_>`_. 
 
 .. code-block::
     :caption: Start State Parameters Demo Output 
 
-    #StartStateParameters started
+    StartStateParameters started
 
 Start State Enter Parameters 
 +++++++++++
 
-Start state parameters are declared using the special start state enter parameter declaration list syntax 
-**>[<start state enter params>]**. Likewise, start state enter initialization arguments are passed in the system initialization 
-expression list using the special start state enter argument expression list syntax **>(<start state enter args>)**. 
+.. note::
+    Start state enter parameter syntax has changed in v0.20. The example below shows the updated v0.20 syntax.
+
+In v0.20, start state enter parameters are declared using the syntax 
+**$>(param1, param2, ...)**. System initialization uses a flattened argument list 
+without special wrapper syntax. 
 
 .. code-block::
-    :caption: Start State Enter Parameters Demo
+    :caption: Start State Enter Parameters Demo (v0.20 syntax)
 
-    fn main {
-        // System Start State Enter Arguments 
-        #StartStateEnterParameters(>(">StartStateEnterParameters started"))
+    fn main() {
+        // System Start State Enter Arguments - flattened list 
+        var sys = StartStateEnterParameters(">StartStateEnterParameters started")
     }
 
-    // System Start State Enter Parameters
-    #StartStateEnterParameters [>[msg]]  
+    // System Start State Enter Parameters with $>() syntax
+    system StartStateEnterParameters ($>(msg)) {
 
-        -machine-
+        machine:
 
-        $Start 
-            // Start State Enter Parameters
-            |>| [msg] print(msg) ^
-    ##
+            $Start {
+                // Start State Enter Parameters
+                $>(msg) {
+                    print(msg)
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/wmjdnXNEx>`_. 
 
 .. code-block::
     :caption: Start State Enter Parameters Demo Output 
 
-    >StartStateEnterParameters started
+    StartStateEnterParameters started
 
 System Domain Parameters 
 +++++++++++
 
-Lastly, the system domain can be initialized during instantiation as well. System domain parameters are 
-declared using the special system domain parameter declaration list syntax 
-**#[<domain initalization params>]**. Likewise, domain initialization arguments are passed in the system initialization 
-expression list using the special domain initialization argument expression list syntax **#(<domain initalization args>)**. 
+.. note::
+    System domain parameter syntax has changed in v0.20. The example below shows the updated v0.20 syntax.
 
-The domain initialization parameters are mapped by name to matching domain variables and override the default 
+In v0.20, the system domain can be initialized during instantiation. Domain parameters are 
+declared as plain parameters without special syntax. Domain initialization arguments are passed in the system initialization 
+using a flattened argument list without wrapper syntax. 
+
+The domain initialization parameters were mapped by name to matching domain variables and override the default 
 variable initialization values. 
 
 .. code-block::
-    :caption: System Domain Parameters Demo 
+    :caption: System Domain Parameters Demo (v0.20 syntax)
 
-    fn main {
-        // System Domain Arguments
-        #SystemDomainParameters(#("#SystemDomainParameters started"))
+    fn main() {
+        // System Domain Arguments - flattened list
+        var sys = SystemDomainParameters("SystemDomainParameters started")
     }
 
-    // System Domain Parameters
-    #SystemDomainParameters [#[msg]] 
+    // System Domain Parameters - plain parameter syntax
+    system SystemDomainParameters (msg) {
 
-        -machine-
+        machine:
 
-        $Start 
-            |>| print(msg) ^
+            $Start {
+                $>() {
+                    print(msg)
+                    return
+                }
+            }
 
-        -domain-
+        domain:
 
-        // System Domain Argument initialization overridden 
-        var msg = nil 
+            // System Domain Argument initialization overridden 
+            var msg = nil 
 
-    ##
+    }
 
 Run the `program <https://onlinegdb.com/QKigQog6F>`_. 
 
 .. code-block::
     :caption: System Domain Parameters Demo Output 
 
-    #SystemDomainParameters started
+    SystemDomainParameters started
 
 
 System Factory 
@@ -220,25 +256,29 @@ following steps when launching a system:
 #. Send the enter event to the start state 
 
 .. code-block::
-    :caption: System Initialization Demo  
+    :caption: System Initialization Demo (v0.20 syntax)
 
-    fn main {
-        #SystemInitializationDemo($("a","b"),>("c","d"),#("e","f"))
+    fn main() {
+        var sys = SystemInitializationDemo("a","b","c","d","e","f")
     }
 
-    #SystemInitializationDemo [$[A,B], >[C,D], #[E,F]]
+    system SystemInitializationDemo ($(A,B), $>(C,D), E,F) {
 
-        -machine-
+        machine:
 
-        $Start [A,B]
-            |>| [C,D] print(A + B + C + D + E + F) ^
+            $Start(A,B) {
+                $>(C,D) {
+                    print(A + B + C + D + E + F)
+                    return
+                }
+            }
 
     
-        -domain-
+        domain:
 
-        var E = nil
-        var F = nil 
-    ## 
+            var E = nil
+            var F = nil 
+    } 
 
 Above we see that the lower case letters a..f are mapped to the equivalent system 
 parameters or domain variables.

@@ -19,15 +19,15 @@ Frame notation promotes three concepts as first class aspects of the language th
 Systems
 ^^^^^^^
 
-A system is indicated by an identifier preceded by the '#' token and terminated by the '##' token:
+A system is indicated by the 'system' keyword followed by an identifier and enclosed in braces:
 
 
 .. code-block::
     :caption: Empty System
 
-    #Lamp
+    system Lamp {
         // Frame single line comment uses C language comment syntax
-    ##
+    }
 
 Above we see a Frame *specification* for a lamp "system". Currently this system does absolutely nothing. 
 
@@ -39,18 +39,20 @@ To improve our lamp, lets start by adding two states - **$Off** and **$On** - to
 .. code-block::
     :caption: Machine Block and States
 
-    #Lamp
+    system Lamp {
 
-        -machine-
+        machine:
 
-        $Off
+            $Off {
+            }
 
-        $On
+            $On {
+            }
 
-    ##
+    }
 
 As with "#" for systems, Frame uses a special prefix token "$" to indicate that an identifier is a state. Frame systems
-have  "blocks" that provide the structure for a system spec. States must be declared inside the system "-machine-" block. 
+have  "blocks" that provide the structure for a system spec. States must be declared inside the system "machine:" block. 
 
 Currently these states don't do anything. Let's fix that.
 
@@ -63,34 +65,39 @@ behavior for our lamp.
 .. code-block::
     :caption: Event Handlers
 
-    #Lamp
+    system Lamp {
 
-        -machine-
+        machine:
 
-        $Off                    // $Off state
-            |turnOn|            // event selector for 'turnOn' event message
-                -> $On          // transition to $On state
-                ^               // return from event handler
+            $Off {                  // $Off state
+                turnOn() {          // event handler for 'turnOn' event
+                    -> $On          // transition to $On state
+                    return          // return from event handler
+                }
+            }
 
-        $On                     // $On state
-            |turnOff|           // event selector for 'turnOff' event message
-                -> $Off         // transition to $Off state
-                ^               // return from event handler
+            $On {                   // $On state
+                turnOff() {         // event handler for 'turnOff' event
+                    -> $Off         // transition to $Off state
+                    return          // return from event handler
+                }
+            }
 
-    ##
+    }
 
 Let's explore each aspect of the event handlers. 
 
 Event Handlers
 ^^^^^^^
 
-Event handlers always begin with an **event selector** for an event message **|msg|** and end with an event handler terminator 
-which, in this case, is a return token **^** which terminates the event handler. 
+Event handlers are defined as methods with the event name **msg()** and end with a **return** statement which terminates the event handler. 
 
 .. code-block::
     :caption: Event Selector
 
-    |msg|  ^ // Event handler with no behavior
+    msg() {          // Event handler with no behavior
+        return
+    }
     
 
 Event handlers contain the behavior of the system. The only behavior for our lamp so far is
@@ -100,7 +107,8 @@ target state the machine will transition to.
 .. code-block::
     :caption: Transitions
 
-    -> $TargetState ^
+    -> $TargetState
+    return
 
 With this level of capability, we have defined a simple Lamp system **state machine** with two states. 
 Frame's notation makes it easy to 
@@ -110,32 +118,38 @@ The Interface Block
 ^^^^^^^
 
 Despite having a simple lamp state machine defined, there is currently no way to send an event to the machine
-to make it do anything. To enable that capability we add an **-interface-** block containing two public interface methods 
+to make it do anything. To enable that capability we add an **interface:** block containing two public interface methods 
 which will generate the events we need to drive the machine activity:
 
 .. code-block::
     :caption: Interface Block and Methods
 
-    #Lamp
+    system Lamp {
 
-        -interface-
+        interface:
 
-        turnOn      // Interface method that sends 'turnOn' event to the machine
-        turnOff     // Interface method that sends 'turnOff' event to the machine
+            turnOn()      // Interface method that sends 'turnOn' event to the machine
+            turnOff()     // Interface method that sends 'turnOff' event to the machine
 
-        -machine-
+        machine:
 
-        $Off                   
-            |turnOn|            
-                -> $On  ^              
+            $Off {                   
+                turnOn() {            
+                    -> $On
+                    return
+                }
+            }
 
-        $On                      
-            |turnOff|           
-                -> $Off  ^           
+            $On {                      
+                turnOff() {           
+                    -> $Off
+                    return
+                }
+            }           
 
-    ##
+    }
 
-Identifiers in the `-interface-` block generate public methods for the system. So now an external client of the 
+Identifiers in the `interface:` block generate public methods for the system. So now an external client of the 
 system can interact with it and make it do something. 
 
 When `turnOn` and `turnOff` interface methods are called, Frame generates an event with the same name as the method and sends 
@@ -153,25 +167,33 @@ To do so we will utilize special events that Frame generates when a system trans
 .. code-block::
     :caption: State Enter and Exit Events
 
-    $Off   
+    $Off {   
         ...
 
-        |<|  // Exit Event
-            print("Exiting $Off") ^
+        <$() {  // Exit Event
+            print("Exiting $Off")
+            return
+        }
 
-        |turnOn|            
-            -> $On  ^              
+        turnOn() {            
+            -> $On
+            return
+        }              
+    }
 
-    $On  
-        |>|  // Enter Event 
-            print("Entering $On") ^ 
+    $On {  
+        $>() {  // Enter Event 
+            print("Entering $On")
+            return
+        } 
 
         ...
+    }
 
 When a transition occurs Frame generates two special events - **Exit** and **Enter**. In the example above, if the system is in the `$Off` state 
-and receives the `|turnOn|` event it will transition to `$On`. In doing so, the Frame runtime will first send an exit event ``<``
-to `$Off` which will print "Exiting $Off". Next the system will update the state to  ``$On`` and subsequently send 
-an enter event ``>`` to `$On` which will print "Entering $On".
+and receives the `turnOn()` event it will transition to `$On`. In doing so, the Frame runtime will first send an exit event `<$()`
+to `$Off` which will print "Exiting $Off". Next the system will update the state to  `$On` and subsequently send 
+an enter event `$>()` to `$On` which will print "Entering $On".
 
 Enter and exit events provide "hooks" that can be used to initialize and clean up states. This capability is a powerful tool for 
 better coding practices and often makes reasoning about complex system behavior much easier. 
@@ -179,30 +201,48 @@ better coding practices and often makes reasoning about complex system behavior 
 .. code-block::
     :caption: Lamp System
 
-    #Lamp
+    system Lamp {
 
-        -interface-
+        interface:
 
-        turnOn      
-        turnOff
+            turnOn()      
+            turnOff()
 
-        -machine-
+        machine:
 
-        $Off   
-            |>| print("Entering $Off") ^ 
-            |<| print("Exiting $Off") ^
+            $Off {   
+                $>() {
+                    print("Entering $Off")
+                    return
+                }
+                <$() {
+                    print("Exiting $Off")
+                    return
+                }
 
-            |turnOn|            
-                -> $On  ^              
+                turnOn() {            
+                    -> $On
+                    return
+                }              
+            }
 
-        $On  
-            |>| print("Entering $On") ^ 
-            |<| print("Exiting $On") ^
-            
-            |turnOff|           
-                -> $Off  ^           
+            $On {  
+                $>() {
+                    print("Entering $On")
+                    return
+                }
+                <$() {
+                    print("Exiting $On")
+                    return
+                }
+                
+                turnOff() {           
+                    -> $Off
+                    return
+                }           
+            }
 
-    ##
+    }
 
 So now we have created a specification for out lamp system, but how do we actually run it? Let's explore how to create
 a complete Python program to run our Lamp. 
@@ -216,24 +256,22 @@ our Lamp and turn it on and off.
 .. code-block::
     :caption: Lamp Program
 
-    fn main {
-        var lamp:# = #Lamp()
+    fn main() {
+        var lamp = Lamp()
         lamp.turnOn()
         lamp.turnOff()
     }
 
-Frame's syntax for `main` does not have an argument list (e.g. `main(a,b)`) if no environment variables are passed 
-to the program. 
+Frame's syntax for `main` requires parentheses even when no arguments are passed to the program. 
 
-We also see that a system controller is instantiated using `#Lamp()` which indicates this is a Frame system spec being
-created.
+We also see that a system controller is instantiated using `Lamp()` which creates an instance of the Frame system.
 
 .. code-block::
     :caption: Lamp Controller Instantiation
 
-    var lamp:# = #Lamp()
+    var lamp = Lamp()
 
-Frame  uses the `var` keyword to declare variables and `:#` is a special Frame type for a system controller instance. 
+Frame uses the `var` keyword to declare variables. The type can be inferred or explicitly specified. 
 
 After instantiation the lamp controller is told to turn itself on and then back off:
 
@@ -253,36 +291,54 @@ Frame makes designing, developing and testing state machines easy and intuitive.
 .. code-block::
     :caption: Complete Lamp Program
 
-    fn main {
-        var lamp:# = #Lamp()
+    fn main() {
+        var lamp = Lamp()
         lamp.turnOn()
         lamp.turnOff()
     }
 
-    #Lamp
+    system Lamp {
 
-        -interface-
+        interface:
 
-        turnOn      
-        turnOff
+            turnOn()      
+            turnOff()
 
-        -machine-
+        machine:
 
-        $Off   
-            |>| print("Entering $Off") ^ 
-            |<| print("Exiting $Off") ^
+            $Off {   
+                $>() {
+                    print("Entering $Off")
+                    return
+                }
+                <$() {
+                    print("Exiting $Off")
+                    return
+                }
 
-            |turnOn|            
-                -> $On  ^              
+                turnOn() {            
+                    -> $On
+                    return
+                }              
+            }
 
-        $On  
-            |>| print("Entering $On") ^ 
-            |<| print("Exiting $On") ^
-            
-            |turnOff|           
-                -> $Off  ^               
+            $On {  
+                $>() {
+                    print("Entering $On")
+                    return
+                }
+                <$() {
+                    print("Exiting $On")
+                    return
+                }
+                
+                turnOff() {           
+                    -> $Off
+                    return
+                }               
+            }
 
-    ##
+    }
 
 Here you can try running the program_.
 

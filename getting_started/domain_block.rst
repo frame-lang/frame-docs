@@ -5,16 +5,16 @@ Domain Block
 Declaring Domain Data
 -----------------
 
-System data is declared in the `-domain-` block.
+System data is declared in the `domain:` block.
 
 .. code-block::
     :caption: Sample Domain Syntax
 
-    -domain-
+    domain:
 
-    var item_id = newId()           // untyped variable with expression intitializer
-    var name:string = "Boris"       // typed variable
-    var s:`[]int` = `[6]int{2, 3, 5, 7, 11, 13}[1:4]` // custom type and initalization expr
+        var item_id = newId()           // untyped variable with expression intitializer
+        var name:string = "Boris"       // typed variable
+        var s:`[]int` = `[6]int{2, 3, 5, 7, 11, 13}[1:4]` // custom type and initalization expr
 
 Domain variables follow the 
 general declaration syntax discussed in the
@@ -26,23 +26,26 @@ Below we can see references from both contexts to the domain variable *name*:
 .. code-block::
     :caption: Sample Domain Syntax
 
-    -machine-
+    machine:
 
-    $Ready
-        |displayName|  
-            print("My name is " + name) ^  
+        $Ready {
+            displayName() {
+                print("My name is " + name)
+                return
+            }
+        }
 
-    -actions-
+    actions:
 
-    printName {
-        print("My name is " + name) 
-    }
+        printName() {
+            print("My name is " + name) 
+        }
 
-    -domain-
+    domain:
 
-    ...
-    
-    var name:string = "Boris"       // typed variable
+        ...
+        
+        var name:string = "Boris"       // typed variable
 
 With this in mind, we can conclude our Hello World saga by utilizing domain variables  
 to provide the required data for the famous greeting.
@@ -50,54 +53,60 @@ to provide the required data for the famous greeting.
 .. code-block::
     :caption: Hello World! Again!
 
-    fn main {
-        var hws:# = #HelloWorldWithDomainSystem()
+    fn main() {
+        var hws = HelloWorldWithDomainSystem()
         hws.sayHello()
         hws.sayWorld()
     }
 
-    #HelloWorldWithDomainSystem
+    system HelloWorldWithDomainSystem {
 
-        -interface-
+        interface:
         
-        sayHello 
-        sayWorld
+            sayHello()
+            sayWorld()
 
-        -machine-
+        machine:
 
-        $Hello
-            |sayHello|  
-                actionWriteHello() // call action
-                -> $World 
-                ^       
-        $World    
-            |sayWorld|  
-                actionWriteWorld() // call action
-                -> $Done 
-                ^     
+            $Hello {
+                sayHello() {
+                    actionWriteHello() // call action
+                    -> $World
+                    return
+                }
+            }
+            
+            $World {
+                sayWorld() {
+                    actionWriteWorld() // call action
+                    -> $Done
+                    return     
+                }
+            }
 
-        $Done 
+            $Done {
+            }
 
-        -actions- 
+        actions: 
 
-        actionWriteHello {
-            actionWrite(hello_txt, " ") // use domain variable
-        }
+            actionWriteHello() {
+                actionWrite(hello_txt, " ") // use domain variable
+            }
 
-        actionWriteWorld {
-            actionWrite(world_txt, "") // use domain variable
-        }    
+            actionWriteWorld() {
+                actionWrite(world_txt, "") // use domain variable
+            }    
 
-        actionWrite [msg,separator] {
-            print(msg, end=separator)
-        }
+            actionWrite(msg, separator) {
+                print(msg, end=separator)
+            }
 
-        -domain-
+        domain:
 
-        var hello_txt = "Hello"
-        var world_txt = "World!"
+            var hello_txt = "Hello"
+            var world_txt = "World!"
 
-    ##
+    }
 
 Admittedly this is a lot of Frame code to replace a single line of C code. However it does serve to both
 introduce a good swath of Frame syntax as well as fulfill the obligation to provide a 

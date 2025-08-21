@@ -5,24 +5,27 @@ Command Line Interactive Programs
 Command Line Interactive Programs make up a broad category of software applications.
 Here we will explore some simple programs that repeatedly poll
 users for input. In the example below, the locus of control is in the infinite loop 
-inside the enter event handler of the **$GetInput** state (as opposed to the loop in an external function). 
+inside the enter event handler of the **$GetInput** state (as opposed to the loop in an external function).
+
+Frame v0.20 uses conventional syntax for loops and conditionals, making CLI programs more readable and familiar to developers from mainstream languages. 
 
 .. code-block::
     :caption: Get Input Loop
 
-    $GetInput
-        |>| 
-            loop {
+    $GetInput {
+        $>() {
+            while true {
                 print("Next state? (a|b|quit)")
                 var next_state = input()
-                next_state ?~
-                    ~/a/ -> $A :>
-                    ~/b/ -> $B :>
-                    ~/quit/ -> $Done :>
-                    : print("huh?") :|
-            } ^
+                if next_state == "a": -> $A
+                elif next_state == "b": -> $B
+                elif next_state == "quit": -> $Done
+                else: print("huh?")
+            }
+        }
+    }
             
-The loop is needed to deal with input that doesn't match any of the valid 
+The while loop is needed to deal with input that doesn't match any of the valid 
 commands by printing "huh?" and 
 trying again to get valid input. Valid commands trigger transitions to different states.
 
@@ -33,27 +36,31 @@ way control stays inside the system and does not return to the **main** function
 .. code-block::
     :caption: $A and $B Aggregator States
 
-    -machine-
+    machine:
 
     ...
 
-    $A
-        |>| 
+    $A {
+        $>() {
             a_count = a_count + 1
             print("$A visit #" + str(a_count))
-            -> $GetInput ^
+            -> $GetInput
+        }
+    }
 
-    $B
-        |>| 
+    $B {
+        $>() {
             b_count = b_count + 1
             print("$B visit #" + str(b_count))
-            -> $GetInput ^
+            -> $GetInput
+        }
+    }
     ...
 
-    -domain-
+    domain:
 
-    var a_count = 0
-    var b_count = 0
+    var a_count: int = 0
+    var b_count: int = 0
 
 In contrast, the **$Done** state simply prints "$Done", but does not pass control to 
 another state or block waiting for user input. This results in control passing back 
@@ -62,58 +69,67 @@ to **main** and terminating the program. Here is the full program:
 .. code-block::
     :caption: $Done State
 
-    $Done 
-        |>| 
-            print("Done") ^
+    $Done {
+        $>() {
+            print("Done")
+        }
+    }
 
 .. code-block::
-    :caption: #CliProgram Listing
+    :caption: CliProgram System Listing
 
     `import signal`
     `import sys`
 
-    fn main {
-        #CliProgram()
+    fn main() {
+        var cli = CliProgram()
     }
 
-    #CliProgram
+    system CliProgram {
 
-        -machine-
+        machine:
 
-        $GetInput
-            |>| 
-                loop {
+        $GetInput {
+            $>() {
+                while true {
                     print("Next state? (a|b|quit)")
                     var next_state = input()
-                    next_state ?~
-                        ~/a/ -> $A :>
-                        ~/b/ -> $B :>
-                        ~/quit/ -> $Done :>
-                        : print("huh?") :|
-                } ^
+                    if next_state == "a": -> $A
+                    elif next_state == "b": -> $B
+                    elif next_state == "quit": -> $Done
+                    else: print("huh?")
+                }
+            }
+        }
         
-        $A
-            |>| 
+        $A {
+            $>() {
                 a_count = a_count + 1
                 print("$A visit #" + str(a_count))
-                -> $GetInput ^
+                -> $GetInput
+            }
+        }
 
-        $B
-            |>| 
+        $B {
+            $>() {
                 b_count = b_count + 1
                 print("$B visit #" + str(b_count))
-                -> $GetInput ^
+                -> $GetInput
+            }
+        }
 
-        $Done 
-            |>| 
-                print("$Done") ^
+        $Done {
+            $>() {
+                print("$Done")
+            }
+        }
 
-        -domain-
+        domain:
 
-        var a_count = 0
-        var b_count = 0
+        var a_count: int = 0
+        var b_count: int = 0
 
-    ##
+    }
 
 
 .. code-block::

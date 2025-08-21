@@ -2,6 +2,8 @@
 State History
 =============
 
+This documentation covers Frame v0.20 syntax with conventional parameter syntax, return statements, and modern block structure.
+
 It is sometimes useful to be able to be able to generically transition to a previous state.
 An example of this situation is state that
 manages a dialog box that can be shown in many different situations. When the dialog
@@ -17,25 +19,38 @@ The following spec illustrates the limitation of state machines with regards
 to history. Below we see states **$B** and **$C** both transition into state **$D**.
 
 
-.. code-block::
+.. code-block:: frame
 
-    #History101
+    system History101 {
+        machine:
+            $A {
+                gotoB() {
+                    -> "B" $B
+                    return
+                }
+                gotoC() {
+                    -> "C" $C
+                    return
+                }
+            }
 
-      -machine-
+            $B {
+                gotoD() {
+                    -> "D" $D
+                    return
+                }
+            }
 
-        $A
-            |gotoB| -> "B" $B ^
-            |gotoC| -> "C" $C ^
+            $C {
+                gotoD() {
+                    -> "D" $D
+                    return
+                }
+            }
 
-        $B
-            |gotoD| -> "D" $D ^
-
-        $C
-            |gotoD| -> "D" $D ^
-
-        $D
-
-    ##
+            $D {
+            }
+    }
 
 .. image:: images/history1.png
 
@@ -45,29 +60,49 @@ ways we could do this but for this example we will simply choose to pass a state
 the name of the state that we transitioned from. This value will be used 
 in **$D** to determine which state to return to.
 
-.. code-block::
+.. code-block:: frame
     :caption: History 102 - Return to State Using a State Name
 
-    #History102
+    system History102 {
+        machine:
+            $A {
+                gotoB() {
+                    -> "B" $B
+                    return
+                }
+                gotoC() {
+                    -> "C" $C
+                    return
+                }
+            }
 
-      -machine-
+            $B {
+                gotoD() {
+                    -> "D" $D("B")
+                    return
+                }
+            }
 
-        $A
-            |gotoB| -> "B" $B ^
-            |gotoC| -> "C" $C ^
+            $C {
+                gotoD() {
+                    -> "D" $D("C")
+                    return
+                }
+            }
 
-        $B
-            |gotoD| -> "D" $D("B") ^
-
-        $C
-            |gotoD| -> "D" $D("C") ^
-
-        $D [previous_state]
-            |ret| 
-                previous_state == "B" ? -> "ret" $B ^ :>
-                previous_state == "D" ? -> "ret" $C ^ :| ^
-
-    ##
+            $D(previous_state) {
+                ret() {
+                    if previous_state == "B" {
+                        -> "ret" $B
+                        return
+                    } elif previous_state == "C" {
+                        -> "ret" $C
+                        return
+                    }
+                    return
+                }
+            }
+    }
 
 .. image:: images/history2.png
 
@@ -79,63 +114,84 @@ to that new state. Functional, but not elegant or scalable.
 In addition, this approach does not allow us to return to the previous state *in the same 
 condition we left it*. Consider this update: 
 
-.. code-block::
+.. code-block:: frame
     :caption: History 102-1 - Return to State Using a State Name
 
-    fn main {
-        var sys:# = #History102_1()
+    fn main() {
+        var sys = History102_1()
         sys.gotoB()
         sys.gotoD()
         sys.ret()
     }
 
-    #History102_1
+    system History102_1 {
+        interface:
+            gotoB()
+            gotoC()
+            gotoD()
+            ret()
 
-    -interface-
-    
-    gotoB
-    gotoC
-    gotoD
-    ret 
+        machine:
+            $A {
+                gotoB() {
+                    -> "B" $B
+                    return
+                }
+                gotoC() {
+                    -> "C" $C
+                    return
+                }
+            }
 
-    -machine-
+            $B {
+                // b is set to 0 when $B is initialized
+                var b = 0
 
-    $A
-        |gotoB| -> "B" $B ^
-        |gotoC| -> "C" $C ^
+                $>() {
+                    print("Entering $B. b = " + str(b))
+                    return
+                }
 
-    $B
-        // b is set to 0 when $B is initalized
-        var b = 0
+                gotoD() {
+                    // b set to 1 when leaving $B
+                    b = 1
+                    print("Going to $D. b = " + str(b))
+                    -> "D" $D("B")
+                    return
+                }
+            }
 
-        |>| 
-            print("Entering $B. b = " + str(b)) ^
+            $C {
+                // c is set to 0 when $C is initialized
+                var c = 0
 
-        |gotoD| 
-            // b set to 1 when leaving $B
-            b = 1
-            print("Going to $D. b = " + str(b))
-            -> "D" $D("B") ^
+                $>() {
+                    print("Entering $C. c = " + str(c))
+                    return
+                }
 
-    $C
-        // c is set to 0 when $B is initalized
-        var c = 0
+                gotoD() {
+                    // c set to 1 when leaving $C
+                    c = 1
+                    print("Going to $D. $C = " + str(c))
+                    -> "D" $D("C")
+                    return
+                }
+            }
 
-        |>| 
-            print("Entering $C. c = " + str(c)) ^
-
-        |gotoD| 
-            // c set to 1 when leaving $C
-            c = 1
-            print("Going to $D. $C = " + str(c))
-            -> "D" $D("C") ^
-
-    $D [previous_state]
-        |ret| 
-            previous_state == "B" ? -> "return to $B" $B ^ :>
-            previous_state == "C" ? -> "return to $C" $C ^ :| ^
-
-    ##
+            $D(previous_state) {
+                ret() {
+                    if previous_state == "B" {
+                        -> "return to $B" $B
+                        return
+                    } elif previous_state == "C" {
+                        -> "return to $C" $C
+                        return
+                    }
+                    return
+                }
+            }
+    }
 
 .. image:: images/history102_1.png
 
@@ -184,35 +240,47 @@ to perform those operations:
 
 Let’s see how these are used:
 
-.. code-block::
+.. code-block:: frame
 
-    #History103
+    system History103 {
+        machine:
+            $A {
+                gotoC() {
+                    $$[+]
+                    -> "$$[+]" $C
+                    return
+                }
+            }
 
-      -machine-
+            $B {
+                gotoC() {
+                    $$[+]
+                    -> "$$[+]" $C
+                    return
+                }
+            }
 
-        $A
-            |gotoC| $$[+] -> "$$[+]" $C ^
-
-        $B
-            |gotoC| $$[+] -> "$$[+]" $C ^
-
-        $C
-            |return| -> "$$[-]" $$[-] ^
-
-    ##
+            $C {
+                ret() {
+                    -> "$$[-]" $$[-]
+                    return
+                }
+            }
+    }
 
 .. image:: images/history103.png
 
 What we see above is that the state stack push token precedes a transition to a
 new state:
 
-.. code-block::
+.. code-block:: frame
 
-    $$[+] -> $NewState
+    $$[+]
+    -> $NewState
 
 while the state stack pop operator produces the state to be transitioned into:
 
-.. code-block::
+.. code-block:: frame
 
     -> $$[-]
 
@@ -225,11 +293,11 @@ The State Stack and Compartments
 The following example explores the differences between returning to a state using a standard transition 
 versus returning to it using the history mechanisms. 
 
-.. code-block::
+.. code-block:: frame
     :caption: History 104 Demo 
 
-    fn main {
-        var sys:# = #History104()
+    fn main() {
+        var sys = History104()
         print("--------------")
         sys.gotoB()
         sys.gotoD()
@@ -240,59 +308,85 @@ versus returning to it using the history mechanisms.
         print("--------------")
     }
 
-    #History104
+    system History104 {
+        interface:
+            gotoB()
+            retToB()
+            gotoC()
+            retToC()
+            gotoD()
 
-        -interface-
+        machine:
+            $A {
+                $>() {
+                    print("In $A")
+                    return
+                }
+                gotoB() {
+                    -> "B" $B
+                    return
+                }
+            }
 
-        gotoB
-        retToB
-        gotoC
-        retToC
-        gotoD
+            $B {
+                var b = 0
 
-        -machine-
+                // upon reentry using a transition, b == 0
+                $>() {
+                    print("Entering $B. b = " + str(b))
+                    return
+                }
 
-        $A
-            |>| print("In $A") ^
-            |gotoB| -> "B" $B ^
+                gotoC() {
+                    print("--------------")
+                    print("Going to $C.")
+                    print("--------------")
+                    -> "C" $C
+                    return
+                }
+                gotoD() {
+                    b = 1
+                    print("Going to $D. b = " + str(b))
+                    -> "D" $D
+                    return
+                }
+            }
 
-        $B
-            var b = 0
+            $C {
+                var c = 0
 
-            // upon reentry using a transition, b == 0
-            |>| print("Entering $B. b = " + str(b)) ^
+                // upon reentry using history pop, c == 1
+                $>() {
+                    print("Entering $C. c = " + str(c))
+                    return
+                }
 
-            |gotoC| 
-                print("--------------")
-                print("Going to $C.")
-                print("--------------")
-                -> "C" $C ^
-            |gotoD|
-                b = 1
-                print("Going to $D. b = " + str(b))
-                -> "D" $D ^
+                gotoD() {
+                    c = 1
+                    print("Going to $D. c = " + str(c))
+                    $$[+]
+                    -> "D" $D
+                    return
+                }
+            }
 
-        $C
-            var c = 0
-
-            // upon reentry using history pop, c == 1
-            |>| print("Entering $C. c = " + str(c)) ^
-
-            |gotoD|
-                c = 1
-                print("Going to $D. c = " + str(c))
-                $$[+]  -> "D" $D ^
-
-        $D
-            |>| print("In $D") ^
-            |retToB|
-                print("Returning to $B")
-                -> "retToB" $B ^
-            |retToC|
-                print("Returning to $C")
-                -> "retToC" $$[-] ^
-
-    ##
+            $D {
+                $>() {
+                    print("In $D")
+                    return
+                }
+                retToB() {
+                    print("Returning to $B")
+                    -> "retToB" $B
+                    return
+                }
+                retToC() {
+                    print("Returning to $C")
+                    -> "retToC" $$[-]
+                    return
+                }
+            }
+    }
 
 .. image:: images/history104.png
 
@@ -356,11 +450,11 @@ explicitly in some way what it was.
 The demo below demonstrates this capability by showing that states **$A** and **B** can 
 transition to state **$C** and return to those states anonymously using a state stack transition. 
 
-.. code-block::
+.. code-block:: frame
     :caption: History 105 Demo 
 
-    fn main {
-        var sys:# = #History105()
+    fn main() {
+        var sys = History105()
         // Currently in $A
         sys.gotoC()
         // Now in $C
@@ -374,49 +468,68 @@ transition to state **$C** and return to those states anonymously using a state 
         // Now back in $B
     }
 
-    #History105
+    system History105 {
+        interface:
+            gotoB()
+            gotoC()
+            ret()
 
-        -interface-
+        machine:
+            $A {
+                var a = 0
 
-        gotoB
-        gotoC
-        ret
+                $>() {
+                    print("In $A. a = " + str(a))
+                    return
+                }
 
-        -machine-
+                gotoB() {
+                    print("Transitioning to $B")
+                    -> $B
+                    return
+                }
 
-        $A 
-            var a = 0
+                gotoC() {
+                    // When we return, a == 1
+                    a = a + 1
+                    print("Incrementing a to " + str(a))
+                    $$[+]
+                    -> $C
+                    return
+                }
+            }
 
-            |>| print("In $A. a = " + str(a)) ^
+            $B {
+                var b = 0
 
-            |gotoB| 
-                print("Transitioning to $B")
-                -> $B ^
+                $>() {
+                    print("In $B. b = " + str(b))
+                    return
+                }
 
-            |gotoC| 
-                // When we return, a == 1
-                a = a + 1
-                print("Incrementing a to " + str(a))
-                $$[+] -> $C ^
+                gotoC() {
+                    // When we return, b == 1
+                    b = b + 1
+                    print("Incrementing b to " + str(b))
+                    $$[+]
+                    -> $C
+                    return
+                }
+            }
 
-        $B 
-            var b = 0
+            $C {
+                $>() {
+                    print("In $C")
+                    return
+                }
 
-            |>| print("In $B. b = " + str(b)) ^
-
-            |gotoC| 
-                // When we return, b == 1
-                b = b + 1
-                print("Incrementing b to " + str(b))
-                $$[+] -> $C ^
-
-        $C 
-            |>| print("In $C") ^
-
-            |ret| 
-                print("Return to previous state")
-                -> $$[-] ^
-    ##
+                ret() {
+                    print("Return to previous state")
+                    -> $$[-]
+                    return
+                }
+            }
+    }
 
 
 .. image:: images/history105.png
@@ -424,14 +537,17 @@ transition to state **$C** and return to those states anonymously using a state 
 In the **History105** demo above the system starts in **$A** and transition to **$C** after 
 incrementing a state local variable **a** and pushing **$A** onto the state stack. 
 
-.. code-block::
+.. code-block:: frame
     :caption: $A's transition to $C 
 
-    |gotoC| 
+    gotoC() {
         // When we return, a == 1
         a = a + 1
         print("Incrementing a to " + str(a))
-        $$[+] -> $C ^
+        $$[+]
+        -> $C
+        return
+    }
 
 When the system returns to **$A** using a state stack transition, the enter event handler 
 will print the updated variable value:
@@ -449,14 +565,17 @@ We then transition the system to state **$B** and do the same operations, demons
 equivalency between the two state stack transitions.
 
 
-.. code-block::
+.. code-block:: frame
     :caption: $B's transition to $C 
 
-    |gotoC| 
+    gotoC() {
         // When we return, b == 1
         b = b + 1
         print("Incrementing b to " + str(b))
-        $$[+] -> $C ^
+        $$[+]
+        -> $C
+        return
+    }
 
 .. code-block::
     :caption: $B -> $C -> $B output

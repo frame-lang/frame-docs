@@ -4,179 +4,186 @@ Enumerated Types
 
 Enumerated types in Frame are declared in the domain block for a system. 
 
-.. note:: Frame v0.12 will support global enumerated types as well. 
+.. note:: Frame v0.20 supports system-level enumerated types. Global enums are planned for future versions.
 
-Enums are C style simple enums declared in the Domain block of a spec. 
+Enums are C-style simple enums declared in the domain block of a system. 
 Enum names have no restriction on case but are case sensitive.
 
-.. code-block::
+.. code-block:: frame
     :caption: System Enums
         
-    #CalendarSystem
-
-        -domain-
-
-        enum Days {
-            SUNDAY
-            monday
-            Tuesday
-            WEDNESDAY
-            tHuRsDaY
-            FRIDAY	
-            SATURDAY
-            SUNDAY
-        }
-
-    ##
+    system CalendarSystem {
+        domain:
+            enum Days {
+                SUNDAY
+                monday
+                Tuesday
+                WEDNESDAY
+                tHuRsDaY
+                FRIDAY	
+                SATURDAY
+                SUNDAY
+            }
+    }
 
 Enums can be assigned specific integer values, which also can be repeated.
 
-
-.. code-block::
+.. code-block:: frame
     :caption: System Enum Values
 
-    enum Days {
-        SUNDAY
-        monday
-        Tuesday = 1000
-        WENESDAY
-        tHuRsDaY
-        FRIDAY	
-        SATURDAY = 1000
-        SUNDAY = 2000
+    system CalendarSystem {
+        domain:
+            enum Days {
+                SUNDAY
+                monday
+                Tuesday = 1000
+                WEDNESDAY
+                tHuRsDaY
+                FRIDAY	
+                SATURDAY = 1000
+                SUNDAY = 2000
+            }
     }
 
 The values assigned start at 0 and will increase by one until an assignment is reached, at which point the counter will be set to that value.
 
 Enums can be used anywhere a literal numeric value can be used. 
 
-.. code-block::
-    :caption: System Enum Values
+.. code-block:: frame
+    :caption: System Enum Declaration
 
-    #Grocery
-
-        -domain-
-
-        enum Fruit {
-            Peach
-            Pear
-            Bannana
-        }
-    ##
+    system Grocery {
+        domain:
+            enum Fruit {
+                Peach
+                Pear
+                Banana
+            }
+    }
 
 Enum values can be assigned to variables and passed as arguments as well as returned by methods.
 
-.. code-block::
+.. code-block:: frame
     :caption: Enum Usage
 
-        getFruitOfTheDay : Fruit {
-            var fruit_of_the_day:Fruit = Fruit.Pear
-            ^(fruit_of_the_day)
-        }
+    system FruitSystem {
+        actions:
+            getFruitOfTheDay(): Fruit {
+                var fruit_of_the_day: Fruit = Fruit.Pear
+                return fruit_of_the_day
+            }
+            
+        domain:
+            enum Fruit {
+                Peach
+                Pear
+                Banana
+            }
+    }
 
 Equality Test Control Flow with Enum
-------------
+------------------------------------
 
-Enums can be tested for equality using the **==** operator. 
+Enums can be tested for equality using the **==** operator with standard if/elif/else statements.
 
-.. code-block::
+.. code-block:: frame
     :caption: Enum Equality Comparison
 
-    var f:Fruit = getFruitOfTheDay()
+    fn testFruit() {
+        var f: Fruit = getFruitOfTheDay()
 
-    f == Fruit.Peach   ? print("Found a Peach")   :>
-    Fruit.Pear == f    ? print("Found a Pear")    :> 
-    f == Fruit.Bannana ? print("Found a Bannana") :|
+        if f == Fruit.Peach {
+            print("Found a Peach")
+        } elif f == Fruit.Pear {
+            print("Found a Pear")
+        } elif f == Fruit.Banana {
+            print("Found a Banana")
+        } else {
+            print("Unknown fruit")
+        }
+    }
 
-Match Test Control Flow with Enums
-------------
+Switch-Style Control Flow with Enums
+------------------------------------
 
-Enums have their own control flow syntax for tests.
+For multiple enum value comparisons, use if/elif/else chains which provide clear, readable logic:
 
-.. code-block::
-    :caption: Enum Test Syntax 
+.. code-block:: frame
+    :caption: Enum Multi-Value Testing
 
-    enum_variable ?:(EnumType)
-        :/enum_value_1/ <statements> :>
-        :/enum_value_2/ <statements> :>
-        :/enum_value_3/ <statements> :  
-                <default_statements> :|
-
-Below we can see that a variable **fruit_value** of enum type **Fruit** is tested to 
-match one of three values and print the name. If not found, the else clause prints
-"Other Fruit". 
-
-.. code-block::
-    :caption: System Enum Values
-
-    fruit_value ?:(Fruit) 
-        :/Peach/    print("Peaches")     :> 
-        :/Pear/     print("Pears")       :> 
-        :/Bannana/  print("Bannanas")    :
-                    print("Other Fruit") :|
+    fn describeFruit(fruit_value: Fruit) {
+        if fruit_value == Fruit.Peach {
+            print("Peaches")
+        } elif fruit_value == Fruit.Pear {
+            print("Pears") 
+        } elif fruit_value == Fruit.Banana {
+            print("Bananas")
+        } else {
+            print("Other Fruit")
+        }
+    }
 
 
-.. code-block::
+.. code-block:: frame
     :caption: Enum Grocery Demo
-
 
     `from enum import Enum`
     `import random`
 
-    fn main {
-        var grocery:# = #Grocery()
+    fn main() {
+        var grocery = Grocery()
         print("We are selling " + grocery.getFruitOfTheDay() + " today.")
         print("We sold " + grocery.getFruitOfTheDay() + " yesterday.")
         print("We are selling " + grocery.getFruitOfTheDay() + " tomorrow.")
     }
 
-    #Grocery
+    system Grocery {
+        interface:
+            getFruitOfTheDay(): string
 
-        -interface-
+        machine:
+            $Start {
+                getFruitOfTheDay(): string {
+                    var f: Fruit = getRandomFruit()
 
-        getFruitOfTheDay : String 
+                    // Demonstrate boolean tests for enums and return
+                    if f == Fruit.Peach {
+                        print("Found a Peach.")
+                        return "Peaches"
+                    } elif f == Fruit.Pear {
+                        print("Found a Pear.")
+                        return "Pears"
+                    } elif f == Fruit.Banana {
+                        print("Found a Banana.")
+                        return "Bananas"
+                    }
+                    
+                    return "None"
+                }
+            }
 
-        -machine-
+        actions:
+            getRandomFruit(): Fruit {
+                var val = random.randint(1, 3)
 
-        $Start 
-            |getFruitOfTheDay| : String
+                if val == 1 {
+                    return Fruit.Peach
+                } elif val == 2 {
+                    return Fruit.Pear
+                } elif val == 3 {
+                    return Fruit.Banana
+                } else {
+                    return Fruit.Peach
+                }
+            }
 
-                var f:Fruit = getFruitOfTheDay()
-
-                // Demonstrate boolean tests for enums
-                
-                f == Fruit.Peach  ? print("Found a Peach.")  :>
-                Fruit.Pear == f   ? print("Found a Pear.")   :> 
-                f == Fruit.Banana ? print("Found a Banana.") :|
-
-                // Demonstrate enum matching
-
-                f ?:(Fruit) 
-                    :/Peach/   ^("Peaches") :> 
-                    :/Pear/    ^("Pears")   :> 
-                    :/Banana/  ^("Bananas") :| 
-
-                ^("None")
-
-        -actions-
-
-        getFruitOfTheDay : Fruit {
-            var val = random.randint(1, 3)
-
-            val ?#
-                #/1/ ^(Fruit.Peach)  :>
-                #/2/ ^(Fruit.Pear)   :>
-                #/3/ ^(Fruit.Banana) :|
-        }
-
-        -domain-
-
-        enum Fruit {
-            Peach
-            Pear
-            Banana
-        }
-    ##
+        domain:
+            enum Fruit {
+                Peach
+                Pear
+                Banana
+            }
+    }
 
 Run the `program <https://onlinegdb.com/YtpIPg0eY>`_. 
 

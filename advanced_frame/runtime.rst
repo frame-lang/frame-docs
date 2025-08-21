@@ -13,7 +13,18 @@ capabilities they support:
 #. State history
 #. Services
 
-This article will discuss these capabilities in depth and explore their implementation in Python. 
+This article discusses these capabilities in depth and explores their implementation in Python.
+
+.. note::
+   This document contains examples using Frame v0.20 syntax in the early sections, 
+   with some later sections still showing v0.11 syntax for reference. The core runtime 
+   concepts remain the same across versions, but syntax has been modernized in v0.20:
+   
+   - ``#SystemName`` → ``system SystemName { }``
+   - ``|event|`` → ``event()``
+   - ``|>|`` → ``$>()``
+   - ``^`` → ``return``
+   - ``-block-`` → ``block:`` 
 
 Frame Runtime Architecture 
 --------------------------
@@ -50,13 +61,14 @@ is a data structure containing the following data:
 
     class Runtime0Compartment:
 
-        def __init__(self,state):
+        def __init__(self,state,parent_compartment):
             self.state = state
             self.state_args = {}
             self.state_vars = {}
             self.enter_args = {}
             self.exit_args = {}
             self.forward_event = None
+            self.parent_compartment = parent_compartment
 
 
 Frame maintains two core references to compartments to make the architecture work:
@@ -84,19 +96,20 @@ a message on startup.
 .. code-block::
     :caption: Runtime0 Listing 
 
-    fn main {
-        var runtime_demo:# = #Runtime0()
+    fn main() {
+        var runtime_demo = Runtime0()
     }
 
-    #Runtime0
+    system Runtime0 {
 
-        -machine-
+        machine:
 
-        $S0 
-            |>|
-                print("Hello from the Runtime") ^
-
-    ##
+            $S0 {
+                $>() {
+                    print("Hello from the Runtime")
+                }
+            }
+    }
 
 First, the program generates a **main()** function and calls it where our **Runtime0()** instance 
 is instantiated. 
@@ -138,7 +151,7 @@ The **__init__()** method for the **Runtime0** system does the following:
             self.msg  = "Hello from the Runtime!"
             
             # Send system start event
-            frame_event = FrameEvent(">", None)
+            frame_event = FrameEvent("$>", None)
             self.__kernel(frame_event)
     
 
@@ -169,20 +182,22 @@ there is only one state ($S0) so this code is trivial:
         ...
 
     
-    def __router(self, e):
+    def __router(self, __e):
         if self.__compartment.state == '__runtime0_state_S0':
-            self.__runtime0_state_S0(e)
+            self.__runtime0_state_S0(__e, self.__compartment)
 
 The state is trivial and simply prints the message:
 
 .. code-block::
     :caption: Frame code 
 
-    -machine-
+        machine:
 
-    $S0 
-        |>|
-            print(msg) ^
+            $S0 {
+                $>() {
+                    print(msg)
+                }
+            }
 
 This Frame code results in the following code generated for the **$S0** state: 
 
@@ -192,10 +207,9 @@ This Frame code results in the following code generated for the **$S0** state:
     # ----------------------------------------
     # $S0
     
-    def __runtime0_state_S0(self, e):
-        if e._message == ">":
+    def __runtime0_state_S0(self, __e, compartment):
+        if __e._message == "$>":
             print(self.msg)
-            return
 
 Each state method contains zero or more event handlers. In this demo, only one event handler exists to handle the 
 enter message. The event handler prints a message declared in the domain and returns.
@@ -239,25 +253,28 @@ Let's start with the simplest transition example possible:
 .. code-block::
     :caption: Transition Runtime Support Demo 
 
-    fn main {
-        var runtime_demo:# = #Runtime1()
+    fn main() {
+        var runtime_demo = Runtime1()
         runtime_demo.next()
     }
 
-    #Runtime1
+    system Runtime1 {
 
-        -interface-
+        interface:
 
-        next
+            next()
 
-        -machine-
+        machine:
 
-        $S0 
-            |next| -> $S1 ^
+            $S0 {
+                next() {
+                    -> $S1
+                }
+            }
 
-        $S1 
-
-    ##
+            $S1 {
+            }
+    }
 
 Calling the **next** interface method triggers a series of calls resulting in the following call stack configuration:
 
@@ -275,15 +292,15 @@ a new **$S1** compartment which is then passed to **self.__transition(compartmen
     # ----------------------------------------
     # $S0
     
-    def __runtime1_state_S0(self, __e):
+    def __runtime1_state_S0(self, __e, compartment):
         if __e._message == "next":
-            next_compartment = Runtime1Compartment('__runtime1_state_S1')
+            next_compartment = None
+            next_compartment = Runtime1Compartment('__runtime1_state_S1', next_compartment)
             self.__transition(next_compartment)
-            return
 
     ...
 
-    def __transition(self, next_compartment: 'Runtime1Compartment'):
+    def __transition(self, next_compartment):
         self.__next_compartment = next_compartment
 
 
@@ -323,7 +340,7 @@ The next step is to send an exit event to the current state and update the curre
     :caption: Kernel Exit Event and State Change Code
 
     # exit current state
-    self.__router(FrameEvent( "<", self.__compartment.exit_args))
+    self.__router(FrameEvent( "<$", self.__compartment.exit_args))
     # change state
     self.__compartment = next_compartment
 
@@ -335,7 +352,7 @@ one, only the following code applies to our demo:
 
     if next_compartment.forward_event is None:
         # send normal enter event
-        self.__router(FrameEvent(">", self.__compartment.enter_args))
+        self.__router(FrameEvent("$>", self.__compartment.enter_args))
 
 
 The code above simply creates and sends an enter event to the new state, passing any enter event 
@@ -376,7 +393,7 @@ class Runtime1:
         # Initialize domain
         
         # Send system start event
-        frame_event = FrameEvent(">", None)
+        frame_event = FrameEvent("$>", None)
         self.__kernel(frame_event)
     
     # ==================== Interface Block ================== #
@@ -390,16 +407,16 @@ class Runtime1:
     # ----------------------------------------
     # $S0
     
-    def __runtime1_state_S0(self, __e):
+    def __runtime1_state_S0(self, __e, compartment):
         if __e._message == "next":
-            next_compartment = Runtime1Compartment('__runtime1_state_S1')
+            next_compartment = None
+            next_compartment = Runtime1Compartment('__runtime1_state_S1', next_compartment)
             self.__transition(next_compartment)
-            return
     
     # ----------------------------------------
     # $S1
     
-    def __runtime1_state_S1(self, __e):
+    def __runtime1_state_S1(self, __e, compartment):
         pass
         
     
@@ -417,21 +434,21 @@ class Runtime1:
             self.__next_compartment = None
             
             # exit current state
-            self.__router(FrameEvent( "<", self.__compartment.exit_args))
+            self.__router(FrameEvent( "<$", self.__compartment.exit_args))
             # change state
             self.__compartment = next_compartment
             
             if next_compartment.forward_event is None:
                 # send normal enter event
-                self.__router(FrameEvent(">", self.__compartment.enter_args))
+                self.__router(FrameEvent("$>", self.__compartment.enter_args))
             else: # there is a forwarded event
-                if next_compartment.forward_event._message == ">":
+                if next_compartment.forward_event._message == "$>":
                     # forwarded event is enter event
                     self.__router(next_compartment.forward_event)
                 else:
                     # forwarded event is not enter event
                     # send normal enter event
-                    self.__router(FrameEvent(">", self.__compartment.enter_args))
+                    self.__router(FrameEvent("$>", self.__compartment.enter_args))
                     # and now forward event to new, initialized state
                     self.__router(next_compartment.forward_event)
                 next_compartment.forward_event = None
@@ -439,11 +456,11 @@ class Runtime1:
     
     def __router(self, __e):
         if self.__compartment.state == '__runtime1_state_S0':
-            self.__runtime1_state_S0(__e)
+            self.__runtime1_state_S0(__e, self.__compartment)
         elif self.__compartment.state == '__runtime1_state_S1':
-            self.__runtime1_state_S1(__e)
+            self.__runtime1_state_S1(__e, self.__compartment)
         
-    def __transition(self, next_compartment: 'Runtime1Compartment'):
+    def __transition(self, next_compartment):
         self.__next_compartment = next_compartment
     
 
@@ -451,13 +468,14 @@ class Runtime1:
 
 class Runtime1Compartment:
 
-    def __init__(self,state):
+    def __init__(self,state,parent_compartment):
         self.state = state
         self.state_args = {}
         self.state_vars = {}
         self.enter_args = {}
         self.exit_args = {}
         self.forward_event = None
+        self.parent_compartment = parent_compartment
     
 if __name__ == '__main__':
     main()
@@ -472,31 +490,35 @@ as before. A **Runtime2** system is instantiated and then its next interface met
 .. code-block::
     :caption: Runtime2 Listing
 
-    fn main {
-        var runtime_demo:# = #Runtime2()
+    fn main() {
+        var runtime_demo = Runtime2()
         runtime_demo.next(1,2,3)
     }
 
-    #Runtime2
+    system Runtime2 {
 
-        -interface-
+        interface:
 
-        next [a,b,c]
+            next(a, b, c)
 
-        -machine-
+        machine:
 
-        $S0 
-            |<| [a] 
-                print("a=" + str(a), end="") ^
+            $S0 {
+                <$(a) {
+                    print("a=" + str(a), end="")
+                }
 
-            |next| [a,b,c]
-                (a) -> (b) $S1(c) ^
+                next(a, b, c) {
+                    (a) -> (b) $S1(c)
+                }
+            }
 
-        $S1 [c]
-            |>| [b]
-                print("; b=" + str(b) + "; c=" + str(c)) ^
-
-    ##  
+            $S1(c) {
+                $>(b) {
+                    print("; b=" + str(b) + "; c=" + str(c))
+                }
+            }
+    }  
 
 The **next()** interface method receives three arguments which are added to a FrameEvent as parameters
 and passed to the kernel.
@@ -519,8 +541,9 @@ for the next state.
 .. code-block::
     :caption: $S0 Transition Parameters 
 
-    |next| [a,b,c]
-        (a) -> (b) $S1(c) ^
+        next(a, b, c) {
+            (a) -> (b) $S1(c)
+        }
 
 As we can see below, a,b,c are used to set the various transition parameters and
 the deferred transition is then created.   
@@ -531,21 +554,21 @@ the deferred transition is then created.
     # ----------------------------------------
     # $S0
     
-    def __runtime2_state_S0(self, __e):
-        if __e._message == "<":
+    def __runtime2_state_S0(self, __e, compartment):
+        if __e._message == "<$":
             print("a=" + str(__e._parameters["a"]),end = "")
             return
         elif __e._message == "next":
             self.__compartment.exit_args["a"] = __e._parameters["a"]
-            next_compartment = Runtime2Compartment('__runtime2_state_S1')
+            next_compartment = None
+            next_compartment = Runtime2Compartment('__runtime2_state_S1', next_compartment)
             next_compartment.enter_args["b"] = __e._parameters["b"]
             next_compartment.state_args["c"] = __e._parameters["c"]
             self.__transition(next_compartment)
-            return
 
     ...
 
-    def __transition(self, next_compartment: 'Runtime2Compartment'):
+    def __transition(self, next_compartment):
         self.__next_compartment = next_compartment
 
 What we see above is the first stage of the Frame runtime code for executing a transition. This code 
@@ -577,7 +600,7 @@ The kernel then performs the following steps:
             self.__next_compartment = None
             
             # exit current state
-            self.__router(FrameEvent( "<", self.__compartment.exit_args))
+            self.__router(FrameEvent( "<$", self.__compartment.exit_args))
             # change state
             self.__compartment = next_compartment
 
@@ -589,8 +612,8 @@ The exit event handler prints out the first part of the output of the program:
     # ----------------------------------------
     # $S0
     
-    def __runtime2_state_S0(self, __e):
-        if __e._message == "<":
+    def __runtime2_state_S0(self, __e, compartment):
+        if __e._message == "<$":
             print("a=" + str(__e._parameters["a"]),end = "")
             return
         elif __e._message == "next":
@@ -604,15 +627,17 @@ Now that the **self.__compartment** has been updated to the new compartment the 
 
     if next_compartment.forward_event is None:
         # send normal enter event
-        self.__router(FrameEvent(">", self.__compartment.enter_args))
+        self.__router(FrameEvent("$>", self.__compartment.enter_args))
 
                 
 .. code-block::
     :caption: $S1 Frame Code 
 
-        $S1 [c]
-            |>| [b]
-                print("; b=" + str(b) + "; c=" + str(c)) ^
+            $S1(c) {
+                $>(b) {
+                    print("; b=" + str(b) + "; c=" + str(c))
+                }
+            }
 
 .. code-block::
     :caption: $S1 Python Code 
@@ -620,10 +645,10 @@ Now that the **self.__compartment** has been updated to the new compartment the 
     # ----------------------------------------
     # $S1
     
-    def __runtime2_state_S1(self, __e):
-        if __e._message == ">":
+    def __runtime2_state_S1(self, __e, compartment):
+        if __e._message == "$>":
             print("; b=" + str(__e._parameters["b"]) 
-                         + "; c=" + str((self.__compartment.state_args["c"])))
+                         + "; c=" + str((compartment.state_args["c"])))
             return
 
 The enter event print code completes the output of the a,b and c parameters. 
@@ -645,27 +670,31 @@ the **next** event and simply forwards it to state **$S1** to handle and print t
 .. code-block::
     :caption: Event Forwarding Demo
 
-    fn main {
-        var runtime_demo:# = #Runtime3()
+    fn main() {
+        var runtime_demo = Runtime3()
         runtime_demo.next(1,2,3)
     }
 
-    #Runtime3
+    system Runtime3 {
 
-        -interface-
+        interface:
 
-        next [a,b,c]
+            next(a, b, c)
 
-        -machine-
+        machine:
 
-        $S0 
-            |next| [a,b,c]
-                -> => $S1 ^
+            $S0 {
+                next(a, b, c) {
+                    -> => $S1
+                }
+            }
 
-        $S1
-            |next| [a,b,c]
-                print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c)) ^
-##
+            $S1 {
+                next(a, b, c) {
+                    print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c))
+                }
+            }
+    }
 
 Frame enables this capability by utilizing a special **forward_event** attribute on compartments 
 to store a reference to the event that should be forwarded:
@@ -676,12 +705,12 @@ to store a reference to the event that should be forwarded:
     # ----------------------------------------
     # $S0
     
-    def __runtime3_state_S0(self, __e):
+    def __runtime3_state_S0(self, __e, compartment):
         if __e._message == "next":
-            next_compartment = Runtime3Compartment('__runtime3_state_S1')
+            next_compartment = None
+            next_compartment = Runtime3Compartment('__runtime3_state_S1', next_compartment)
             next_compartment.forward_event = __e
             self.__transition(next_compartment)
-            return
 
 In the kernel,  a test is performed for the existence of a forwarded event. 
 If there isn't one then the kernel sends an enter event along with the enter parameters. 
@@ -706,15 +735,15 @@ makes sure the new state receives an enter event, whether forwarded or newly cre
 
             if next_compartment.forward_event is None:
                 # send normal enter event
-                self.__router(FrameEvent(">", self.__compartment.enter_args))
+                self.__router(FrameEvent("$>", self.__compartment.enter_args))
             else: # there is a forwarded event
-                if next_compartment.forward_event._message == ">":
+                if next_compartment.forward_event._message == "$>":
                     # forwarded event is enter event
                     self.__router(next_compartment.forward_event)
                 else:
                     # forwarded event is not enter event
                     # send normal enter event
-                    self.__router(FrameEvent(">", self.__compartment.enter_args))
+                    self.__router(FrameEvent("$>", self.__compartment.enter_args))
                     # and now forward event to new, intialized state
                     self.__router(next_compartment.forward_event)
                 next_compartment.forward_event = None
@@ -735,22 +764,24 @@ There are three aspects of system startup that are parameterized and can be init
 .. code-block::
     :caption: System Initalization Parameters
 
-    fn main {
-        #Runtime4($(1), >(2), #(3))
+    fn main() {
+        Runtime4(1, 2, 3)
     }
 
-    #Runtime4 [$[a], >[b], #[c]]
+    system Runtime4($(start_state_param_a), $>(enter_param_b), domain_param_c) {
 
-        -machine-
+        machine:
 
-        $S0 [a] 
-            |>| [b]
-                print("a=" + str(a) + "; b=" + str(b) + "; c=" + str(c)) ^
+            $S0(start_state_param_a) {
+                $>(enter_param_b) {
+                    print("a=" + str(start_state_param_a) + "; b=" + str(enter_param_b) + "; c=" + str(domain_param_c))
+                }
+            }
 
-        -domain-
+        domain:
 
-        var c = nil
-    ##
+            var domain_param_c = nil
+    }
 
 Above we see that each aspect of the system is initialized with one argument. The system factory (__init__([...])) 
 method handles all of 
@@ -782,7 +813,7 @@ the logic for setting the start state parameters and domain variables:
             self.c  = domain_param_c
             
             # Send system start event
-            frame_event = FrameEvent(">", self.__compartment.enter_args)
+            frame_event = FrameEvent("$>", self.__compartment.enter_args)
             self.__kernel(frame_event)
         
         # ===================== Machine Block =================== #
@@ -790,9 +821,9 @@ the logic for setting the start state parameters and domain variables:
         # ----------------------------------------
         # $S0
         
-        def __runtime4_state_S0(self, __e):
-            if __e._message == ">":
-                print("a=" + str((self.__compartment.state_args["a"])) + "; b=" + str(__e._parameters["b"]) + "; c=" + str(self.c))
+        def __runtime4_state_S0(self, __e, compartment):
+            if __e._message == "$>":
+                print("a=" + str((compartment.state_args["start_state_param_a"])) + "; b=" + str(__e._parameters["enter_param_b"]) + "; c=" + str(self.domain_param_c))
                 return
     
     ...
@@ -836,37 +867,57 @@ Frame also generates methods in the runtime for managing the stack.
 .. code-block::
     :caption: State Stack Demo
 
-    fn main {
-        var ss:# = #StateStack()
+    fn main() {
+        var ss = StateStack()
         ss.next()
         ss.next()
         ss.ret()
         ss.ret()
     }
     
-    #StateStack
+    system StateStack {
 
-        -interface-
+        interface:
 
-        next
-        ret
+            next()
+            ret()
 
-        -machine-
+        machine:
 
-            $A
-                |>| print("$A") ^
-                |next| $$[+] -> $B ^
+            $A {
+                $>() {
+                    print("$A")
+                }
+                
+                next() {
+                    $$[+] -> $B
+                }
+            }
 
-            $B
-                |>| print("$B") ^
-                |next| $$[+] -> $C ^
-                |ret| -> $$[-] ^
+            $B {
+                $>() {
+                    print("$B")
+                }
+                
+                next() {
+                    $$[+] -> $C
+                }
+                
+                ret() {
+                    -> $$[-]
+                }
+            }
 
-            $C
-                |>| print("$C") ^
-                |ret| -> $$[-] ^
-
-    ##
+            $C {
+                $>() {
+                    print("$C")
+                }
+                
+                ret() {
+                    -> $$[-]
+                }
+            }
+    }
 
 
 .. code-block::
@@ -887,7 +938,9 @@ Here we can see how Frame code is translated into Python to push a state:
 .. code-block::
     :caption: Frame Code for State Push and Transition  
 
-    |next| $$[+] -> $C ^
+        next() {
+            $$[+] -> $C
+        }
 
 .. code-block::
     :caption: Python Code for State Push and Transition
@@ -903,7 +956,9 @@ And here we can see how Frame code is translated into Python to pop a state and 
 .. code-block::
     :caption: Frame Code for State Pop and Transition  
 
-    |ret| -> $$[-] ^
+        ret() {
+            -> $$[-]
+        }
 
 .. code-block::
     :caption: Python Code for State Pop and Transition
@@ -939,19 +994,17 @@ And here we can see how Frame code is translated into Python to pop a state and 
         # ----------------------------------------
         # $B
         
-        def __statestack_state_B(self, __e):
-            if __e._message == ">":
+        def __statestack_state_B(self, __e, compartment):
+            if __e._message == "$>":
                 print("$B")
-                return
             elif __e._message == "next":
                 self.__state_stack_push(self.__compartment)
-                next_compartment = StateStackCompartment('__statestack_state_C')
+                next_compartment = None
+                next_compartment = StateStackCompartment('__statestack_state_C', next_compartment)
                 self.__transition(next_compartment)
-                return
             elif __e._message == "ret":
                 next_compartment = self.__state_stack_pop()
                 self.__transition(next_compartment)
-                return
         
         ...
 

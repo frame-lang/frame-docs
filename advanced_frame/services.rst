@@ -17,17 +17,17 @@ this need. Secondarily, Looper passes data from one
 state to another using the enter event handler parameters rather than persisting to 
 domain variables.
 
-Looper instantiates a **#Looper** system in **main** and passes the number of loops 
+Looper instantiates a **Looper** system in **main** and passes the number of loops 
 to perform as an argument to the system: 
 
 .. code-block::
     :caption: Looper Instantiation
 
-    fn main {
-        #Looper(>(1000000))
+    fn main() {
+        var looper = Looper(1000000)
     }
 
-    #Looper [>[loops]]
+    system Looper ($>(loops)) {
     ...
 
 Looper begins in the **$Start** state, prints "Starting" and then transitions to **$A** 
@@ -36,30 +36,39 @@ while passing in the number of loops twice (we'll see why next) as well as the s
 .. code-block::
     :caption: Looper Start State
 
-    -machine-
+    machine:
 
-    $Start
-        |>| [loops]
+    $Start {
+        $>(loops) {
             print("Starting")
-            -> (loops, loops, time.time()) $A ^
+            -> (loops, loops, time.time()) $A
+        }
+    }
 
-    $A 
-        |>| [total_loops, loops_left, start]
+    $A {
+        $>(total_loops, loops_left, start) {
     ...
 
 
 .. code-block::
     :caption: Looper Looped States
 
-    $A 
-        |>| [total_loops, loops_left, start]
-            loops_left == 0  ? -> $Done(total_loops, start) ^ :|
-            -> (total_loops, loops_left, start) $B ^
+    $A {
+        $>(total_loops, loops_left, start) {
+            if loops_left == 0 {
+                -> (total_loops, start) $Done
+                return
+            }
+            -> (total_loops, loops_left, start) $B
+        }
+    }
     
-    $B
-        |>| [total_loops, loops_left, start]
+    $B {
+        $>(total_loops, loops_left, start) {
             loops_left = loops_left - 1
-            -> (total_loops, loops_left, start) $A ^ 
+            -> (total_loops, loops_left, start) $A
+        }
+    }
 
 Both **$A** and **$B** accept the same parameters and cycle transitioning between each other 
 while counting down the loops_left. State **$B** decrements **loops_left** and 
@@ -69,10 +78,12 @@ to **$Done** while passing the total loops and start time as transition argument
 .. code-block::
     :caption: $Done State
 
-    $Done [total_loops, start]
-        |>| 
+    $Done {
+        $>(total_loops, start) {
             print("Done. Looped " + str(total_loops) + " times in ", end = " ") 
-            print(str(time.time() - start) + " seconds.") ^
+            print(str(time.time() - start) + " seconds.")
+        }
+    }
 
 The arguments passed to **$Done** are used to print out a report. Here is the full 
 program: 
@@ -82,35 +93,45 @@ program:
 
     `import time`
 
-    fn main {
-        #Looper(>(1000000))
+    fn main() {
+        var looper = Looper(1000000)
     }
 
-    #Looper [>[loops]]
+    system Looper ($>(loops)) {
 
-    -machine-
+        machine:
 
-    $Start
-        |>| [loops]
-            print("Starting")
-            -> (loops, loops, time.time()) $A ^
+        $Start {
+            $>(loops) {
+                print("Starting")
+                -> (loops, loops, time.time()) $A
+            }
+        }
 
-    $A 
-        |>| [total_loops, loops_left, start]
-            loops_left == 0  ? -> $Done(total_loops, start) ^ :|
-            -> (total_loops, loops_left, start) $B ^
-    
-    $B
-        |>| [total_loops, loops_left, start]
-            loops_left = loops_left - 1
-            -> (total_loops, loops_left, start) $A ^  
+        $A {
+            $>(total_loops, loops_left, start) {
+                if loops_left == 0 {
+                    -> (total_loops, start) $Done
+                    return
+                }
+                -> (total_loops, loops_left, start) $B
+            }
+        }
+        
+        $B {
+            $>(total_loops, loops_left, start) {
+                loops_left = loops_left - 1
+                -> (total_loops, loops_left, start) $A
+            }
+        }
 
-    $Done [total_loops, start]
-        |>| 
-            print("Done. Looped " + str(total_loops) + " times in ", end = " ") 
-            print(str(time.time() - start) + " seconds.") ^
-
-    ##
+        $Done(total_loops, start) {
+            $>() {
+                print("Done. Looped " + str(total_loops) + " times in ", end = " ") 
+                print(str(time.time() - start) + " seconds.")
+            }
+        }
+    }
 
 
 .. code-block::
@@ -131,27 +152,30 @@ an interrupt signal by pressing CTRL-C.
         
     `import time`
 
-    fn main {
-        #BasicService()
+    fn main() {
+        var service = BasicService()
     }
 
-    #BasicService
+    system BasicService {
 
-    -machine-
+        machine:
 
-    $A 
-        |>| 
-            print("$A")
-            time.sleep(.2)
-            -> $B ^
-    
-    $B
-        |>| 
-            print("$B")
-            time.sleep(.2)
-            -> $A ^
-
-    ##
+        $A {
+            $>() {
+                print("$A")
+                time.sleep(.2)
+                -> $B
+            }
+        }
+        
+        $B {
+            $>() {
+                print("$B")
+                time.sleep(.2)
+                -> $A
+            }
+        }
+    }
 
 The service machine simply loops between states **$A** and **$B**, printing out the current state
 and then transitioning after a brief sleep. 
@@ -193,9 +217,9 @@ add an operation to catch the CTRL-C signal and exit the process:
 .. code-block::
     :caption: CTRL-C Signal Handler Operation
 
-    -operations-
+    operations:
 
-    signal_handler[sig, frame] {
+    signal_handler(sig, frame) {
         sys.exit(0)
     }
 
@@ -204,10 +228,12 @@ Next we will add an **$Init** state to register the handler and start the loop:
 .. code-block::
     :caption: Register CTRL-C Signal Handler
 
-    $Init 
-        |>| 
-            signal.signal(signal.SIGINT, #.signal_handler)
-            -> $A ^
+    $Init {
+        $>() {
+            signal.signal(signal.SIGINT, self.signal_handler)
+            -> $A
+        }
+    }
 
 Here is the complete demo: 
 
@@ -218,38 +244,43 @@ Here is the complete demo:
     `import signal`
     `import sys`
 
-    fn main {
-        #CleanExitService()
+    fn main() {
+        var service = CleanExitService()
     }
 
-    #CleanExitService
+    system CleanExitService {
 
-        -operations-
+        operations:
 
-        signal_handler[sig, frame] {
+        signal_handler(sig, frame) {
             sys.exit(0)
         }
 
-        -machine-
+        machine:
 
-        $Init 
-            |>| 
-                signal.signal(signal.SIGINT, #.signal_handler)
-                -> $A ^
+        $Init {
+            $>() {
+                signal.signal(signal.SIGINT, self.signal_handler)
+                -> $A
+            }
+        }
 
-        $A 
-            |>| 
+        $A {
+            $>() {
                 print("$A")
                 time.sleep(.2)
-                -> $B ^
+                -> $B
+            }
+        }
         
-        $B
-            |>| 
+        $B {
+            $>() {
                 print("$B")
                 time.sleep(.2)
-                -> $A ^
-
-        ##
+                -> $A
+            }
+        }
+    }
 
 .. code-block::
     :caption: Full Signal Handler Demo Output
@@ -273,25 +304,26 @@ rather than make the **sys.exit(0)** call itself.
 .. code-block::
     :caption: Signal Handler Calling Interface
 
-        -operations-
+        operations:
 
-        signal_handler[sig, frame] {
-            quit()
+        signal_handler(sig, frame) {
+            self.quit()
         }
 
-        -interface-
-
-        quit 
+        interface:
+            quit()
 
 Next we will create a state just for handling the **quit** event: 
 
  .. code-block::
     :caption: $Done State
 
-        $Done 
-            |quit|
+        $Done {
+            quit() {
                 print("Goodbye!")
-                sys.exit(0) ^
+                sys.exit(0)
+            }
+        }
 
 To enable receiving this event, we will modify **$A** and **$B** to inherit behavior from 
 **Done**: 
@@ -299,17 +331,21 @@ To enable receiving this event, we will modify **$A** and **$B** to inherit beha
  .. code-block::
     :caption: Hierarchical State Machine System
 
-        $A => $Done
-            |>| 
+        $A => $Done {
+            $>() {
                 print("$A")
                 time.sleep(.2)
-                -> $B ^
+                -> $B
+            }
+        }
         
-        $B => $Done
-            |>| 
+        $B => $Done {
+            $>() {
                 print("$B")
                 time.sleep(.2)
-                -> $A ^
+                -> $A
+            }
+        }
 
 Here is the full program: 
 
@@ -320,47 +356,53 @@ Here is the full program:
     `import signal`
     `import sys`
 
-    fn main {
-        #SignalMachineService()
+    fn main() {
+        var service = SignalMachineService()
     }
 
-    #SignalMachineService
+    system SignalMachineService {
 
-        -operations-
+        operations:
 
-        signal_handler[sig, frame] {
-            quit()
+        signal_handler(sig, frame) {
+            self.quit()
         }
 
-        -interface-
+        interface:
+            quit()
 
-        quit 
+        machine:
 
-        -machine-
+        $Init {
+            $>() {
+                signal.signal(signal.SIGINT, self.signal_handler)
+                -> $A
+            }
+        }
 
-        $Init 
-            |>| 
-                signal.signal(signal.SIGINT, #.signal_handler)
-                -> $A ^
-
-        $A => $Done
-            |>| 
+        $A => $Done {
+            $>() {
                 print("$A")
                 time.sleep(.2)
-                -> $B ^
+                -> $B
+            }
+        }
         
-        $B => $Done
-            |>| 
+        $B => $Done {
+            $>() {
                 print("$B")
                 time.sleep(.2)
-                -> $A ^
+                -> $A
+            }
+        }
         
-        $Done 
-            |quit|
+        $Done {
+            quit() {
                 print("Goodbye!")
-                sys.exit(0) ^
-
-        ##
+                sys.exit(0)
+            }
+        }
+    }
 
 This system is also a good example of Hierarchical State Machines (HSMs) ability to factor out 
 common behavior using the dispatch operator **=>**.

@@ -1,23 +1,23 @@
 States and Transitions
 ==================
 
+This documentation covers Frame v0.20 syntax with conventional parameter syntax, return statements, and modern block structure. All examples use the updated syntax patterns.
+
 Machine Block 
 -------------
 
-States are defined inside the machine block. The machine block is optional but must be after the 
-interface block (if it exists) and before the actions and domain blocks (if they exist). 
+States are defined inside the machine block. The machine block is optional but must follow the 
+interface block (if it exists) and precede the actions and domain blocks (if they exist). 
 
-.. code-block::
+.. code-block:: frame
     :caption: Empty Machine Block 
 
-    #StatesSystem
-
-        -interface-
-        -machine-    // machine block must go here
-        -actions-
-        -domain-
-
-    ##
+    system StatesSystem {
+        interface:
+        machine:    // machine block must go here
+        actions:
+        domain:
+    }
 
 States 
 ------
@@ -25,20 +25,20 @@ States
 The machine block can contain zero or more states. The first state in the machine block is 
 called the **start state**.
 
-.. code-block::
+.. code-block:: frame
     :caption: Start State 
 
-    #StatesSystem
+    system StatesSystem {
+        machine:
+            $Begin {  // start state
+            }
 
-        -machine-
+            $Working {
+            }
 
-        $Begin  // start state
-
-        $Working
-
-        $End
-
-    ##
+            $End {
+            }
+    }
 
 Event Handlers
 --------------
@@ -50,9 +50,9 @@ clauses:
 #. Statements (zero or more) 
 #. Return or Continue token
 
-.. admonition: Event Handler Syntax
+.. admonition:: Event Handler Syntax
 
-       '|' message '|' statement* return_or_continue
+       message '(' parameter_list? ')' type? '{' statement* terminator '}'
  
 
 Message Selector
@@ -61,27 +61,24 @@ Message Selector
 The message selector is indicated by two pipe characters which match an event message. Event messages
 are set to the name of interface method that generated it.
 
-.. code-block::
+.. code-block:: frame
     :caption: Sending Messages 
 
-    #MessageSending
+    system MessageSending {
+        interface:
+            // The "foo" interface method sends the "foo" event message
+            foo()
 
-        -interface-
-
-        // The "foo" interface method sends the "foo" event message
-
-        foo 
-
-        -machine- 
-
-        $Working
-
-            // This event handler is triggered when the state
-            // recieves a "foo" message. 
-
-            |foo| print("handled foo") ^
-
-    ##
+        machine:
+            $Working {
+                // This event handler is triggered when the state
+                // receives a "foo" message. 
+                foo() {
+                    print("handled foo")
+                    return
+                }
+            }
+    }
 
 
 Event Handler Parameters
@@ -92,29 +89,26 @@ that sends the event message it responds to. Here we can see that
 the init interface method parameters are identical with the **|init|** event handler 
 signature:
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handler Parameters Demo
 
-    fn main {
-        var ehpd:# = #EventHandlerParametersDemo()
+    fn main() {
+        var ehpd = EventHandlerParametersDemo()
         ehpd.init("Boris", 1959)
     }
 
-    #EventHandlerParametersDemo
+    system EventHandlerParametersDemo {
+        interface:
+            init(name, birth_year)
 
-        -interface-
-
-        init [name, birth_year] 
-
-        -machine-
-
-        $Start 
-
-            |init| [name,birth_year]
-                print("My name is " + name + " and I was born in " + str(birth_year))
-                ^
-
-    ##
+        machine:
+            $Start {
+                init(name, birth_year) {
+                    print("My name is " + name + " and I was born in " + str(birth_year))
+                    return
+                }
+            }
+    }
 
 
 Run the `program <https://onlinegdb.com/yKZKs6pR6>`_. 
@@ -127,56 +121,56 @@ Run the `program <https://onlinegdb.com/yKZKs6pR6>`_.
 Event Handler Terminators
 ~~~~~~~~
 
-Event handlers are terminated by either a return token **^** or a continue token **:>**. 
+Event handlers in Frame v0.20 are terminated by either a **return** statement, the continue operator **@:>**, or the dispatch operator **=>**. 
 
 Event Handler Return Terminator
 +++++++++++
 
-In addition to the the standard return token we have seen which returns nothing from 
-the event handler, it is also possible to return a value to the interface  as well. 
-This is accomplished by adding an expression in parenthesis after the **^** token:
+The **return** statement can return nothing or return a value to the interface. Frame v0.20 now supports return statements as regular statements, enabling conventional control flow patterns:
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handler Return Value
 
-    $Oracle
-        |getName| : string  ^(name)
-        |getMeaning| : number  ^(21*2) 
-        |getWeather| : string ^(weatherReport())
+    $Oracle {
+        getName(): string {
+            return name
+        }
+        getMeaning(): number {
+            return 21 * 2
+        }
+        getWeather(): string {
+            return weatherReport()
+        }
+    }
 
 Event handlers that return values must be declared identically to the interface methods 
 that they correspond to.
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handler Return Demo
 
-    fn main {
-        var ehrd:# = #EventHandlerReturnDemo()
+    fn main() {
+        var ehrd = EventHandlerReturnDemo()
         var ret = ehrd.init("Boris", 1959)
         print("Succeeded = " + str(ret))
     }
 
-    #EventHandlerReturnDemo
+    system EventHandlerReturnDemo {
+        interface:
+            // interface signature matches event handler signature
+            init(name, birth_year): bool
 
-        -interface-
+        machine:
+            $Start {
+                // event handler signature matches interface signature
+                init(name, birth_year): bool {
+                    print("My name is " + name + " and I was born in " + str(birth_year))
+                    return true
+                }
+            }
+    }
 
-        // interface signature matches event handler signature
-
-        init [name, birth_year] : bool 
-
-        -machine-
-
-        $Start 
-
-            // event handler signature matches interface signature
-
-            |init| [name, birth_year] : bool 
-                print("My name is " + name + " and I was born in " + str(birth_year))
-                ^(true)
-
-    ##
-
-Notice the **^(true)** statement which sets the FrameEvent's return object which the 
+Notice the **return true** statement which sets the FrameEvent's return object which the 
 interface then passes back to the caller. 
 
 Run the `program <https://onlinegdb.com/Ad87kwvpz>`_. 
@@ -191,45 +185,50 @@ Run the `program <https://onlinegdb.com/Ad87kwvpz>`_.
 Event Handler Continue Terminator
 +++++++++++
 
-As previously mentioned, event handlers are also able to be terminated with a continue operator **:>**. In later 
+As previously mentioned, event handlers are also able to be terminated with a continue operator **@:>**. In later 
 articles we will discuss **Hierarchical State Machines (HSMs)** in depth. HSMs enable states to inherit behavior 
 from other states and are created using the Frame *Dispatch Operator* **=>**. 
 While unhandled events are automatically passed to parent states, the continue operator enables the 
 handled event to be passed to a parent state as well:   
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handler Continue Terminator
 
-    fn main {
-        var sys:# = #ContinueTerminatorDemo()
+    fn main() {
+        var sys = ContinueTerminatorDemo()
         sys.passMe1()
         sys.passMe2()
     }
 
-    #ContinueTerminatorDemo
+    system ContinueTerminatorDemo {
+        interface:
+            passMe1()
+            passMe2()
 
-        -interface-
+        machine:
+            // Dispatch operator (=>) defines the state hierarchy
+            $Child => $Parent {
+                // Continue operator sends events to $Parent
+                passMe1() {
+                    @:>
+                }
+                passMe2() {
+                    print("handled in $Child")
+                    @:>
+                }
+            }
 
-        passMe1
-        passMe2 
-
-        -machine-
-
-        // Dispatch operator (=>) defines the state hierarchy
-
-        $Child => $Parent 
-
-            // Continue operator sends events to $Parent
-
-            |passMe1|  :>
-            |passMe2|  print("handled in $Child") :>
-
-        $Parent
-
-            |passMe1| print("handled in $Parent") ^
-            |passMe2| print("handled in $Parent") ^
-
-    ##
+            $Parent {
+                passMe1() {
+                    print("handled in $Parent")
+                    return
+                }
+                passMe2() {
+                    print("handled in $Parent")
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/l7WBIHtd7>`_. 
 
@@ -248,21 +247,28 @@ One of the most important features of the Frame language is the support of two s
 messages - enter (**>**) and exit (**<**). Not surprisingly, these messages are generated 
 by the Frame runtime in circumstances when the the state is being entered or exited. 
 
-.. code-block::
+.. code-block:: frame
     :caption: Enter and Exit Messages
 
-    #StatesSystem
+    system StatesSystem {
+        machine:
+            $Begin {
+                $>() {
+                    print("entering $Begin")
+                    return
+                }
+                <$() {
+                    print("exiting $Begin")
+                    return
+                }
+            }
 
-        -machine-
+            $Working {
+            }
 
-        $Begin
-            |>| print("entering $Begin") ^
-            |<| print("exiting $Begin") ^
-
-        $Working
-
-        $End
-    ##
+            $End {
+            }
+    }
 
 
 The enter message is sent to a state under two conditions: 
@@ -278,54 +284,79 @@ Transitions
 
 Transitions between states are affected by the use of the **->** operator.
 
-.. code-block::
+.. code-block:: frame
     :caption: Transitions
 
-    #S0 
-        |>|
-            -> $S1 ^
-    $S1
+    system S0 {
+        machine:
+            $S0 {
+                $>() {
+                    -> $S1
+                    return
+                }
+            }
+            $S1 {
+            }
+    }
 
 Transitions are fully explored in another article. For the purposes of this article 
 they are important in order to understand state behavior. 
 To see  them in action we will examine a simple system with three states that handle enter and exit events. 
 The main function instantiates the system and drives it to the **$End** state:
 
-.. code-block::
+.. code-block:: frame
     :caption: Enter and Exit Messages Demo
 
-    fn main {
-        var eemd:# = #EnterExitMessagesDemo() 
+    fn main() {
+        var eemd = EnterExitMessagesDemo()
         eemd.next()
         eemd.next()
     }
 
-    #EnterExitMessagesDemo
+    system EnterExitMessagesDemo {
+        interface:
+            next()
 
-        -interface-
+        machine:
+            $Begin {
+                $>() {
+                    print("entering $Begin")
+                    return
+                }
+                <$() {
+                    print("exiting $Begin")
+                    return
+                }
 
-        next 
-        
-        -machine-
+                next() {
+                    -> $Working
+                    return
+                }
+            }
 
-        $Begin
-            |>| print("entering $Begin") ^
-            |<| print("exiting $Begin") ^
+            $Working {
+                $>() {
+                    print("entering $Working")
+                    return
+                }
+                <$() {
+                    print("exiting $Working")
+                    return
+                }
 
-            |next| 
-                -> $Working ^
+                next() {
+                    -> $End
+                    return
+                }
+            }
 
-        $Working
-            |>| print("entering $Working") ^
-            |<| print("exiting $Working") ^
-
-            |next| 
-                -> $Working ^
-
-        $End
-            |>| print("entering $End") ^
-
-    ##
+            $End {
+                $>() {
+                    print("entering $End")
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/2XE6J5jzW>`_. 
 
@@ -371,23 +402,23 @@ Event Handler Variables
 Variables can be defined in the scope of an event handler and are valid during the invocation
 of the event handler and are dropped when exiting it.
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handler Scoped Variables
 
-    fn main {
-        #EventHandlerVariablesDemo() 
+    fn main() {
+        EventHandlerVariablesDemo()
     }
 
-    #EventHandlerVariablesDemo
-
-        -machine-
-
-        $Begin
-            |>| 
-                var x = 21 * 2
-                print("Meaning of life = " + str(x))
-            ^
-    ##
+    system EventHandlerVariablesDemo {
+        machine:
+            $Begin {
+                $>() {
+                    var x = 21 * 2
+                    print("Meaning of life = " + str(x))
+                    return
+                }
+            }
+    }
 
 
 Event Handler Parameters
@@ -396,30 +427,27 @@ Event Handler Parameters
 Event handlers for an event need to have the same signature (parameters and return types) as the interface method that generated 
 the message. 
 
-.. code-block::
+.. code-block:: frame
     :caption: Event Handle Parameters Demo
 
-    fn main {
-        var ehpd:# = #EventHandlerParametersDemo()
+    fn main() {
+        var ehpd = EventHandlerParametersDemo()
         var ret = ehpd.init("Boris", 1959)
         print("Succeeded = " + str(ret))
     }
 
-    #EventHandlerParametersDemo
+    system EventHandlerParametersDemo {
+        interface:
+            init(name, birth_year): bool  // init method
 
-        -interface-
-
-        init [name, birth_year] : bool // init method 
-
-        -machine-
-
-        $Start 
-
-            |init| [name,birth_year] : bool 
-                print("My name is " + name + " and I was born in " + str(birth_year))
-                ^(true)
-
-    ##
+        machine:
+            $Start {
+                init(name, birth_year): bool {
+                    print("My name is " + name + " and I was born in " + str(birth_year))
+                    return true
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/Bhs0wGQ_P>`_. 
 
@@ -436,23 +464,29 @@ State Variables
 In addition to variables in event handlers, states can have their own variables. 
 State variables are declared in the state scope before the event handlers. 
 
-.. code-block::
+.. code-block:: frame
     :caption: State Variables
 
-    -machine-
+    system StateVariablesExample {
+        machine:
+            $S0 {
+                // State variables are defined before event handlers
+                var name = "Natasha"
+                var age = "not saying"
 
-    $S0
+                a() {
+                    print("My name is " + name + " and I am " + age + " years old.")
+                    return
+                }
+            }
 
-        // State variables are defined before event handlers
-
-        var name = "Natasha"
-        var age = "not saying"           
-     
-        |a| print("My name is " + name + " and I am " + age + " years old." ^
-
-    $S1 
-        // no state variables
-        |b| ^
+            $S1 {
+                // no state variables
+                b() {
+                    return
+                }
+            }
+    }
 
 
 State Variables are initialized upon entry to the state 
@@ -464,11 +498,11 @@ to the current **$Begin** state we can see that the counter has been reset to 0.
 **counter** variable is a state local variable scoped to the *instance* of the state. 
 
 
-.. code-block::
+.. code-block:: frame
     :caption: State Variables Demo
 
-    fn main {
-        var svd:# = #StateVariablesDemo() 
+    fn main() {
+        var svd = StateVariablesDemo()
         svd.inc()
         svd.inc()
         svd.cycle()
@@ -476,33 +510,37 @@ to the current **$Begin** state we can see that the counter has been reset to 0.
         svd.inc()
     }
 
-    #StateVariablesDemo
+    system StateVariablesDemo {
+        interface:
+            inc()
+            cycle()
 
-        -interface-
+        machine:
+            $Begin {
+                // state variable initialized to 0
+                var counter = 0
 
-        inc
-        cycle
+                $>() {
+                    print("Entering $Begin, counter = " + str(counter))
+                    return
+                }
+                <$() {
+                    print("Exiting $Begin, counter = " + str(counter))
+                    return
+                }
 
-        -machine-
-
-        $Begin
-
-            // state variable initialized to 0
-
-            var counter = 0  
-
-            |>| 
-                print("Entering $Begin, counter = " + str(counter)) ^
-            |<| print("Exiting $Begin, counter = " + str(counter)) ^
-
-            |inc| 
-                counter = counter + 1 
-                print("Handling |inc|, counter = " + str(counter))
-                ^
-            |cycle| 
-                print("Cycling")
-                -> $Begin ^
-    ##
+                inc() {
+                    counter = counter + 1
+                    print("Handling inc(), counter = " + str(counter))
+                    return
+                }
+                cycle() {
+                    print("Cycling")
+                    -> $Begin
+                    return
+                }
+            }
+    }
 
 
 Run the `program <https://onlinegdb.com/NBIKiLuH3>`_. 
@@ -528,21 +566,25 @@ States are compartmentalized environments
 One of the features Frame has to transfer data from one state to another is **state parameters**. 
 State parameters are declared by adding a parameter list after the definition of the state name.
 
-.. code-block::
+.. code-block:: frame
     :caption: State Parameters
         
-    $S0 [x,y] 
+    $S0(x, y) { 
 
 During a transition, state parameters are set by arguments passed to the target state.
 
-.. code-block::
+.. code-block:: frame
     :caption: State Parameters
 
-    $S0
-        |>| 
-            -> $S1(0,1) ^ 
+    $S0 {
+        $>() {
+            -> $S1(0, 1)
+            return
+        }
+    }
         
-    $S1 [zero,one] // zero = 0, one = 1
+    $S1(zero, one) {  // zero = 0, one = 1
+    }
 
 The transition to state **$S1** is "called" with two arguments (0,1) which are mapped respectively to the 
 **zero** and **one** parameters in state **$S1**.
@@ -569,17 +611,18 @@ specifies different grouping syntax for each scope:
 Scope                                       System Parameter Group 
 ------------------------------------------- ----------------------
 
-Start State Parameters                      $[...]
-Start state enter event handler parameters  >[...]
-Domain variables                            #[...]
+Start State Parameters                      $(...)
+Start state enter event handler parameters  $>(...)
+Domain variables                            name (no special syntax)
 =========================================== ======================
 
 System parameter groups are optional, but must be in the specific order shown:
 
-.. code-block::
+.. code-block:: frame
     :caption: System Parameter Group Ordering
 
-    #SystemParameters [$[...],>(...),#(...)]
+    system SystemParameters ($(arg1, arg2), $>(arg3, arg4), arg5, arg6) {
+    }
 
 If no system parameters are declared, the enclosing list should not be present - it is 
 an error to declare an empty parameter list.
@@ -587,56 +630,55 @@ an error to declare an empty parameter list.
 In the next example we see how the start state is initialized with two parameters, one as a 
 state parameter and one as an enter event parameter.
 
-.. code-block::
-    :caption: System Initalized Start State Parameters
+.. code-block:: frame
+    :caption: System Initialized Start State Parameters
 
-    #StartStateInitDemo [$[zero],>[one]]
-
-        -machine-
-
-        $StartState [zero]
-            |>| [one]
-                print(zero)  // use state param scope syntax
-                print(one)      // resolves to state param scope
-                ^
-    ##
+    system StartStateInitDemo ($(zero), $>(one)) {
+        machine:
+            $StartState(zero) {
+                $>(one) {
+                    print(zero)  // use state param scope syntax
+                    print(one)   // resolves to state param scope
+                    return
+                }
+            }
+    }
 
 
 .. note::
 
     The names of the *system* start state parameters 
-    need to match the names of the start state's parameters.
+    need to match the names of the start state's parameters. In v0.20, system instantiation uses flattened argument lists.
 
 The final step is to initialize the system parameters with arguments upon 
 instantiation. 
 
-.. code-block::
-    :caption: Call groups
+.. code-block:: frame
+    :caption: System Instantiation
 
-    #StartStateInitDemo($(0),>(1))
+    StartStateInitDemo(0, 1)
 
-The system declaration sends arguments to the correct scopes, all of which must be enclosed in the 
-appropriate type of call group for the arguments. 
+System instantiation in v0.20 uses flattened argument lists where all arguments are passed in order without special grouping syntax. 
 
 Here is a demo with all of these aspects together:
 
-.. code-block::
-    :caption: System Initalized Start State Parameters
+.. code-block:: frame
+    :caption: System Initialized Start State Parameters Complete Example
         
-    fn main {
-        #StartStateInitDemo($(0),>(1))
+    fn main() {
+        StartStateInitDemo(0, 1)
     }
 
-    #StartStateInitDemo [$[zero],>[one]]
-
-        -machine-
-
-        $StartState [zero]
-            |>| [one]
-                print(zero)  // use state param scope syntax
-                print(one)      // resolves to state param scope
-                ^
-    ##
+    system StartStateInitDemo ($(zero), $>(one)) {
+        machine:
+            $StartState(zero) {
+                $>(one) {
+                    print(zero)  // use state param scope syntax
+                    print(one)   // resolves to state param scope
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/IajrHD80s8>`_. 
 
@@ -651,43 +693,43 @@ Run the `program <https://onlinegdb.com/IajrHD80s8>`_.
 A final example will tie together all of these concepts neatly together and demo a practical
 application of these capabilities.
 
-.. code-block::
+.. code-block:: frame
     :caption: Fibonacci Demo Using System Parameters
 
-    fn main {
-        var fib:# = #FibonacciSystemParamsDemo($(0),>(1)) 
+    fn main() {
+        var fib = FibonacciSystemParamsDemo(0, 1)
         loop var x = 0; x < 10; x = x + 1 {
             fib.next()
         }
     }
 
-    #FibonacciSystemParamsDemo [$[zero],>[one]]
+    system FibonacciSystemParamsDemo ($(zero), $>(one)) {
+        interface:
+            next()
 
-        -interface-
+        machine:
+            $Setup(zero) {
+                $>(one) {
+                    print(zero)
+                    print(one)
 
-        next
-
-        -machine-
-
-        $Setup [zero]
-            |>| [one]
-                print(zero)  
-                print(one)    
-
-                // initialize $PrintNextFibonacciNumber state parameters
-                
-                -> $PrintNextFibonacciNumber(zero,one) ^ 
+                    // initialize $PrintNextFibonacciNumber state parameters
+                    -> $PrintNextFibonacciNumber(zero, one)
+                    return
+                }
+            }
             
-        // params [a,b] = (0,1)
-
-        $PrintNextFibonacciNumber [a,b] 
-            |next| 
-                var sum = a + b
-                print(sum) 
-                a = b
-                b = sum
-                ^
-    ##
+            // params (a,b) = (0,1)
+            $PrintNextFibonacciNumber(a, b) {
+                next() {
+                    var sum = a + b
+                    print(sum)
+                    a = b
+                    b = sum
+                    return
+                }
+            }
+    }
 
 Run the `program <https://onlinegdb.com/mCqbyq__p>`_. 
 

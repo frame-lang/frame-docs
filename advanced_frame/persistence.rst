@@ -17,10 +17,10 @@ of the system:
 .. code-block::
     :caption: Operation to Deep Copy the System State
 
-        -operations-
+    operations:
 
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
+        marshal(): JSON {
+            return jsonpickle.encode(self)
         }
 
 Persisting the system is as simple as calling the **marshal** operation and then saving the data 
@@ -30,13 +30,13 @@ the data in memory for these demos.
 .. code-block::
     :caption: Use of marshal functionality
 
-        var ds:# = #DurableSystem()
-    
-        // get a deep copy of the system data
-        var system_data = ds.marshal()
+    var ds = DurableSystem()
 
-        // remove reference to the system
-        ds = nil
+    // get a deep copy of the system data
+    var system_data = ds.marshal()
+
+    // remove reference to the system
+    ds = nil
 
 To reconstitute a system, we will use 
 a *static* operation **unmarshal [data]**  and return the output 
@@ -45,11 +45,11 @@ of **jsonpickle.decode(data)**:
 .. code-block::
     :caption: System Reconstitution 
 
-        -operations-
+    operations:
 
         #[static]
-        unmarshal [data] : #DurableSystem {
-            ^(jsonpickle.decode(data)) 
+        unmarshal(data): DurableSystem {
+            return jsonpickle.decode(data)
         } 
 
 To access this static operation we call **unmarshal** through the system type specifier
@@ -58,35 +58,39 @@ itself rather than an instance of the system (as there isn't one):
 .. code-block::
     :caption: Persistence Mechanisms
 
-        // Restore system using static operation
-        ds = #DurableSystem.unmarshal(data)
+    // Restore system using static operation
+    ds = DurableSystem.unmarshal(data)
 
-The **ds** variable now references the **#DurableSystem** instance in the state it 
+The **ds** variable now references the **DurableSystem** instance in the state it 
 was persisted.
 
 Persistence Demo 
 ----------------
 
 Let's create a persistable system that tracks how many times its been 
-saved and restored. Our **#PersistDemo** system 
-has a single state **$Started** which has a state variable **revived_count** which will be used to 
+saved and restored. Our **PersistDemo** system 
+has a single state **$Start** which has a state variable **revived_count** which will be used to 
 track how many times the state (and by proxy, the system) has been revived. 
 
 .. code-block::
     :caption: State with Counter for Revival Count
 
-        -machine-
+    machine:
 
-        $Start 
+        $Start {
             var revived_count = 0
 
-            |>| 
-                print("Started") ^
+            $>() {
+                print("Started")
+                return
+            }
 
-            |revived| 
+            revived() {
                 revived_count = revived_count + 1
-                print("Revived = " + str(revived_count) + " times") 
-                ^
+                print("Revived = " + str(revived_count) + " times")
+                return
+            }
+        }
 
 The first time the **$Start** is entered is during instantiation, which happens only once when 
 the system is initially created. It does *not happen* again with each reinstantiation. To keep 
@@ -97,13 +101,13 @@ be incremented and printed when the **revived** event is received. To do so, we 
 .. code-block::
     :caption: Persistence Demo
 
-        -operations-
+    operations:
 
         #[static]
-        unmarshal [data] : #PersistDemo  {
-            var demo:# = jsonpickle.decode(data)
+        unmarshal(data): PersistDemo {
+            var demo = jsonpickle.decode(data)
             demo.revived()
-            ^(demo) 
+            return demo
         } 
 
 We will start by creating the system and then immediately persisting it:
@@ -112,13 +116,13 @@ We will start by creating the system and then immediately persisting it:
 .. code-block::
     :caption: Persistence Demo
 
-        var demo:# = #PersistDemo()
-    
-        // get deep copy
-        var data = demo.marshal()
+    var demo = PersistDemo()
 
-        // remove reference to system
-        demo = nil
+    // get deep copy
+    var data = demo.marshal()
+
+    // remove reference to system
+    demo = nil
 
 Upon creating the demo we will see the following output from the **$Start** state enter 
 event handler: 
@@ -133,10 +137,10 @@ Next we will loop 3 times, reviving and persisting the system with each loop:
 .. code-block::
     :caption: Main Loop
 
-    loop var i = 0; i < 3; i = i + 1 {
+    for var i = 0; i < 3; i = i + 1 {
 
         // Restore system using static operation
-        demo = #PersistDemo.unmarshal(data)
+        demo = PersistDemo.unmarshal(data)
 
         // get deep copy
         data = demo.marshal()
@@ -163,20 +167,20 @@ Here is the full program:
     `import time`
     `import jsonpickle`
 
-    fn main {
+    fn main() {
 
-        var demo:# = #PersistDemo()
-    
+        var demo = PersistDemo()
+
         // get deep copy
         var data = demo.marshal()
 
         // remove reference to system
         demo = nil
 
-        loop var i = 0; i < 3; i = i + 1 {
+        for var i = 0; i < 3; i = i + 1 {
 
             // Restore system using static operation
-            demo = #PersistDemo.unmarshal(data)
+            demo = PersistDemo.unmarshal(data)
 
             // get deep copy
             data = demo.marshal()
@@ -187,39 +191,42 @@ Here is the full program:
 
     }
 
-    #PersistDemo
+    system PersistDemo {
 
-        -operations-
+        operations:
 
-        #[static]
-        unmarshal [data] : #PersistDemo  {
-            var demo:# = jsonpickle.decode(data)
-            demo.revived()
-            ^(demo) 
-        } 
+            #[static]
+            unmarshal(data): PersistDemo {
+                var demo = jsonpickle.decode(data)
+                demo.revived()
+                return demo
+            }
 
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
+            marshal(): JSON {
+                return jsonpickle.encode(self)
+            }
 
-        -interface-
+        interface:
 
-        revived 
+            revived()
 
-        -machine-
+        machine:
 
-        $Start 
-            var revived_count = 0
+            $Start {
+                var revived_count = 0
 
-            |>| 
-                print("Started") ^
+                $>() {
+                    print("Started")
+                    return
+                }
 
-            |revived| 
-                revived_count = revived_count + 1
-                print("Revived = " + str(revived_count) + " times") 
-                ^
-        
-    ##
+                revived() {
+                    revived_count = revived_count + 1
+                    print("Revived = " + str(revived_count) + " times")
+                    return
+                }
+            }
+    }
 
 
 Persisted Traffic Light 
@@ -243,15 +250,15 @@ persists the system again and then sleeps.
     `import time`
     `import jsonpickle`
 
-    fn main {
+    fn main() {
 
-        var tl:# = #TrafficLight()
+        var tl = TrafficLight()
         var data = tl.marshal()
         tl = nil
         time.sleep(.5)
 
-        loop var x = 0; x < 9; x = x + 1 {
-            tl = #TrafficLight.unmarshal(data)
+        for var x = 0; x < 9; x = x + 1 {
+            tl = TrafficLight.unmarshal(data)
             tl.tick()
             time.sleep(.5)
             data = tl.marshal()
@@ -259,47 +266,61 @@ persists the system again and then sleeps.
         }
     }
 
-    #TrafficLight
+    system TrafficLight {
 
-        -operations-
+        operations:
 
-        #[static]
-        unmarshal [data] : #TrafficLight  {
-            ^(jsonpickle.decode(data)) 
-        } 
+            #[static]
+            unmarshal(data): TrafficLight {
+                return jsonpickle.decode(data)
+            }
 
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
+            marshal(): JSON {
+                return jsonpickle.encode(self)
+            }
         
-        -interface-
+        interface:
 
-        tick
+            tick()
 
-        -machine-
+        machine:
 
-        $Green
-            |>|
-                print("Green") ^
+            $Green {
+                $>() {
+                    print("Green")
+                    return
+                }
 
-            |tick|
-                -> $Yellow ^
+                tick() {
+                    -> $Yellow
+                    return
+                }
+            }
 
-        $Yellow
-            |>|
-                print("Yellow") ^
+            $Yellow {
+                $>() {
+                    print("Yellow")
+                    return
+                }
 
-            |tick|
-                -> $Red ^
+                tick() {
+                    -> $Red
+                    return
+                }
+            }
 
-        $Red
-            |>|
-                print("Red") ^
+            $Red {
+                $>() {
+                    print("Red")
+                    return
+                }
 
-            |tick|
-                -> $Green ^
-
-    ##
+                tick() {
+                    -> $Green
+                    return
+                }
+            }
+    }
 
 .. code-block::
     :caption: Traffic Light Demo Output
@@ -332,15 +353,15 @@ response to the caller that the workflow is complete.
     `import time`
     `import jsonpickle`
 
-    fn main {
+    fn main() {
 
         // instantiate system
-        var flow:# = #Workflow()
+        var flow = Workflow()
 
         // delay
         time.sleep(1)
         
-        loop var i = 0; i < 4; i = i + 1 {
+        for var i = 0; i < 4; i = i + 1 {
             flow.next()
 
             // Persist workflow
@@ -353,68 +374,79 @@ response to the caller that the workflow is complete.
             time.sleep(1)
 
             // Revive workflow
-            flow = #Workflow.unmarshal(data)
+            flow = Workflow.unmarshal(data)
         }
 
         flow.next()
         flow = nil
     }
 
-    #Workflow
+    system Workflow {
 
-        -operations-
+        operations:
 
-        #[static]
-        unmarshal [data] : #Workflow  {
-            ^(jsonpickle.decode(data)) 
-        } 
+            #[static]
+            unmarshal(data): Workflow {
+                return jsonpickle.decode(data)
+            }
 
-        marshal : JSON {
-            ^(jsonpickle.encode(self))
-        }
+            marshal(): JSON {
+                return jsonpickle.encode(self)
+            }
         
-        -interface-
+        interface:
 
-        next
+            next()
 
-        -machine-
+        machine:
 
-        $Ready
-            |>|
-                print("Ready") ^
-
-            |next|
-                -> $Step1 ^
-
-        $Step1
-            |>|
-                print("Doing Step1") ^
-
-            |next|
-                -> $Step2 ^
-
-        $Step2
-            |>|
-                print("Doing Step2") ^
-
-            |next|
-                -> $Done ^
-
-        $Done
-            var exclaimation_count = 1
-
-            |>|
-                print("Done.") ^
-
-            |next|
-                print("I told you I was done", end="") 
-                loop var i = 0; i < exclaimation_count; i = i + 1 {
-                    print("!",end="")
+            $Ready {
+                $>() {
+                    print("Ready")
                 }
-                exclaimation_count = exclaimation_count + 1
-                print("") ^
 
-    ##
+                next() {
+                    -> $Step1
+                }
+            }
+
+            $Step1 {
+                $>() {
+                    print("Doing Step1")
+                }
+
+                next() {
+                    -> $Step2
+                }
+            }
+
+            $Step2 {
+                $>() {
+                    print("Doing Step2")
+                }
+
+                next() {
+                    -> $Done
+                }
+            }
+
+            $Done {
+                var exclaimation_count = 1
+
+                $>() {
+                    print("Done.")
+                }
+
+                next() {
+                    print("I told you I was done", end="")
+                    for var i = 0; i < exclaimation_count; i = i + 1 {
+                        print("!", end="")
+                    }
+                    exclaimation_count = exclaimation_count + 1
+                    print("")
+                }
+            }
+    }
 
 
 .. code-block::

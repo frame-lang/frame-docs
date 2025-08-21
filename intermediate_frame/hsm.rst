@@ -41,56 +41,77 @@ The next example will show refactoring of a common behavior between two states t
 .. code-block::
     :caption: Flat State Machine
 
-    #FlatStateMachine
+    system FlatStateMachine {
 
-        -interface-
-
-        a 
-        b
+        interface:
+            a()
+            b()
         
-        -machine-
+        machine:
+            $S1 {
+                a() {
+                    -> "a" $S2
+                    return
+                }
+                b() {
+                    -> "b" $S3
+                    return
+                }
+            }
 
-        $S1 
-            |a| -> "a" $S2 ^
-            |b| -> "b" $S3 ^
-
-        $S2 
-            |a| -> "a" $S1 ^
-            |b| -> "b" $S3 ^
+            $S2 {
+                a() {
+                    -> "a" $S1
+                    return
+                }
+                b() {
+                    -> "b" $S3
+                    return
+                }
+            }
             
-        $S3
-
-    ##
+            $S3 {}
+    }
 
 .. image:: images/no_parent.png
 
 Above we see a simple system with three states. States **$S1** and **$S2** share the common behavior 
-of **|b| -> "b" $S3 ^**. To eliminate the redundancy, we will 
+of **b() { -> "b" $S3 return }**. To eliminate the redundancy, we will 
 create a new parent state and refactor the common behavior into it. 
 
 .. code-block::
     :caption: Hierarchical State Machine
 
-    #HSM1
+    system HSM1 {
 
-        -interface-
+        interface:
+            a()
+            b()
 
-        a 
-        b
+        machine:
+            $S0 {
+                b() {
+                    -> "b" $S3
+                    return
+                }
+            }
 
-        -machine-
+            $S1 => $S0 {
+                a() {
+                    -> "a" $S2
+                    return
+                }
+            }
 
-        $S0 
-            |b| -> "b" $S3 ^
-
-        $S1 => $S0
-            |a| -> "a" $S2 ^
-
-        $S2 => $S0
-            |a| -> "a" $S1 ^
+            $S2 => $S0 {
+                a() {
+                    -> "a" $S1
+                    return
+                }
+            }
             
-        $S3
-    ##
+            $S3 {}
+    }
 
 .. image:: images/hsm_with_parent.png
     :height: 500
@@ -99,58 +120,66 @@ create a new parent state and refactor the common behavior into it.
 Supporting the HSM architecture is one of the primary reasons the Frame runtime is event based which 
 makes the capability straightforward to implement. 
 
-Event Handler Continue Terminator
+Event Handler Parent Dispatch (=> $^)
 +++++++++++
 
 By default and by design, unhandled events such as **b** in states **$S1** and **$S2** in the example above pass 
 through to the parent state **$S0**. In some circumstances, however, it is desirable to execute 
-behavior in both the child and the parent. To facilitate this capability, event handlers are also able 
-to be terminated with a continue operator **:>**. After executing all statements in the child event handler,
-the continue operator does not return but instead passes the event to the parent for processing. 
+behavior in both the child and the parent. To facilitate this capability, event handlers can use 
+the parent dispatch statement **=> $^**. After executing all statements in the child event handler,
+the parent dispatch statement passes the event to the parent for processing and then returns. 
 
 .. code-block::
-    :caption: Event Handler Continue Terminator
+    :caption: Event Handler Parent Dispatch
 
-    fn main {
-        var sys:# = #ContinueTerminatorDemo()
+    fn main() {
+        var sys = ParentDispatchDemo()
         sys.passMe1()
         sys.passMe2()
     }
 
-    #ContinueTerminatorDemo
+    system ParentDispatchDemo {
 
-        -interface-
+        interface:
+            passMe1()
+            passMe2()
 
-        passMe1
-        passMe2 
+        machine:
+            // Dispatch operator (=>) defines state hierarchy
 
-        -machine-
+            $Child => $Parent {
+                // Parent dispatch (=> $^) sends events to $Parent
 
-        // Dispatch operator (=>) defines state hierarchy
+                passMe1() {
+                    => $^
+                }
+                passMe2() {
+                    print("handled in $Child")
+                    => $^
+                }
+            }
 
-        $Child => $Parent 
+            $Parent {
+                passMe1() {
+                    print("handled in $Parent")
+                    return
+                }
+                passMe2() {
+                    print("handled in $Parent")
+                    return
+                }
+            }
+    }
 
-            // Continue operator sends events to $Parent
-
-            |passMe1|  :>
-            |passMe2|  print("handled in $Child") :>
-
-        $Parent
-
-            |passMe1| print("handled in $Parent") ^
-            |passMe2| print("handled in $Parent") ^
-
-    ##
-
-Above we see two scenarios in the **$Child** state. In the **|passMe1|** event handler, there are 
-no statements and the event is passed on to the **$Parent** state. In the **|passMe2|** event handler 
-a print statement is executed first and then the event is passed on to the **$Parent** for 
+Above we see two scenarios in the **$Child** state. In the **passMe1()** event handler, the event 
+is immediately dispatched to the **$Parent** state. In the **passMe2()** event handler 
+a print statement is executed first and then the event is dispatched to the **$Parent** for 
 further processing. 
 
 Run the `program <https://onlinegdb.com/l7WBIHtd7>`_. 
 
 .. code-block::
-    :caption: Event Handler Continue Terminator Output
+    :caption: Event Handler Parent Dispatch Output
 
     handled in $Parent
     handled in $Child
@@ -162,41 +191,63 @@ A final example demonstrates that enter and exit messages obey the same rules as
 .. code-block::
     :caption: Parent Child Enter Exit Demo
 
-
-
-    fn main {
-        var sys:# = #ParentChildEnterExitDemo()
+    fn main() {
+        var sys = ParentChildEnterExitDemo()
         sys.next()
         sys.next()   
     }
 
-    #ParentChildEnterExitDemo
+    system ParentChildEnterExitDemo {
 
-        -interface-
+        interface:
+            next()
 
-        next
+        machine:
+            // Dispatch operator (=>) defines state hierarchy
 
-        -machine-
+            $Child1 => $Parent {
+                $>() {
+                    print("enter handled in $Child1")
+                    => $^
+                }
+                <$() {
+                    print("exit handled in $Child1")
+                    => $^
+                }
 
-        // Dispatch operator (=>) defines state hierarchy
+                next() {
+                    -> $Child2
+                    return
+                }
+            }
 
-        $Child1 => $Parent  
-            |>|  print("enter handled in $Child1") :>
-            |<|  print("exit handled in $Child1") :>
+            $Child2 => $Parent {
+                $>() {
+                    print("enter handled in $Child2")
+                    => $^
+                }
+                <$() {
+                    print("exit handled in $Child2")
+                    => $^
+                }
 
-            |next| -> $Child2 ^
-        
+                next() {
+                    -> $Child1
+                    return
+                }   
+            }
 
-        $Child2 => $Parent  
-            |>|  print("enter handled in $Child2") :>
-            |<|  print("exit handled in $Child2") :>
-
-            |next| -> $Child1 ^   
-
-        $Parent 
-            |>| print("enter handled in $Parent") ^
-            |<| print("exit handled in $Parent") ^ 
-    ##
+            $Parent {
+                $>() {
+                    print("enter handled in $Parent")
+                    return
+                }
+                <$() {
+                    print("exit handled in $Parent")
+                    return
+                }
+            }
+    }
 
 
 Run the `program <https://onlinegdb.com/KFVFsIXav>`_. 

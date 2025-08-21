@@ -32,35 +32,40 @@ in the future) to do more sophisticated list operations.
     my_list.append("foo")
     print(my_list)
 
-Lists can be iterated over using loops.
+Lists can be iterated over using loops. Frame supports both index-based iteration and the more convenient ``for in`` syntax:
 
 .. code-block::
 
-
-    fn main {
+    fn main() {
         var l = [0,1,2]
+        var fruits = ["apple", "banana", "cherry"]
 
         print("l = " + str(l)) 
 
-        loop var i = 0; i < len(l); i = i + 1 {
+        // Index-based iteration
+        print("Iterating over list using index iteration:")
+        for var i = 0; i < len(l); i = i + 1 {
             print("l[" + str(i) + "] = " + str(l[i]))
         }
 
-        loop var i = 0; i < len(l); i = i + 1 {
-            l[i] = i + 10
-            print("l[" + str(i) + "] = " + str(l[i]))
+        // Element iteration with for in
+        print("Iterating over fruits:")
+        for fruit in fruits {
+            print("Fruit: " + fruit)
         }
     }
 
 The program generates the following output:
 
 .. code-block::
-    :caption: Looping over lists
+    :caption: List iteration examples
 
     l = [0, 1, 2]
+    Iterating over list using index iteration:
     l[0] = 0
     l[1] = 1
     l[2] = 2
-    l[0] = 10
-    l[1] = 11
-    l[2] = 12
+    Iterating over fruits:
+    Fruit: apple
+    Fruit: banana
+    Fruit: cherry

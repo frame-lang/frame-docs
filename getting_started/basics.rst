@@ -155,8 +155,8 @@ Frame has four flavors of callable routine types:
 Frame functions are normal, globally scoped callable subroutines. 
 
 .. NOTE::
-    In v0.11 Frame only supports an single (and optional) `main()` function. This will be expanded 
-    to support multiple functions in v0.12.
+    In v0.20 Frame only supports a single (and optional) `main()` function. This will be expanded 
+    to support multiple functions in future versions.
 
 The main() Function 
 ~~~~~~~~~~~~~~~~~~
