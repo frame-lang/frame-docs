@@ -37,7 +37,8 @@ Transitions are performed by using the **->** operator to go to another state.
                 }
             }
 
-            $End
+            $End {
+            }
     }
 
 Above we see a system initialized in the **$Start** start state that will transition to 
