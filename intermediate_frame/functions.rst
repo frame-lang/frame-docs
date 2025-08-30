@@ -2,9 +2,9 @@
 Functions
 ==================
 
-Frame v0.20 supports a main function that can work alongside system specifications. The main function is optional and, when present, provides the entry point for program execution.
+Frame v0.30 supports multiple functions per module that can work alongside system specifications. Functions are optional and, when present, provide entry points and utility functionality.
 
-.. note:: Frame v0.20 currently supports one main function per module. Additional functionality can be implemented as action methods within systems, which support full v0.20 syntax including conventional if/elif/else patterns with return statements.
+.. note:: Frame v0.30 supports multiple functions with any names per module. Functions can interact with systems through interface methods and operations (which are public), while actions remain private implementation details within systems.
 
 Basic Function Syntax
 ======================
@@ -23,25 +23,29 @@ Basic Function Syntax
         return 0
     }
 
-Action Methods as Function-Like Behavior
-=========================================
+Multiple Functions and Systems  
+===============================
 
-While Frame v0.20 currently supports only a main function, you can achieve function-like behavior using action methods within systems. These support full v0.20 syntax including return statements and conditional logic.
+Frame v0.30 supports multiple functions within a module alongside systems. Functions can call system interface methods and operations (which are public), but cannot directly access actions (which are private implementation details).
+
+**Function-System Interaction Rules:**
+- **Operations**: Functions call operations using `SystemName.operationName()` syntax (static method calls)
+- **Interface Methods**: Functions call interface methods using `systemInstance.methodName()` syntax (instance method calls)  
+- **Actions**: Functions cannot call actions (actions are private implementation details within systems)
 
 .. code-block:: frame
-    :caption: Action Methods with Function-Like Behavior
+    :caption: Functions Calling System Operations (Static Methods)
 
     fn main() {
-        var utils = Utils()
-        var result = utils.add(5, 3)
+        var result = Utils.add(5, 3)
         print("5 + 3 = " + str(result))
         
-        var category = utils.categorizeNumber(42)
+        var category = Utils.categorizeNumber(42)
         print("42 is " + category)
     }
 
     system Utils {
-        actions:
+        operations:
             add(x: int, y: int): int {
                 return x + y
             }
@@ -61,25 +65,58 @@ While Frame v0.20 currently supports only a main function, you can achieve funct
             }
     }
 
+.. code-block:: frame
+    :caption: Functions Calling System Interface Methods (Instance Methods)
+
+    fn main() {
+        var counter = Counter()
+        
+        // Call interface methods on system instance
+        counter.increment()
+        counter.increment()
+        counter.increment()
+        
+        print("Final count: " + str(counter.getCount()))
+    }
+
+    system Counter {
+        interface:
+            increment()
+            getCount(): int
+
+        machine:
+            $Start {
+                increment() {
+                    count = count + 1
+                }
+                
+                getCount(): int {
+                    return count
+                }
+            }
+
+        domain:
+            var count: int = 0
+    }
+
 Return Statements in Action Methods
 ====================================
 
 Action methods support conventional `return` statements with both simple values and complex expressions. This is a major improvement in Frame v0.20, enabling conventional control flow patterns.
 
 .. code-block:: frame
-    :caption: Action Methods with Return Values
+    :caption: Operations with Return Values
 
     fn main() {
-        var math = MathUtils()
-        var result = math.add(5, 3)
+        var result = MathUtils.add(5, 3)
         print("5 + 3 = " + str(result))
         
-        var fact = math.factorial(5)
+        var fact = MathUtils.factorial(5)
         print("5! = " + str(fact))
     }
 
     system MathUtils {
-        actions:
+        operations:
             add(x: int, y: int): int {
                 return x + y
             }
@@ -88,7 +125,7 @@ Action methods support conventional `return` statements with both simple values 
                 if n <= 1 {
                     return 1
                 } else {
-                    return n * factorial(n - 1)
+                    return n * MathUtils.factorial(n - 1)
                 }
             }
     }
@@ -99,22 +136,18 @@ Control Flow with Return Statements
 Frame v0.20 action methods support conventional control flow patterns with if/elif/else chains and return statements. This enables clean, readable logic similar to traditional programming languages.
 
 .. code-block:: frame
-    :caption: Action Method with Conditional Logic
+    :caption: Operations with Conditional Logic
 
     fn main() {
-        var classifier = NumberClassifier()
-        var numbers = [-5, 0, 7, 42, 123]
-        
-        // Note: Manual array iteration in current Frame v0.20
-        var category1 = classifier.categorize(-5)
+        var category1 = NumberClassifier.categorize(-5)
         print("-5 is " + category1)
         
-        var category2 = classifier.categorize(42)
+        var category2 = NumberClassifier.categorize(42)
         print("42 is " + category2)
     }
 
     system NumberClassifier {
-        actions:
+        operations:
             categorize(num: int): string {
                 if num < 0 {
                     return "negative"
@@ -227,13 +260,12 @@ Best Practices for Frame v0.20
     :caption: Best Practices Example
 
     fn main() {
-        var calculator = DiscountCalculator()
-        var discount = calculator.calculate(100.0, "premium")
+        var discount = DiscountCalculator.calculate(100.0, "premium")
         print("Discount amount: $" + str(discount))
     }
 
     system DiscountCalculator {
-        actions:
+        operations:
             calculate(price: float, customerType: string): float {
                 // Validate input
                 if price <= 0 {
