@@ -1,24 +1,31 @@
 ============
-Frame Grammar v0.20
+Frame Grammar v0.30
 ============
 
-This grammar specification reflects Frame v0.20 syntax with conventional parameter syntax, return statements, and modern block structure. It has been comprehensively validated with 98 working Frame systems and 100% test success rate.
+This grammar specification reflects Frame v0.30 syntax with multi-entity support, deprecated feature cleanup, and modern block structure. It has been comprehensively validated with 98 working Frame systems and 100% test success rate for modern syntax.
+
+**v0.30 Architecture**: Frame now uses a proper modular architecture with ``FrameModule`` as the top-level AST container, ensuring systems and functions are peer entities within modules rather than artificial hierarchies.
 
 Module Structure
 ================
 
 .. code-block:: bnf
 
+    frame_module: module_metadata (function | system)*
+    module_metadata: module_attribute*
+    module_attribute: attribute_expr
+
+    // Legacy for compatibility - now generates FrameModule internally
     module: function* system*
 
 Functions
 =========
 
-Frame v0.20 supports a main function as the entry point. Currently, only one function (``main``) is supported per module, with additional functionality implemented as system action methods.
+Frame v0.30 supports multiple functions with any names per module. Functions serve as entry points and utilities, while systems provide state machine functionality.
 
 .. code-block:: bnf
 
-    function: 'fn' 'main' '(' parameter_list? ')' type? function_body
+    function: 'fn' IDENTIFIER '(' parameter_list? ')' type? function_body
     function_body: '{' stmt* '}'
     parameter_list: parameter (',' parameter)*
     parameter: IDENTIFIER type?
@@ -27,7 +34,10 @@ Frame v0.20 supports a main function as the entry point. Currently, only one fun
 
 **Note**: Function parameter lists always require parentheses ``()``, even when empty. The ``parameter_list?`` indicates the parameters inside are optional, but the parentheses themselves are mandatory.
 
-**v0.20 Feature**: Empty parameter lists ``()`` are fully supported in v0.20, enabling conventional method call patterns.
+**v0.30 Features**: 
+- Multiple functions per module with any valid identifiers as names
+- Empty parameter lists ``()`` fully supported, enabling conventional method call patterns
+- Functions can coexist with multiple systems in the same module
 
 Function Examples
 ^^^^^^^^^^^^^^^^^
